@@ -44,19 +44,37 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href="{{ asset('bundles/ujmexo/css/tableLayout.css') }}" type="text/css" rel="stylesheet"/>
+    <link href="{{ asset('bundles/ujmexo/css/slrn_exoBundle.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 
 {% block title %} {{ 'paper' | trans }} {% endblock %}
 
-{% block resourceBreadcrumb %}
+{% block resourceBreadcrumb %}{#
     <li><a href="{{ path('claro_resource_open', { 'resourceType': _resource.resourceNode.resourceType.name(), 'node': _resource.resourceNode.id }) }}">{{ _resource.getResourceNode().getName() }}</a></li>
     <li class="active">{{ 'nQuestion' | trans }}{{numQ}}</li>
-{% endblock %}
+#}{% endblock %}
 
 {% block section_content %}
     <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/paper.js') }}"></script>
-
-    <div class="panel-heading">
+<section class="col-xs-12 col-md-12">
+ <div class="col-xs-3 col-md-3">
+        {# FIRST : MOOC  WIDGET #}
+        {% render controller(
+            'ClarolineCoreBundle:Solerni:getWorkspacePresentationWidget',
+            {'workspaceId': workspace.getId(), 'renderProgression': false  }
+        ) %}
+        <div class='col-xs-12 col-md-12 slrn-widget'>
+	        <div class='row slrn-back bg-color-grey-2'>
+	            <a href="{{ app.session.get('solerni_apprendre_url') }}" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans }}</a>
+	        </div>
+        </div>
+        
+</div>
+<div class='col-xs-9 col-md-9'>    
+     <div class="panel-heading">
+        <h1>{{'paper exo'|trans}} : {{ render(controller('UJMExoBundle:ExoAddons:getExoInSession', {  })) }}</h1>
+    </div>
+{#    <div class="panel-heading">
         <h3 class="panel-title">{{ _resource.getResourceNode().getName() }}
             <span style="float:right;">
                 {% if(maxAttempsAllowed > 0) %}
@@ -71,7 +89,8 @@
                 {{ "attempt info3" | trans }} {{ numAttempt }}
             </span>
         </h3>
-    </div>
+    </div> #}
+    <hr/>
     <div class="panel-body">
         <form action="{{ path('ujm_exercise_paper_nav') }}" method="post" name="formResponse" id="formResponse">
             <input type="hidden" name="numQuestionToDisplayed" id="numQuestionToDisplayed" value=""/>
@@ -81,13 +100,20 @@
             {% if interactionType == 'InteractionQCM' %}
 
                 <!--<div class="panel-body">-->
+
+				<div class="panel-heading">
+                    <h3>{{ 'nQuestion' | trans }}{{numQ}}/{{ tabOrderInter | length }}</h3>
+                </div>
+				<div class="panel-body">
+                    {{ interactionToDisplayed.interaction.invite | raw}}
+                
                     <input class="form-control" type="hidden" name="interactionQCMToValidated" value="{{ interactionToDisplayed.id }}"/>
                     <input class="form-control" type="hidden" name="interactionToValidated" value="{{ interactionToDisplayed.interaction.id }}"/>
                     <input class="form-control" type="hidden" name="typeInteraction" value="InteractionQCM"/>
 
-                    {% include "UJMExoBundle:Partial:interactionPaper.html.twig" %}
+                   {# {% include "UJMExoBundle:Partial:interactionPaper.html.twig" %} #}
 
-                    <table class="table-striped" cellspacing="5" cellpadding="2" border="0">
+                    <table cellspacing="5" cellpadding="2" border="0">
                         {% for choice in interactionToDisplayed.choices %}
                             {% set checked = "" %}
                             <tr>
@@ -99,13 +125,14 @@
                                 {% else %}
                                     <td><p><INPUT type="checkbox" name="choice[]" value="{{ choice.id }}" {{ checked }}/></p></td>
                                 {% endif %}
-                                <td>{{ choice.label|raw }}</td>
+                                <td style='font-weight:bold;'>{{ choice.label|raw }}</td>
                             </tr>
                         {% endfor %}
                     </table>
 
                     {% include "UJMExoBundle:Partial:hintPaper.html.twig" %}
-
+				</div>
+				<br/>
                 <!--</div>-->
 
                 <input type="hidden" name="testQCM" value="testQCM" />
@@ -160,23 +187,29 @@
             {% elseif interactionType == 'InteractionOpen' %}
 
                 <!--<div class="panel-body">-->
+
+
+				<div class="panel-heading">
+                    <h3>{{ 'nQuestion' | trans }}{{numQ}}/{{ tabOrderInter | length }}</h3>
+                </div>
+				<div class="panel-body">
                     <input type="hidden" name="interactionOpenToValidated" value="{{ interactionToDisplayed.id }}"/>
                     <input type="hidden" name="interactionToValidated" value="{{ interactionToDisplayed.interaction.id }}"/>
                     <input type="hidden" name="typeInteraction" value="InteractionOpen"/>
 
-                    {% include "UJMExoBundle:Partial:interactionPaper.html.twig" %}
+                    {#{% include "UJMExoBundle:Partial:interactionPaper.html.twig" %}#}
+					{{ interactionToDisplayed.interaction.invite | raw }}
 
                     {% if interactionToDisplayed.typeopenquestion == 'long' %}
-                        <textarea name="interOpenLong" class="claroline-tiny-mce hide" data-theme="advanced" data-resource-picker="off">
-                            {{ response }}
-                        </textarea>
+                        <textarea name="interOpenLong" class="claroline-tiny-mce hide" data-theme="advanced" data-resource-picker="off">{{ response }}</textarea>
                     {% endif %}
 
                     {% include "UJMExoBundle:Partial:hintPaper.html.twig" %}
 
                     <input type="hidden" name="testOpen" value="testOpen" />
                     <input type="hidden" name="interaction" value="{{ interactionToDisplayed.id }}"/>
-
+				</div>
+				<br/>
                 <!--</div>-->
             {#--------------------------------------------------- Hole ----------------------------------------------------------#}
 
@@ -213,8 +246,17 @@
     </div>
     {#--------------------------------------------------- Pagination ----------------------------------------------------#}
 
+{% if tabOrderInter | length != numQ %}
+    <input type="button" value="{{ "next" | trans }}" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');"
+                    class="btn btn-primary"/>
+{% else %}                                        
+    <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
+                    class="btn btn-primary"/>
+{% endif %}    
+    
+
     <!--div class="text-center panel-footer">
-        {#% set indexMax = 1 %}
+        {% set indexMax = 1 %}
         <ul class="pagination">
             {% if numQ != 1 %}
                 <li>
@@ -270,10 +312,10 @@
                     <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
                         class="btn btn-primary"/>
                 </li>
-            {% endif %#}
+            {% endif %}
         </ul>
     </div-->
-
+{#
     <div class="text-center panel-footer">
         {% set indexMax = 1 %}
 
@@ -342,8 +384,10 @@
                     {% endfor %}
                 </select>
             </li>
-        </ul>
-    </div>
+        </ul> 
+    </div>#}
+</div>
+</section>
 {% endblock %}
 
 {% block javascripts %}
