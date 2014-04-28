@@ -624,7 +624,8 @@ class ExerciseController extends Controller
         $typeInterToRecorded = $request->get('typeInteraction');
 
         $tabOrderInter = $session->get('tabOrderInter');
-        
+        /*
+         * // Edit by Kevin : break solerni user-experience
         if ($paper->getEnd()) {
             
             return $this->forward('UJMExoBundle:Paper:show', 
@@ -633,7 +634,7 @@ class ExerciseController extends Controller
                                       'p'  => -1
                                        )
                                  );
-        }
+        }*/
 
         //To record response
         $exerciseSer = $this->container->get('ujm.exercise_services');
