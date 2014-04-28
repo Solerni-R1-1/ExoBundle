@@ -65,7 +65,7 @@
         ) %}
         <div class='col-xs-12 col-md-12 slrn-widget'>
 	        <div class='row slrn-back bg-color-grey-2'>
-	            <a href="{{ app.session.get('solerni_apprendre_url') }}" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans }}</a>
+	            <a href="{{ app.session.get('solerni_apprendre_url') }}" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
 	        </div>
         </div>
         
@@ -247,14 +247,14 @@
     {#--------------------------------------------------- Pagination ----------------------------------------------------#}
 
 {% if tabOrderInter | length != numQ %}
-    <input type="button" value="{{ "next" | trans }}" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');"
+    <input type="button" value="{{ "next" | trans({}, 'solerni')  }}" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');"
                     class="btn btn-primary"/>
 {% else %}                                        
     <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
                     class="btn btn-primary"/>
 {% endif %}    
     
-
+{#
     <!--div class="text-center panel-footer">
         {% set indexMax = 1 %}
         <ul class="pagination">
@@ -314,7 +314,7 @@
                 </li>
             {% endif %}
         </ul>
-    </div-->
+    </div--> #}
 {#
     <div class="text-center panel-footer">
         {% set indexMax = 1 %}
