@@ -65,14 +65,34 @@
         ) %}
         <div class='col-xs-12 col-md-12 slrn-widget'>
 	        <div class='row slrn-back bg-color-grey-2'>
-	            <a href="{{ app.session.get('solerni_apprendre_url') }}" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
+	            <a data-toggle="modal" href="#quitModal" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
 	        </div>
         </div>
         
 </div>
 <div class='col-xs-9 col-md-9'>    
      <div class="panel-heading">
-        <h1>{{'paper exo'|trans}} : {{ render(controller('UJMExoBundle:ExoAddons:getExoInSession', {  })) }}</h1>
+        <div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>
+        <h1>{{'paper exo'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}</h1>
+        <div class="row">
+            <div class="col-md-6 meta">
+        {#{{ "duree" | trans({}, 'solerni') }} : TODO min#}
+            </div>
+            <div class="col-md-6 meta text-right">
+            
+                {% if(maxAttempsAllowed > 0) %}
+                    {{ "attempt info1" | trans }} {{ maxAttempsAllowed }}
+                    {% if(maxAttempsAllowed > 1) %}
+                        {{ "attempt info2plur" | trans }}
+                    {% else %}
+                        {{ "attempt info2sing" | trans }}
+                    {% endif %}
+                     -
+                {% endif %}
+                 {{ numAttempt }}<sup>{% if(maxAttempsAllowed == 1) %}{{ "attempt info3_1" | trans({}, 'solerni') }}{% else %}{{ "attempt info3_x" | trans({}, 'solerni') }}{% endif %}</sup> {{ "attempt info3" | trans({}, 'solerni') }}
+            
+            </div>
+        </div>
     </div>
 {#    <div class="panel-heading">
         <h3 class="panel-title">{{ _resource.getResourceNode().getName() }}
@@ -246,107 +266,66 @@
     </div>
     {#--------------------------------------------------- Pagination ----------------------------------------------------#}
 
-{% if tabOrderInter | length != numQ %}
-    <input type="button" value="{{ "next" | trans({}, 'solerni')  }}" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');"
-                    class="btn btn-primary"/>
-{% else %}                                        
-    <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
-                    class="btn btn-primary"/>
-{% endif %}    
     
-{#
-    <!--div class="text-center panel-footer">
-        {% set indexMax = 1 %}
-        <ul class="pagination">
-            {% if numQ != 1 %}
-                <li>
-                    <a href="#" onClick="submitForm(1, '{{ interactionType }}');">
-                        <i class="icon-chevron-left"></i><i class="icon-chevron-left"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onClick="submitForm({{ numQ-1 }}, '{{ interactionType }}');">
-                        <i class="icon-chevron-left"></i>
-                    </a>
-                </li>
-            {% else %}
-                <li class="disabled"><a href="#"><i class="icon-chevron-left"></i><i class="icon-chevron-left"></i></a></li>
-                <li class="disabled"><a href="#"><i class="icon-chevron-left"></i></a></li>
-            {% endif %}
 
-            {% for interactionID in tabOrderInter %}
-                {% if loop.index != numQ %}
-                    <li><a href="#" onClick="submitForm({{ loop.index }}, '{{ interactionType }}');">{{ loop.index }}</a></li>
-                    {% set indexMax = loop.index %}
-                {% else %}
-                    <li class="active"><a href="#">{{ loop.index }}</a></li>
-                    {% set indexMax = loop.index %}
-                {% endif %}
-            {% endfor %}
-
-            {% if numQ != indexMax %}
-                <li>
-                    <a href="#" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');">
-                        <i class="icon-chevron-right"></i>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" onClick="submitForm({{ indexMax }}, '{{ interactionType }}');">
-                        <i class="icon-chevron-right"></i><i class="icon-chevron-right"></i>
-                    </a>
-                </li>
-            {% else %}
-                <li class="disabled"><a href="#"><i class="icon-chevron-right"></i></a></li>
-                <li class="disabled"><a href="#"><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i></a></li>
-            {% endif %}
-
-            {% if dispButtonInterrupt %}
-                <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-                <li>
-                    <input type="button" value="{{ "interupt" | trans }}" onClick="interupt('{{ interactionType }}');" class="btn btn-primary"/>
-                </li>
-            {% endif %}
-            <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
-            {% if numQ == indexMax %}
-                <li>
-                    <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
-                        class="btn btn-primary"/>
-                </li>
-            {% endif %}
-        </ul>
-    </div--> #}
-{#
-    <div class="text-center panel-footer">
+    <div class="panel-footer">
         {% set indexMax = 1 %}
 
         {% for interactionID in tabOrderInter %}
             {% set indexMax = loop.index %}
         {% endfor %}
 
-        <ul class="pagination">
-
+            {# Cas question unique #}
             {% if numQ == indexMax and numQ == 1 %}
-                <li>
-                    <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
-                        class="btn btn-primary"/>
-                </li>
+               
+                    <a data-toggle="modal" href="#saveModal" class="btn btn-primary">{{ "finish" | trans }}</a>
+  
             {% else %}
-
-                {% if numQ == 1 %}
-                    <li class="disabled"><a href="#" onclick="event.preventDefault();"><i class="icon-chevron-left"></i> &nbsp; {{ 'previous' | trans }}</a></li>
-                    <li>
-                        <a href="#" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');">
-                            {{ 'next' | trans }} &nbsp; <i class="icon-chevron-right"></i>
-                        </a>
-                    </li>
-                {% endif %}
-
+            
+            <div class="row">
+                <div class="col-md-4">
+	                {# Page précédente #}
+	                {% if numQ == 1 %}
+	                    <input type='button' value='{{ 'previous' | trans({}, 'solerni') }}' class='btn btn-primary disabled'/>
+	                {% else %}
+	                    <input type='button' onclick="submitForm({{ numQ-1 }}, '{{ interactionType }}');" value='{{ 'previous' | trans({}, 'solerni') }}' class='btn btn-primary'/>
+	                {% endif %}
+                </div>
+                
+                <div class="col-md-4 text-center">
+                {# Selecteur #}
+					<div class="btn-group">
+					  <button type="button" class="btn btn-colorheader dropdown-toggle" data-toggle="dropdown">
+					    {{ 'nQuestion' | trans }}{{ numQ }} / {{ tabOrderInter | length }} <span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu btn-colorheader" role="menu">
+					  {% for interactionID in tabOrderInter %}
+					    <li><a class='colorheader' href="#" onclick="submitForm({{ loop.index }}, '{{ interactionType }}');">{{ 'nQuestion' | trans }}{{ loop.index }} / {{ tabOrderInter | length }}</a></li>
+					  {% endfor %}
+					  </ul>
+					</div>
+				</div>
+                
+                
+                <div class="col-md-4 text-right">
+	                {# Page Suivante #}
+	                {% if numQ == 1 %}
+	                    <input type='button' onclick="submitForm({{ numQ+1 }}, '{{ interactionType }}');" value='{{ 'next' | trans({}, 'solerni')   }}' class='btn btn-primary'/>
+	                {% else %}
+	                    <a data-toggle="modal" href="#saveModal" class="btn btn-primary">{{ "finish" | trans }}</a>
+	                {% endif %}
+	               </div>
+				</div>
+         {% endif %}       
+                {# ################################################################# #}
+				
+{#
                 {% if numQ == indexMax %}
-                    <li>
+                    
                         <a href="#" onClick="submitForm({{ numQ-1 }}, '{{ interactionType }}');">
                             <i class="icon-chevron-left"></i> &nbsp; {{ 'previous' | trans }}
                         </a>
-                    </li>
+                        
                     <li class="disabled"><a href="#" onclick="event.preventDefault();">{{ 'next' | trans }} &nbsp; <i class="icon-chevron-right"></i></a></li>
                     <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                     <li>
@@ -383,11 +362,87 @@
                         <option value="{{ loop.index }}">{{ 'nQuestion' | trans }}{{ loop.index }} / {{ tabOrderInter | length }}</option>
                     {% endfor %}
                 </select>
-            </li>
-        </ul> 
-    </div>#}
+
+            </li>#}
+    </div>
 </div>
 </section>
+
+                    <!-- Button trigger modal -->
+                    <!--  <a data-toggle="modal" href="#saveNoFinishModal" class="btn btn-primary">Save incomplet</a> -->
+                    
+
+                    <!-- Modal When leave the page-->
+                    <div class="modal fade" id="quitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">{{ 'Quit_title'|trans({}, 'solerni') | raw }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    {{ 'Quit'|trans({}, 'solerni') }}<br/><br/>
+                                    {{ 'Quit2'|trans({}, 'solerni') }}
+                                </div>
+                                <div class="modal-footer">
+                                            
+                                    <a href="{{ app.session.get('solerni_apprendre_url') }}" class="btn btn-default">{{ 'Quit_Y'|trans({}, 'solerni') }}</a>
+                                    
+                                    <a href="#" class="btn btn-primary pull-right" data-dismiss="modal">{{ 'Quit_N'|trans({}, 'solerni') }}</a>
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                    
+                    <!-- Modal before finish the exo-->
+                    <div class="modal fade" id="saveModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">{{ 'Save_title'|trans({}, 'solerni')}}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    {{ 'Save'|trans({}, 'solerni') }}
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#" class="btn btn-default" data-dismiss="modal">{{ 'Save_N'|trans({}, 'solerni') }}</a>
+
+                                    <button type="button" class="btn btn-primary pull-right" onclick="finish('{{ interactionType }}', null);">
+                                        {{ 'Save_Y'|trans({}, 'solerni') }}
+                                    </button>
+                        
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+                    
+                    <!-- Modal before finish the exo-->
+                    <div class="modal fade" id="saveNoFinishModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title">{{ 'SaveNoFinish_title'|trans({}, 'solerni') }}</h4>
+                                </div>
+                                <div class="modal-body">
+                                    {{ 'SaveNoFinish'|trans({}, 'solerni') }}<br/><br/>
+                                    {{ 'SaveNoFinish2'|trans({}, 'solerni') }}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default">
+                                        {{ 'SaveNoFinish_N'|trans({}, 'solerni') }}
+                                    </button>
+                                    
+                                    <a href="#" class="btn btn-primary pull-right" data-dismiss="modal">{{ 'SaveNoFinish_Y'|trans({}, 'solerni') }}</a>
+
+                                    
+                                </div>
+                            </div><!-- /.modal-content -->
+                        </div><!-- /.modal-dialog -->
+                    </div><!-- /.modal -->
+
+
 {% endblock %}
 
 {% block javascripts %}
