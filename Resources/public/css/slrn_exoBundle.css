@@ -40,7 +40,7 @@ h1 {
 h3 {
 	font-size: 14px;
 	color: #000;
-	margin: 30px 0 20px 10px;
+	margin: 10px 0 20px 10px;
 	font-weight: bold;
 	text-transform: uppercase;
 }
@@ -110,5 +110,33 @@ h3 {
 }
 
 .paper_desc{
-	font-size: 20px
+	font-size: 20px;
 }
+
+.dropdown-menu > li > a.colorheader {
+	color:#FFFFFF ;	
+	background-color:transparent ;
+}
+.dropdown-menu > li > a.colorheader:hover, .dropdown-menu > li > a.colorheader:focus {
+	background-color: #385268;
+	border-color: #385268;
+}
+.btn-colorheader, .dropdown-toggle.btn-colorheader {
+	background-color: #4B667C;
+	border-color: #4B667C;
+	color:#FFFFFF;	
+}
+
+.btn-colorheader:hover, .btn-colorheader:focus, .btn-colorheader:active, .btn-colorheader.active, .open .dropdown-toggle.btn-colorheader {
+	background-color: #385268;
+	border-color: #385268;
+}
+
+.slrn_lessonTitle{
+	text-transform: uppercase;
+	margin: 30px 0 0 0;
+}
+.meta{
+	font-weight: 700;	
+}
+

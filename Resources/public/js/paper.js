@@ -44,10 +44,10 @@ function finish(interactionType, alert) {
     if (interactionType == 'InteractionGraphic') {
         recordGraph();
     }
-
-    if (confirm(alert)) {
+    
+    if (alert == null || confirm(alert)) {
         $('#formResponse').submit();
-    }
+    } 
 }
 
 function interupt(interactionType) {
