@@ -50,6 +50,7 @@ use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
+use Claroline\CoreBundle\Controller\Badge\Tool;
 
 /**
  * Paper controller.
@@ -146,7 +147,7 @@ class PaperController extends Controller
         $badgesInfoUser = $exerciseSer->badgesInfoUser(
                 $user->getId(), $exercise->getResourceNode()->getId(),
                 $this->container->getParameter('locale'));
-        
+
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
@@ -222,6 +223,21 @@ class PaperController extends Controller
             }
         }
 
+
+        
+        $badgeC = $this->container->get('orange.badge.controller');
+        $badgesName = array();
+        $max = 10;
+        $page = 1;
+
+        $badgePager = $badgeC->myWorkspaceBadgeAction($worspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
+        $badgePager = $badgePager['badgePager'];
+        $resultats = $badgePager->getCurrentPageResults();
+
+        foreach($resultats as $result){
+            $badgesName[] = $result['badge']->getName();
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:show.html.twig',
             array(
@@ -242,7 +258,8 @@ class PaperController extends Controller
                 'p'                => $p,
                 'nbMaxQuestion'    => $nbMaxQuestion,
                 'paperID'          => $paper->getId(),
-                'retryButton'      => $retryButton
+                'retryButton'      => $retryButton,
+                'badgesName'       => $badgesName
             )
         );
     }

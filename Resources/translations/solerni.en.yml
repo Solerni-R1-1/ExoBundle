@@ -15,7 +15,7 @@ final mark: See your mark
 finish: Finish
 
 # L
-list of question : Here the good answers to the quiz
+list of question : Résultats
 
 # N
 next: Validate the answer
@@ -48,6 +48,7 @@ SaveNoFinish : Vous n'avez pas répondu à toutes les questions.
 SaveNoFinish2 : En validant votre quiz vous ne pourrez plus modifier vos réponses
 SaveNoFinish_Y : Reprendre le quiz
 SaveNoFinish_N : Valider
+start again: Recommencer le quiz
 
 # T
 time : 2 min
@@ -55,3 +56,4 @@ time : 2 min
 # Y
 your mark : Your mark
 your score : Your mark
+your response : Votre réponse

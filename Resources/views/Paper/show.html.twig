@@ -74,28 +74,85 @@
         
 </div>
 <div class='col-xs-9 col-md-9'>
-    {#<div class="panel-heading">
-        <h3>{{ 'correction' | trans }}</h3>
-    </div>#}
+
      <div class="panel-heading">
+     
+        <div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>
+
         <h1>
         {% if  p == -2 %}
-            {{'correction'|trans}} : {{ render(controller('UJMExoBundle:ExoAddons:getExoInSession', {  })) }}
+            {{'correction'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}
         {% elseif p >= 0  %}
             {% set desc = 'answer for question' | trans %}
             {% set desc = desc ~ (p+1) ~ '/' ~ interactions|length %}
-            {{ desc }} : {{ render(controller('UJMExoBundle:ExoAddons:getExoInSession', {  })) }}
+            {{ desc }} : {{ _resource.getResourceNode().getName() }}
         {% elseif  p == -1 %}
-            {{ 'your mark' | trans({}, 'solerni')  }} : {{ render(controller('UJMExoBundle:ExoAddons:getExoInSession', {  })) }}
+            {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}UJMExoBundle:ExoAddons:getExoInSession', {  })) }}
         {% endif %}
         </h1>
     </div>    
     <hr/>
+    
+    {% set exoMark = 0 %}
+    {% set exoScoreMax = 0 %}
+    {% set len = responses|length - 1 %}
+    
+    {% for i in 0..len %}
+
+        {% if responses[i].mark != -1 %}
+            {% set exoMark = exoMark + responses[i].mark %}
+        {% endif %}
+ 
+        {% if(interactions[i].type == 'InteractionQCM') %}
+            {% set interInfo = getInterTwig(interactions[i].id, 'InteractionQCM') %}
+        {% elseif(interactions[i].type == 'InteractionGraphic') %}
+            {% set interInfo = getInterTwig(interactions[i].id, 'InteractionGraphic') %}
+	    {% elseif(interactions[i].type == 'InteractionHole') %}
+		    {% set interInfo = getInterTwig(interactions[i].id, 'InteractionHole') %}
+		{% elseif(interactions[i].type == 'InteractionOpen') %}
+            {% set interInfo = getInterTwig(interactions[i].id, 'InteractionOpen') %}
+		{% endif %}
+		
+		{% set exoScoreMax = exoScoreMax + interInfo['maxScore'] %}
+		
+    {% endfor %}
+    
+    {% set isPassed = ((exoMark * 2) >= exoScoreMax) %}
+    
+    <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ exoMark }}/{{ exoScoreMax }}</div></h3>
+    <p>
+    {% if isPassed %}
+        <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+        Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+    {% else %}
+        Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+    {% endif %}
+    
+    {% if nbAttemptAllowed > 0 %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %}
+    </p>
+    
+    {#
+    {% set exoMark = 0 %}
+    {% set exoScoreMax = 0 %}
+    {% if responses[p].mark != -1 %}
+        {{ 'mark' | trans }} : <span id="open_mark_value_{{ responses[p].id }}">{{ responses[p].mark }} / {{ interInfo['maxScore'] }}</span>
+        {% set exoMark = exoMark + responses[p].mark %}
+    {% else %}
+        {{ 'mark' | trans }} : <span id="open_mark_value_{{ responses[p].id }}">{{ 'not yet mark' | trans }}</span>
+        {% set temporaryMark = true %}
+    {% endif %}
+    #}
+    
     <div class="panel-body">
         {% if  p == -2 %}
-	        <a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': -1 }) }}"
+	<!-- <a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': -1 }) }}"
 	            class="btn btn-primary">{{ 'final mark' |trans }}
-	        </a>
+	        </a> -->
+	        {% if retryButton %}
+                <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoId }) }}">
+	                {{ 'start again' | trans({}, 'solerni') }}
+	            </a>
+	        {% endif %}
         {% endif %}
 
         {#<a class="btn btn-primary" href="{{ path('ujm_exercise_open', { 'exerciseId':  exoId }) }}">
@@ -109,6 +166,7 @@
                 <i class="icon-check"></i> {{ 'start again' | trans }}
             </a>
         {% endif %}#}
+        
 
         {% set exoMark = 0 %}
         {% set exoScoreMax = 0 %}
@@ -626,22 +684,38 @@
             <div class="panel-body">
                 <div class="panel panel-default">
                     {% set needLegend = false %}
-                    <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{{ 'list of question' | trans }} :</div></div>
+                    <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{{ 'list of question' | trans({}, 'solerni') }}</div></div>
                     <div class="panel-body">
 
                             {% set i = 0 %}
                             {% for interaction in interactions %}
-
+                            
+                                {% if(interaction.type == 'InteractionQCM') %}
+                	                {% set interInfo = getInterTwig(interaction.id, 'InteractionQCM') %}
+                	            {% elseif(interaction.type == 'InteractionOpen') %}
+                	               {% set interInfo = getInterTwig(interaction.id, 'InteractionOpen') %}
+                	            {% endif %}
+                	            
+                	            {% if responses[i].mark == interInfo['maxScore'] %}
+                	               {% set css = 'success' %}
+                	            {% elseif responses[i].mark == -1 %}
+									{% set css = '' %}
+                	            {% else %}
+									{% set css = 'fail' %}
+								{% endif %}
+                	                           
                                 {% if (display == 'all') %}
                                     {% if responses[i].mark == -1 %}
                                         {% set needLegend = true %}
                                         <div class='slr__line'>
-                                            <h3 class='slr__line__h3'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }} : {{ interaction.question.title }} </h3>
+                                            <h3 class='slr__line__h3 {{ css }}'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }}/{{ interactions|length }}</h3>
+                                            <p>{{ interaction.question.title }} </p>
                                             <div class='slr__line__answer'>
                                               <a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': i }) }}" class='slr__line__answer__link'>
                                                 {% if(interaction.type == 'InteractionQCM') %}
-                
+                                                    
 									                {% set interInfo = getInterTwig(interaction.id, 'InteractionQCM') %}
+									                
 									                {% set interQCM =  interInfo['question'] %}
 									                {{ interQCM.sortChoices() }}
 									                {% for choice in interQCM.choices %}
@@ -666,20 +740,33 @@
                                         </div>
                                     {% else %}
                                         <div class='slr__line'>
-                                            <h3 class='slr__line__h3'>{{ 'question_num' | trans }}{{ i+1 }} : {{ interaction.question.title }} </h3>
-                                            <div class='slr__line__answer'>
-                                              <a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': i }) }}" class='slr__line__answer__link'>
+                                            <h3 class='slr__line__h3 {{ css }}'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }}/{{ interactions|length }}</h3>
+                                            <p>{{ interaction.question.title }} </p>
+                                            <div class='slr__line__answer_{{ css }}'>
+                                              {{ 'your response' | trans({}, 'solerni')  }}      
+                                              {#<a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': i }) }}" class='slr__line__answer__link'> #}
                                                 {% if(interaction.type == 'InteractionQCM') %}
-                
+                    
+                                                    {% set mychoises = responses[i].response|split(';') %}
+
 									                {% set interInfo = getInterTwig(interaction.id, 'InteractionQCM') %}
 									                {% set interQCM =  interInfo['question'] %}
 									                {{ interQCM.sortChoices() }}
+									                {% set separator = '' %}
+									                {% for mychoice in mychoises %}
+									                   {% if mychoice != 0  %}
+                                                           {{ separator }}{{ interQCM.choices[mychoice-1].label|striptags|raw  }}
+									                       {% set separator = ', ' %}
+									                   {% endif %}									                   
+									                {% endfor %}
+									                
+									                {#
 									                {% for choice in interQCM.choices %}
 									                  {% if choice.rightResponse %}
 									                   {{ choice.label|striptags|raw  }}<br/>
 									                  {% endif %}
 								                    {% endfor %}
-								                    
+								                    #}
 								                {% elseif(interaction.type == 'InteractionOpen') %}
 								                
 									                {% set interInfo = getInterTwig(interaction.id, 'InteractionOpen') %}
@@ -691,13 +778,14 @@
 			                                        {% else %} npoe    
 			                                        {% endif %}
 								                {% endif %}
-                                              </a>
+                                              {#</a>#}
                                             </div>
                                         </div>
                                     {% endif %}
                                 {% else %}
                                     <div class='slr__line'>
-                                        <h3 class='slr__line__h3'>{{ 'question_num' | trans }}{{ i+1 }} : {{ interaction.question.title }} </h3>
+                                        <h3 class='slr__line__h3'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }}/{{ interactions|length }}</h3>
+                                            <p>{{ interaction.question.title }} </p>
                                         <div class='slr__line__answer'><!--blablabla--></div>
                                     </div>
                                 {% endif %}
