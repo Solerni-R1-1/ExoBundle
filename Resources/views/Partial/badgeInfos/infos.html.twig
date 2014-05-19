@@ -1,10 +1,10 @@
 {% if badgesInfoUser|length > 0 %}
     {% for key,info in badgesInfoUser %}
-        <div class="alert alert-info">
+        <div class="">
             {% if(info.issued|date('d/m/Y \\- H\\hi\\ms\\s') == '01/01/1970 - 00h59m59s') %}
-                {{ 'badgeNoObtained'|trans }} : "{{ info.badgeName }}"
+                {{ 'badgeNoObtained'|trans }} : <strong>&laquo; {{ info.badgeName }} &raquo;</strong>
             {% else %}
-                {{ 'badgeObtained'|trans }} : "{{ info.badgeName }}" -
+                {{ 'badgeObtained'|trans }} : <strong>&laquo; {{ info.badgeName }} &raquo;</strong> -
                 {{ info.issued|date('d/m/Y \\- H\\hi\\ms\\s') }}
             {% endif %}
         </div>

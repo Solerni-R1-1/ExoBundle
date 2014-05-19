@@ -1,4 +1,5 @@
 # A
+actions: Correction
 answer for question : Correction for the question n°
 attempt info3 : essai
 attempt info3_1 : er
@@ -9,6 +10,9 @@ correction : Quiz's Results
 
 #D
 duree : Durée estimée
+
+#E
+end date: Fin
 
 # F
 final mark: See your mark
@@ -28,7 +32,8 @@ previous : Question précédente
 question_num : Question N°
 quiz_ended : You have already finish this quiz. Here your marks
 Quit_title : Quitter le quiz
-Quit : En quittant le quiz sans le terminer, vous serez décompté de vos essais disponibles pour obtenir le badge de compétence correspondant. <br/><br/> Êtes-vous sûr de vouloir quitter ce quiz maintenant ?
+Quit : En quittant le quiz sans le terminer, vous serez décompté de vos essais disponibles pour obtenir le badge de compétence correspondant. 
+Quit2 : Êtes-vous sûr de vouloir quitter ce quiz maintenant ?
 Quit_Y : Oui
 Quit_N : Non
 
@@ -39,6 +44,7 @@ returnResult : Retourn to the results
 # S
 see mark : Your final mark
 see all corrections : See the correction of questions
+see papers : Voir ses copies
 Save_title : Attention 
 Save : Êtes vous sûr de vouloir terminer ? (Vous ne pourrez plus modifier vos réponses).
 Save_Y : Valider
@@ -49,6 +55,7 @@ SaveNoFinish2 : En validant votre quiz vous ne pourrez plus modifier vos répons
 SaveNoFinish_Y : Reprendre le quiz
 SaveNoFinish_N : Valider
 start again: Recommencer le quiz
+start date: Début
 
 # T
 time : 2 min

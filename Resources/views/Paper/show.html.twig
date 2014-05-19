@@ -77,7 +77,7 @@
 
      <div class="panel-heading">
      
-        <div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>
+        {#<div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>#}
 
         <h1>
         {% if  p == -2 %}
@@ -121,11 +121,19 @@
     
     <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ exoMark }}/{{ exoScoreMax }}</div></h3>
     <p>
-    {% if isPassed %}
-        <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
-        Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+    {% if badgesName|length > 0 %}
+        {% if isPassed %}
+            <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+            Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+        {% else %}
+            Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+        {% endif %}
     {% else %}
-        Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+        {% if isPassed %}
+            <strong>Félicitations !</strong>
+        {% else %}
+            Dommage...<br/>
+        {% endif %}
     {% endif %}
     
     {% if nbAttemptAllowed > 0 %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %}
@@ -152,6 +160,10 @@
                 <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoId }) }}">
 	                {{ 'start again' | trans({}, 'solerni') }}
 	            </a>
+            {% else %}
+                 <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
+                    {{ 'see papers' | trans({}, 'solerni') }}
+                </a>
 	        {% endif %}
         {% endif %}
 
