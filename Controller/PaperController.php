@@ -50,6 +50,7 @@ use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
+use Claroline\CoreBundle\Controller\Badge\Tool;
 
 /**
  * Paper controller.
@@ -146,7 +147,7 @@ class PaperController extends Controller
         $badgesInfoUser = $exerciseSer->badgesInfoUser(
                 $user->getId(), $exercise->getResourceNode()->getId(),
                 $this->container->getParameter('locale'));
-        
+
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
@@ -222,6 +223,21 @@ class PaperController extends Controller
             }
         }
 
+
+        
+        $badgeC = $this->container->get('orange.badge.controller');
+        $badgesName = array();
+        //$max = 10;
+        //$page = 1;
+
+        $badgePager = $badgeC->myWorkspaceBadgeAction($worspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
+        $badgePager = $badgePager['badgePager'];
+        $resultats = $badgePager->getCurrentPageResults();
+
+        foreach($resultats as $result){
+            $badgesName[] = $result['badge']->getName();
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:show.html.twig',
             array(
@@ -242,7 +258,8 @@ class PaperController extends Controller
                 'p'                => $p,
                 'nbMaxQuestion'    => $nbMaxQuestion,
                 'paperID'          => $paper->getId(),
-                'retryButton'      => $retryButton
+                'retryButton'      => $retryButton,
+                'badgesName'       => $badgesName
             )
         );
     }
@@ -302,18 +319,33 @@ class PaperController extends Controller
 
     public function searchUserPaperAction()
     {
-        $papersOneUser = array();
+
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        
+        $papersOneUser   = array();
+        $papersUser      = array();
+        $arrayMarkPapers = array();
+        
+        $display = 'none';
 
         $request = $this->get('request');
         $em = $this->getDoctrine()->getManager();
 
         $nameUser = $request->query->get('userName');
+        $exoID    = $request->query->get('exoID');
 
         $userList = $em->getRepository('ClarolineCoreBundle:User')->findByName($nameUser);
         $end = count($userList);
 
         for ($i = 0; $i < $end; $i++) {
-            $papersOneUser[] = $em->getRepository('UJMExoBundle:Paper')->getPaperUser($userList[$i]->getId());
+            
+           //$papersOneUser[] = $em->getRepository('UJMExoBundle:Paper')->getPaperUser($userList[$i]->getId());
+            $papersOneUser[] = $em->getRepository('UJMExoBundle:Paper')
+                                  ->findBy(array(
+                                            'user' => $userList[$i]->getId(),
+                                            'exercise' => $exoID
+                                            )
+                                          );
 
             if ($i > 0) {
                 $papersUser = array_merge($papersOneUser[$i - 1], $papersOneUser[$i]);
@@ -325,11 +357,16 @@ class PaperController extends Controller
         foreach ($papersUser as $p) {
             $arrayMarkPapers[$p->getId()] = $this->container->get('ujm.exercise_services')->getInfosPaper($p);
         }
-
+        
+        if(count($papersUser) > 0) {
+            $display = $this->ctrlDisplayPaper($user, $papersUser[0]);
+        }
+         
         $divResultSearch = $this->render(
             'UJMExoBundle:Paper:userPaper.html.twig', array(
-                'papers'    => $papersUser,
-                'arrayMarkPapers' => $arrayMarkPapers
+                'papers'          => $papersUser,
+                'arrayMarkPapers' => $arrayMarkPapers,
+                'display'         => $display
             )
         );
         // If request is ajax (first display of the first search result (page = 1))

@@ -1,11 +1,18 @@
 # A
+actions: Correction
 answer for question : Correction de la question n°
 attempt info3 : essai
 attempt info3_1 : er
 attempt info3_x : ème
 
 # C
-correction : Résultat du quiz
+correction : Résultats du quiz
+
+#D
+duree : Durée estimée
+
+#E
+end date: Fin
 
 #D
 duree : Durée estimée
@@ -15,7 +22,7 @@ final mark: Voir votre note
 finish: Terminer
 
 # L
-list of question : Voici les bonnes réponses au Quiz
+list of question : Résultats
 
 # N
 next: Question suivante
@@ -40,6 +47,7 @@ returnResult : Retourner aux résultats
 # S
 see mark : Votre note finale
 see all corrections : Voir la correction des questions
+see papers : Voir ses copies
 Save_title : Attention 
 Save : Êtes vous sûr de vouloir terminer ? (Vous ne pourrez plus modifier vos réponses).
 Save_Y : Valider
@@ -49,6 +57,8 @@ SaveNoFinish : Vous n'avez pas répondu à toutes les questions.
 SaveNoFinish2 : En validant votre quiz vous ne pourrez plus modifier vos réponses
 SaveNoFinish_Y : Reprendre le quiz
 SaveNoFinish_N : Valider
+start again: Recommencer le quiz
+start date: Début
 
 # T
 #time : 2 min
@@ -56,3 +66,4 @@ SaveNoFinish_N : Valider
 # Y
 your mark : Votre note
 your score : Votre score
+your response : Votre réponse

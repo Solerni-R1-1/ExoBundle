@@ -72,7 +72,7 @@
 </div>
 <div class='col-xs-9 col-md-9'>    
      <div class="panel-heading">
-        <div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>
+        {#<div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>#}
         <h1>{{'paper exo'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}</h1>
         <div class="row">
             <div class="col-md-6 meta">
@@ -90,7 +90,7 @@
                      -
                 {% endif %}
                  {{ numAttempt }}<sup>{% if(maxAttempsAllowed == 1) %}{{ "attempt info3_1" | trans({}, 'solerni') }}{% else %}{{ "attempt info3_x" | trans({}, 'solerni') }}{% endif %}</sup> {{ "attempt info3" | trans({}, 'solerni') }}
-            
+
             </div>
         </div>
     </div>
@@ -309,7 +309,7 @@
                 
                 <div class="col-md-4 text-right">
 	                {# Page Suivante #}
-	                {% if numQ == 1 %}
+	                {% if numQ != indexMax %}
 	                    <input type='button' onclick="submitForm({{ numQ+1 }}, '{{ interactionType }}');" value='{{ 'next' | trans({}, 'solerni')   }}' class='btn btn-primary'/>
 	                {% else %}
 	                    <a data-toggle="modal" href="#saveModal" class="btn btn-primary">{{ "finish" | trans }}</a>
@@ -381,7 +381,7 @@
                                     <h4 class="modal-title">{{ 'Quit_title'|trans({}, 'solerni') | raw }}</h4>
                                 </div>
                                 <div class="modal-body">
-                                    {{ 'Quit'|trans({}, 'solerni') }}<br/><br/>
+                                    {% if maxAttempsAllowed == numAttempt %}{{ 'Quit'|trans({}, 'solerni') }}<br/><br/>{% endif %}
                                     {{ 'Quit2'|trans({}, 'solerni') }}
                                 </div>
                                 <div class="modal-footer">
