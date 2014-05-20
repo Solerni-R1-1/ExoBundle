@@ -578,7 +578,7 @@ window.onload = function () {
     }
 };
 
-function searchUserPaper(path) {
+function searchUserPaper(path, exoID) {
 
     var userName = $('#nameUser').val();
 
@@ -587,7 +587,8 @@ function searchUserPaper(path) {
         type: 'GET',
         url: path,
         data: {
-            userName: userName
+            userName: userName,
+            exoID:    exoID
         },
         cache: false,
         success: function (data) {

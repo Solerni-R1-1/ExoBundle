@@ -758,21 +758,22 @@
                                               {{ 'your response' | trans({}, 'solerni')  }}      
                                               {#<a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': i }) }}" class='slr__line__answer__link'> #}
                                                 {% if(interaction.type == 'InteractionQCM') %}
-                    
+                                                
                                                     {% set mychoises = responses[i].response|split(';') %}
 
 									                {% set interInfo = getInterTwig(interaction.id, 'InteractionQCM') %}
 									                {% set interQCM =  interInfo['question'] %}
 									                {{ interQCM.sortChoices() }}
 									                {% set separator = '' %}
-									                {% for mychoice in mychoises %}
-									                   {% if mychoice != 0  %}
-                                                           {{ separator }}{{ interQCM.choices[mychoice-1].label|striptags|raw  }}
-									                       {% set separator = ', ' %}
-									                   {% endif %}									                   
-									                {% endfor %}
-									                
-									                {#
+                                                    {% for choice in interQCM.choices %}
+									                   {% for mychoice in mychoises %}
+									                      {% if mychoice == choice.id  %}
+                                                                {{ separator }}{{ choice.label|striptags|raw  }}
+									                           {% set separator = ', ' %}
+									                       {% endif %}									                   
+									                   {% endfor %}
+                                                    {% endfor %}
+         								                {#
 									                {% for choice in interQCM.choices %}
 									                  {% if choice.rightResponse %}
 									                   {{ choice.label|striptags|raw  }}<br/>

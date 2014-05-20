@@ -309,7 +309,7 @@
                 
                 <div class="col-md-4 text-right">
 	                {# Page Suivante #}
-	                {% if numQ == 1 %}
+	                {% if numQ != indexMax %}
 	                    <input type='button' onclick="submitForm({{ numQ+1 }}, '{{ interactionType }}');" value='{{ 'next' | trans({}, 'solerni')   }}' class='btn btn-primary'/>
 	                {% else %}
 	                    <a data-toggle="modal" href="#saveModal" class="btn btn-primary">{{ "finish" | trans }}</a>
