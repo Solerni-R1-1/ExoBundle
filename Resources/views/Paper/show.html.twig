@@ -704,12 +704,16 @@
                             
                                 {% if(interaction.type == 'InteractionQCM') %}
                 	                {% set interInfo = getInterTwig(interaction.id, 'InteractionQCM') %}
-                	            {% elseif(interaction.type == 'InteractionOpen') %}
-                	               {% set interInfo = getInterTwig(interaction.id, 'InteractionOpen') %}
+                                {% elseif(interaction.type == 'InteractionOpen') %}
+                                   {% set interInfo = getInterTwig(interaction.id, 'InteractionOpen') %}
+                                {% elseif(interaction.type == 'InteractionHole') %}
+                                   {% set interInfo = getInterTwig(interaction.id, 'InteractionHole') %}
+                                {% else %}
+                                    {% set interInfo = null %}
+                                    <h1 style='color:#FOO'> Le type {{interaction.type }} n'est pas géré </h1>
                 	            {% endif %}
-                	            
-                	            {% if responses[i].mark == interInfo['maxScore'] %}
-                	               {% set css = 'success' %}
+                	            {% if interInfo != null and responses[i].mark == interInfo['maxScore'] %}
+                	               {% set css = 'success' %} 
                 	            {% elseif responses[i].mark == -1 %}
 									{% set css = '' %}
                 	            {% else %}
