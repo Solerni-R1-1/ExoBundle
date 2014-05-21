@@ -14,12 +14,12 @@ duree : Durée estimée
 #E
 end date: Fin
 
-#D
-duree : Durée estimée
-
 # F
 final mark: Voir votre note
 finish: Terminer
+
+# H
+Hint_title: Avant de continuer.
 
 # L
 list of question : Résultats
