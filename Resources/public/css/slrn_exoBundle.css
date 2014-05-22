@@ -83,10 +83,10 @@ h3 {
 	background-image: url(../images/response_ko.png);
 }
 
-.slr__line__answer_success {
+.colorize_success {
 	color:#ABC143;
 }
-.slr__line__answer_fail, a.red {
+.colorize_fail, a.red {
 	color:#D90045;
 }
 
@@ -149,6 +149,18 @@ h3 {
 	border-color: #385268;
 }
 
+.btn-gris, .dropdown-toggle.btn-gris {
+	background-color: #7D7D7D;
+	border-color: #757575;
+	color:#FFFFFF;	
+}
+
+.btn-gris:hover, .btn-gris:focus, .btn-gris:active, .btn-gris.active, .open .dropdown-toggle.btn-gris {
+	background-color: #757575;
+	border-color: #707070;
+	color:#FFFFFF;	
+}
+
 .slrn_lessonTitle{
 	text-transform: uppercase;
 	margin: 30px 0 0 0;
@@ -181,4 +193,51 @@ a.see:hover{
 }
 .table-solerni ul.list-unstyled{
 	margin:0;
+}
+
+
+.collapse__div__title{
+	margin-top: 10px;
+	color:#FF004F;
+}
+ .collapse__div__title a{
+ 	color:#FF004F;
+	padding-left:30px;	
+}
+.collapse__div__title:before{
+	content: "";
+	position: absolute;
+	background-image: url('../../clarolinecore/images/sprites_solerni.png');
+	background-position: -129px -582px;
+	width:22px;
+	height:22px;
+}
+.collapse__div__title.open:before{
+	background-position: -153px -582px;	
+}
+.collapse__div__instruction{
+	background-color: #EEEEEF;
+	margin-top: 20px;
+	padding: 10px;
+	margin-left: 10px;
+	display:none;
+}
+.hint_black, .hint_red{
+	background-image: url('../images/hints.png');
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	padding-left:20px;
+	min-height: 20px;
+	display: inline-block;
+}
+.hint_black{
+	color: #000;
+	background-position: 0px -20px;
+}
+
+.hint_red{
+	color: #F00;
+}
+.hint_red:hover{
+	text-decoration: underline;
 }

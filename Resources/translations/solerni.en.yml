@@ -1,6 +1,7 @@
 # A
 actions: Correction
 answer for question : Correction for the question n°
+ask hint : Je souhaite un indice
 attempt info3 : essai
 attempt info3_1 : er
 attempt info3_x : ème
@@ -14,15 +15,19 @@ duree : Durée estimée
 #E
 end date: Fin
 
+# G
+good response: Les bonnes réponses étaient
+
 # F
 final mark: See your mark
 finish: Finish
 
 # H
-Hint_title: Avant de continuer.
+Hint_title: Attention.
 
 # L
 list of question : Résultats
+list of question and response: Rappel de vos questions
 
 # N
 next: Validate the answer

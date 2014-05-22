@@ -235,12 +235,15 @@ class PaperController extends Controller
         $resultats = $badgePager->getCurrentPageResults();
 
         foreach($resultats as $result){
-            if($result['badge']['type'] == 'owned'){
-                $badgesName[] = $result['badge']['badge']->getName();
+            $badge = $result['badge'];
+        //        print_r($badge);
+        //        exit;
+        //    if($badge['type'] == 'owned'){
+        //        $badgesName[] = $badge['badge']->getName();
 
-            } else {
-                $badgesName[] = $result['badge']->getName();
-            }
+        //    } else {
+                $badgesName[] = $badge->getName();
+        //    }
         }
         
         return $this->render(

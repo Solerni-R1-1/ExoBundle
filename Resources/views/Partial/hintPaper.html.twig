@@ -10,7 +10,7 @@
                 <tr>
                     {% if penalties[hint.id] is defined %}
 
-                        <td class="classic">{{ "hint" | trans }} {{nbr_hint}}</td>
+                        <td class="classic"><span class='hint_black'>{{ "ask hint" | trans({}, 'solerni') }}</span></td>
 
                         <script type="text/javascript">
                             show_hint2('{{hint.id}}', '{{path('ujm_hint_show')}}',
@@ -21,15 +21,15 @@
 
                         {% if hint.penalty > 0 %}
 
-                            <td class="classic"><a data-toggle="modal" href="#hint{{nbr_hint}}"  id="indice_popup">{{ "hint" | trans }} {{nbr_hint}}</a>
+                            <td class="classic"><a data-toggle="modal" href="#hint{{nbr_hint}}"  id="indice_popup"><span class='hint_red'>{{ "ask hint" | trans({}, 'solerni') }}</span></a>
                             </td>
 
 
                         {% else %}
 
-                            <td class="classic"><a href="#"  id="indice_popup" onclick="show_hint('{{hint.id}}',
+                            <td class="classic"><a href="#"  id="indice_popup" class='indice_popup'onclick="show_hint('{{hint.id}}',
                                     '{{path('ujm_hint_show')}}', '{{ "consult_hint" | trans }} ?', '{{nbr_hint}}',
-                                    {{hint.penalty}}, '{{paper}}');event.preventDefault();">{{ "hint" | trans }} {{nbr_hint}}</a>
+                                    {{hint.penalty}}, '{{paper}}');event.preventDefault();"><span class='hint_red'>{{ "ask hint" | trans({}, 'solerni') }}</span></a>
                             </td>
 
                         {% endif %}
