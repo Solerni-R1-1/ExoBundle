@@ -122,18 +122,19 @@
         {% if nbUserPaper > 0 %}
             
                 {{ 'already answered' | trans }}
-                {% if retryButton %} :
-                    <div style="float:right;">
-                        <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
-                            <i class="icon-check"></i> {{ 'start again' | trans }}
-                        </a>
-                    </div>
-                    {% else %}.
-                    {% endif %}
+                
         {% endif %}
 
         {% include "UJMExoBundle:Partial:badgeInfos/infos.html.twig" %}
         {% include "UJMExoBundle:Partial:correction/attemptInfo.html.twig" %}
+
+        {% if retryButton %}<br/>
+            <div class="input-group">
+                <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
+                    {{ 'start again' | trans({}, 'solerni') }}
+                </a>
+            </div><br/>
+        {% endif %}
 
         <h3>Titre à redéfinir</h3>
         {#<h6 style="color: red; text-align: right;">({{ 'paperLegend' | trans }}).</h6>#}
