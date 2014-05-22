@@ -144,7 +144,7 @@ h3 {
 	color:#FFFFFF;	
 }
 
-.btn-colorheader:hover, .btn-colorheader:focus, .btn-colorheader:active, .btn-colorheader.active, .open .dropdown-toggle.btn-colorheader {
+.btn-colorheader li:hover, .btn-colorheader li:focus, .btn-colorheader li:active, .btn-colorheader li.active, .open .dropdown-toggle.btn-colorheader {
 	background-color: #385268;
 	border-color: #385268;
 }
