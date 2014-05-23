@@ -79,7 +79,7 @@
      
         {#<div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>#}
 
-        <h1>
+        <h1>{{p}}
         {% if  p == -2 %}
             {{'correction'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}
         {% elseif p >= 0  %}
@@ -87,7 +87,7 @@
             {% set desc = desc ~ (p+1) ~ '/' ~ interactions|length %}
             {{ desc }} : {{ _resource.getResourceNode().getName() }}
         {% elseif  p == -1 %}
-            {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}UJMExoBundle:ExoAddons:getExoInSession', {  })) }}
+            {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}
         {% endif %}
         </h1>
     </div>    

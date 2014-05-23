@@ -22,24 +22,7 @@ use JMS\DiExtraBundle\Annotation as DI;
  *           
  */
 class ExoAddonsController extends Controller
-{
-        public function getExoInSessionAction($desc = null){
-   
-            $em = $this->getDoctrine()->getManager();
-            $session = $this->getRequest()->getSession();
-            $paper = $em->getRepository('UJMExoBundle:Paper')->find($session->get('paper'));
-            $exo = $paper->getExercise();
-            
-            return $this->render(
-                'UJMExoBundle:Partial:title.html.twig',
-                array(
-                    'exoTitle'     => $exo->getTitle()
-                )
-            );
-            
-            
-        }
-        
+{       /* 
         public function getLessonInSessionAction(AbstractWorkspace $workspace){
              
             $em = $this->getDoctrine()->getManager();
@@ -56,7 +39,7 @@ class ExoAddonsController extends Controller
                 )
             );
         
-        }
+        }*/
         
         /**
          * @param AbstractWorkspace $workspace
