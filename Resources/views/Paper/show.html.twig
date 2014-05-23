@@ -823,7 +823,7 @@
 								                {% endif %}
                                               {#</a>#}
                                             </div>
-                                            {% if interaction.feedback != '' %}
+                                            {% if displayCorrection and interaction.feedback != '' %}
                                                 <div class='collapse__div' data-collapse>
                                                     <div class='collapse__div__title' data-collapse-summary>Voir les commentaires du correcteur</div>
                                                     <div class='collapse__div__instruction slrn-grey-block'>{{ interaction.feedback|raw }}</div>
