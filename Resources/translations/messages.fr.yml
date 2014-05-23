@@ -62,7 +62,7 @@ attempt info3: Essai N°
 attempt info4: Il vous reste
 attempt info5: afin d'améliorer votre note
 attempt info6: Il ne vous reste plus aucun essai
-at the end of assessment: A la fin du test
+at the end of assessment: A la fin de l'essai
 at the same time that the correction: En même temps que la correction
 availability of correction: Disponibilité de la correction
 availability of score: Disponibilité de la note
@@ -377,7 +377,7 @@ your answer: Votre réponse
 
 
 #properties of entities
-At the end of assessment: A la fin du test
+At the end of assessment: A la fin de l'essai
 At the same time that the correction: En même temps que la correction
 After the last attempt: Après le dernier essai
 

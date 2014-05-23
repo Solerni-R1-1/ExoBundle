@@ -175,6 +175,19 @@ class ExerciseController extends Controller
         $nbUserPaper = $exerciseSer->getNbPaper($user->getId(),
                                                 $exercise->getId());
 
+
+            /** SII trouver l'info numAttempt **/
+            $paper = $this->getDoctrine()
+                ->getManager()
+                ->getRepository('UJMExoBundle:Paper')
+                ->getPaper($user->getId(), $exerciseId);
+            $numAttempt = 0;
+            if(count($paper) > 0){
+                $paper = $paper[0];
+                $numAttempt = $paper->getNumPaper();    
+            }
+            /** SII trouver l'info numAttempt **/
+
         return $this->render(
             'UJMExoBundle:Exercise:show.html.twig',
             array(
@@ -185,7 +198,8 @@ class ExerciseController extends Controller
                 'userId'         => $user->getId(),
                 'nbQuestion'     => $nbQuestions['nbq'],
                 'nbUserPaper'    => $nbUserPaper,
-                '_resource'      => $exercise
+                '_resource'      => $exercise,
+                'numAttempt'     => $numAttempt
             )
         );
     }
@@ -374,6 +388,7 @@ class ExerciseController extends Controller
                     $pageGoNow += 1;
                 }
             }
+
 
             return $this->render(
                 'UJMExoBundle:Question:import.html.twig',

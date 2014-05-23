@@ -87,7 +87,7 @@
             {% set desc = desc ~ (p+1) ~ '/' ~ interactions|length %}
             {{ desc }} : {{ _resource.getResourceNode().getName() }}
         {% elseif  p == -1 %}
-            {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}UJMExoBundle:ExoAddons:getExoInSession', {  })) }}
+            {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}
         {% endif %}
         </h1>
     </div>    
@@ -95,6 +95,7 @@
     
     {% set exoMark = 0 %}
     {% set exoScoreMax = 0 %}
+    {% set exoScoreMax20 = 20 %}
     {% set len = responses|length - 1 %}
     
     {% for i in 0..len %}
@@ -116,27 +117,35 @@
 		{% set exoScoreMax = exoScoreMax + interInfo['maxScore'] %}
 		
     {% endfor %}
+
     
-    {% set isPassed = ((exoMark * 2) >= exoScoreMax) %}
+    {% set hasBadge = badgesName|length > 0 %}
+    {% set hasBadgeOwned = badgesNameOwned|length > 0 %}
+    {% set isPassed = exoMark * 2 >= exoScoreMax %}
+    {% set exoMark20 = (exoMark * exoScoreMax20 / exoScoreMax) %}
+    {% set exoMark20 = roundUpOrDown(exoMark20) %} {# tronqué à 1 digit #}
     
-    <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ exoMark }}/{{ exoScoreMax }}</div></h3>
+    <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ exoMark20 }}/{{ exoScoreMax20 }}</div></h3>
+
     <p>
-    {% if badgesName|length > 0 %}
-        {% if isPassed %}
-            <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
-            Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+            
+        {% if hasBadge or hasBadgeOwned %}
+            {% if hasBadgeOwned %}
+                <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesNameOwned|join(', ')}} &raquo;</strong>. <br/>
+                Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+            {% else %}
+                Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+            {% endif %}
         {% else %}
-            Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+            {% if isPassed %}
+                <strong>Félicitations !</strong>
+            {% else %}
+                Dommage...<br/>
+            {% endif %}
         {% endif %}
-    {% else %}
-        {% if isPassed %}
-            <strong>Félicitations !</strong>
-        {% else %}
-            Dommage...<br/>
-        {% endif %}
-    {% endif %}
-    
-    {% if nbAttemptAllowed > 0 %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %}
+
+
+        {% if nbAttemptAllowed > 0 %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %}
     </p>
     
     {#
@@ -161,10 +170,10 @@
 	                {{ 'start again' | trans({}, 'solerni') }}
 	            </a>
             {% else %}
-                 <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
+                 <a class="btn btn-gris" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
                     {{ 'see papers' | trans({}, 'solerni') }}
                 </a>
-	        {% endif %}
+            {% endif %}
         {% endif %}
 
         {#<a class="btn btn-primary" href="{{ path('ujm_exercise_open', { 'exerciseId':  exoId }) }}">
@@ -696,9 +705,11 @@
             <div class="panel-body">
                 <div class="panel panel-default">
                     {% set needLegend = false %}
-                    <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{{ 'list of question' | trans({}, 'solerni') }}</div></div>
-                    <div class="panel-body">
+                    {# Devons nous afficher les corrections ? #}
+                    {% set displayCorrection = (correction == 1 or (correction == 2 and nbAttemptAllowed == 0)) %}
 
+                    <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{% if displayCorrection %}{{ 'list of question' | trans({}, 'solerni') }}{% else %}{{ 'list of question and response' | trans({}, 'solerni') }}{% endif %}</div></div>
+                    <div class="panel-body">
                             {% set i = 0 %}
                             {% for interaction in interactions %}
                             
@@ -712,15 +723,19 @@
                                     {% set interInfo = null %}
                                     <h1 style='color:#FOO'> Le type {{interaction.type }} n'est pas géré </h1>
                 	            {% endif %}
-                	            {% if interInfo != null and responses[i].mark == interInfo['maxScore'] %}
-                	               {% set css = 'success' %} 
-                	            {% elseif responses[i].mark == -1 %}
-									{% set css = '' %}
-                	            {% else %}
+
+                 	            {% if displayCorrection and interInfo != null and responses[i].mark == interInfo['maxScore'] %}
+                	               {% set css = 'success' %}
+                	            {% elseif displayCorrection and interInfo != null and responses[i].mark != interInfo['maxScore'] and responses[i].mark != -1 %}
 									{% set css = 'fail' %}
+                	            {% else %}
+									{% set css = '' %}
 								{% endif %}
-                	                           
-                                {% if (display == 'all') %}
+
+
+
+                            {#    {% if (display == 'all') %} #}
+
                                     {% if responses[i].mark == -1 %}
                                         {% set needLegend = true %}
                                         <div class='slr__line'>
@@ -748,27 +763,34 @@
 									                   
 			                                        {% if interOpen.typeopenquestion == 'long' %}
 			                                            {#{ interOpen.worldResponse.response }#}Réponse libre
-			                                        {% else %} npoe    
+			                                        {% else %}     
 			                                        {% endif %}
 								                {% endif %}
                                             </a>
                                             </div>
+                                            {% if interaction.feedback != '' %}
+                                                <div class='collapse__div' data-collapse>
+                                                    <div class='collapse__div__title' data-collapse-summary>Voir les commentaires du correcteur</div>
+                                                    <div class='collapse__div__instruction slrn-grey-block'>{{ interaction.feedback|raw }}</div>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     {% else %}
                                         <div class='slr__line'>
                                             <h3 class='slr__line__h3 {{ css }}'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }}/{{ interactions|length }}</h3>
                                             <p>{{ interaction.question.title }} </p>
-                                            <div class='slr__line__answer_{{ css }}'>
-                                              {{ 'your response' | trans({}, 'solerni')  }}      
+                                            <div class='slr__line__answer'>
+                                              <span class='colorize_{{ css }}'><strong>{{ 'your response' | trans({}, 'solerni')  }} :</strong></span>
                                               {#<a href="{{ path('ujm_paper_show', { 'id': paperID, 'p': i }) }}" class='slr__line__answer__link'> #}
                                                 {% if(interaction.type == 'InteractionQCM') %}
-                                                
+                                                    
                                                     {% set mychoises = responses[i].response|split(';') %}
 
 									                {% set interInfo = getInterTwig(interaction.id, 'InteractionQCM') %}
 									                {% set interQCM =  interInfo['question'] %}
 									                {{ interQCM.sortChoices() }}
-									                {% set separator = '' %}
+									                <span class='colorize_{{ css }}'>
+                                                    {% set separator = '' %}
                                                     {% for choice in interQCM.choices %}
 									                   {% for mychoice in mychoises %}
 									                      {% if mychoice == choice.id  %}
@@ -777,13 +799,23 @@
 									                       {% endif %}									                   
 									                   {% endfor %}
                                                     {% endfor %}
-         								                {#
-									                {% for choice in interQCM.choices %}
-									                  {% if choice.rightResponse %}
-									                   {{ choice.label|striptags|raw  }}<br/>
-									                  {% endif %}
-								                    {% endfor %}
-								                    #}
+                                                    </span>
+
+                                                    {# N'afficher la correction que si autorisé et si echec du test #}
+                                                    {% if displayCorrection and interInfo != null and responses[i].mark != interInfo['maxScore'] and responses[i].mark != -1  %}
+
+             								            <br/><br/>    
+                                                        <strong>{{'good response' | trans({}, 'solerni')}} : </strong>
+                                                        {% set separator = '' %}
+    									                {% for choice in interQCM.choices %}
+    									                  {% if choice.rightResponse %}
+    									                   {{ separator }}{{ choice.label|striptags|raw  }}
+                                                           {% set separator = ', ' %}
+    									                  {% endif %}
+    								                    {% endfor %}
+
+                                                    {% endif %}
+								                    
 								                {% elseif(interaction.type == 'InteractionOpen') %}
 								                
 									                {% set interInfo = getInterTwig(interaction.id, 'InteractionOpen') %}
@@ -797,15 +829,21 @@
 								                {% endif %}
                                               {#</a>#}
                                             </div>
+                                            {% if displayCorrection and interaction.feedback != '' %}
+                                                <div class='collapse__div' data-collapse>
+                                                    <div class='collapse__div__title' data-collapse-summary>Voir les commentaires du correcteur</div>
+                                                    <div class='collapse__div__instruction slrn-grey-block'>{{ interaction.feedback|raw }}</div>
+                                                </div>
+                                            {% endif %}
                                         </div>
                                     {% endif %}
-                                {% else %}
+                          {#      {% else %}
                                     <div class='slr__line'>
                                         <h3 class='slr__line__h3'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }}/{{ interactions|length }}</h3>
                                             <p>{{ interaction.question.title }} </p>
                                         <div class='slr__line__answer'><!--blablabla--></div>
                                     </div>
-                                {% endif %}
+                                {% endif %}#}
 
                                 <hr/>
                                 {% set i = i + 1 %}
@@ -816,6 +854,13 @@
                             <h6 style="color: red;">( {{ 'need Correction' | trans }} ).</h6>
                         {% endif %} #}
                     </div>
+
+                    {% if retryButton %}
+                         <a class="btn btn-gris" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
+                            {{ 'see papers' | trans({}, 'solerni') }}
+                        </a>
+                    {% endif %}
+
                 </div>
             </div>
         {% endif %}
@@ -1003,10 +1048,16 @@
     {{ parent() }}
     <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/markedOpenQuestion.js') }}"></script>
     <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/paper.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/jquery.collapse.js') }}"></script>
 
     <script type="text/javascript">
         $(document).ready(function() {
             $('#Qnumber option[value="' + {{ p + 1 }} + '"]').attr('selected', 'selected');
         });
     </script>
+
+
+
+
+
 {% endblock %}

@@ -148,6 +148,33 @@ class PaperController extends Controller
                 $user->getId(), $exercise->getResourceNode()->getId(),
                 $this->container->getParameter('locale'));
 
+        $badgeC = $this->container->get('orange.badge.controller');
+        $badgesName = array();
+        $badgesNameOwned = array();
+
+        $badgePager = $badgeC->myWorkspaceBadgeAction($workspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
+        $badgePager = $badgePager['badgePager'];
+        $resultats = $badgePager->getCurrentPageResults();
+
+        foreach($resultats as $result){
+            $badge = $result['badge'];
+            if(get_class($badge) === 'Claroline\CoreBundle\Entity\Badge\UserBadge'){
+
+                //$userBadges = $badge['badge'];
+                //$userBadges = $badge->getUser();
+
+               /* foreach($userBadges as $aUser){
+                    if($aUser->id === $user->getId()){
+                        $badgesNameOwned[] = $badge->getBadge()->getName();
+                    }
+                }*/
+                $badgesNameOwned[] = $badge->getBadge()->getName();
+            } else {
+                $badgesName[] = $badge->getName();
+            }
+
+        }
+
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
@@ -162,7 +189,9 @@ class PaperController extends Controller
                 'badgesInfoUser'   => $badgesInfoUser,
                 'nbUserPaper'      => $nbUserPaper,
                 '_resource'        => $exercise,
-                'arrayMarkPapers'  => $arrayMarkPapers
+                'arrayMarkPapers'  => $arrayMarkPapers,
+                'badgesName'       => $badgesName,
+                'badgesNameOwned'  => $badgesNameOwned
             )
         );
     }
@@ -193,7 +222,7 @@ class PaperController extends Controller
             $admin = 0;
         }
 
-        $worspace = $paper->getExercise()->getResourceNode()->getWorkspace();
+        $workspace = $paper->getExercise()->getResourceNode()->getWorkspace();
 
         $display = $this->ctrlDisplayPaper($user, $paper);
 
@@ -227,26 +256,35 @@ class PaperController extends Controller
         
         $badgeC = $this->container->get('orange.badge.controller');
         $badgesName = array();
-        //$max = 10;
-        //$page = 1;
+        $badgesNameOwned = array();
 
-        $badgePager = $badgeC->myWorkspaceBadgeAction($worspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
+        $badgePager = $badgeC->myWorkspaceBadgeAction($workspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
         $badgePager = $badgePager['badgePager'];
         $resultats = $badgePager->getCurrentPageResults();
 
         foreach($resultats as $result){
-            if($result['badge']['type'] == 'owned'){
-                $badgesName[] = $result['badge']['badge']->getName();
+            $badge = $result['badge'];
+            if(get_class($badge) === 'Claroline\CoreBundle\Entity\Badge\UserBadge'){
 
+                //$userBadges = $badge['badge'];
+                //$userBadges = $badge->getUser();
+
+               /* foreach($userBadges as $aUser){
+                    if($aUser->id === $user->getId()){
+                        $badgesNameOwned[] = $badge->getBadge()->getName();
+                    }
+                }*/
+                $badgesNameOwned[] = $badge->getBadge()->getName();
             } else {
-                $badgesName[] = $result['badge']->getName();
+                $badgesName[] = $badge->getName();
             }
+
         }
         
         return $this->render(
             'UJMExoBundle:Paper:show.html.twig',
             array(
-                'workspace'        => $worspace,
+                'workspace'        => $workspace,
                 'exoId'            => $paper->getExercise()->getId(),
                 'interactions'     => $infosPaper['interactions'],
                 'responses'        => $infosPaper['responses'],
@@ -264,7 +302,8 @@ class PaperController extends Controller
                 'nbMaxQuestion'    => $nbMaxQuestion,
                 'paperID'          => $paper->getId(),
                 'retryButton'      => $retryButton,
-                'badgesName'       => $badgesName
+                'badgesName'       => $badgesName,
+                'badgesNameOwned'  => $badgesNameOwned
             )
         );
     }

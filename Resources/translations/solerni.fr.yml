@@ -1,6 +1,7 @@
 # A
 actions: Correction
 answer for question : Correction de la question n°
+ask hint : Je souhaite un indice
 attempt info3 : essai
 attempt info3_1 : er
 attempt info3_x : ème
@@ -14,15 +15,19 @@ duree : Durée estimée
 #E
 end date: Fin
 
-#D
-duree : Durée estimée
-
 # F
 final mark: Voir votre note
 finish: Terminer
 
+# G
+good response: Les bonnes réponses étaient
+
+# H
+Hint_title: Attention
+
 # L
 list of question : Résultats
+list of question and response: Rappel de vos questions
 
 # N
 next: Question suivante
@@ -47,7 +52,7 @@ returnResult : Retourner aux résultats
 # S
 see mark : Votre note finale
 see all corrections : Voir la correction des questions
-see papers : Voir ses copies
+see papers : Afficher mes résultats précédents
 Save_title : Attention 
 Save : Êtes vous sûr de vouloir terminer ? (Vous ne pourrez plus modifier vos réponses).
 Save_Y : Valider
