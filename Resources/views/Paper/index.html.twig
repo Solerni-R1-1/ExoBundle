@@ -103,7 +103,7 @@
                     onkeydown="if (event.keyCode == 13) { searchUserPaper('{{ path('ujm_paper_searchUserPaper') }}', {{exoID}});return false; }">
                 <span class="input-group-btn">
                     <button class="btn btn-default" type="button" id="searchPaperUser"
-                        onClick="searchUserPaper('{{ path('ujm_paper_searchUserPaper') }}');">
+                        onClick="searchUserPaper('{{ path('ujm_paper_searchUserPaper') }}', {{exoID}});">
                 <i class="icon-search"></i></button>
                 </span>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
