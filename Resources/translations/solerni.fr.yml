@@ -40,7 +40,7 @@ previous : Question précédente
 question_num : Question N°
 quiz_ended : Vous avez déjà répondu à ce quiz. voici vos notes.
 Quit_title : Quitter le quiz
-Quit : En quittant le quiz sans le terminer, vous serez décompté de vos essais disponibles pour obtenir le badge de compétence correspondant. 
+Quit : En quittant le quiz sans le terminer, vous serez décompté de vos essais disponibles pour obtenir le badge de connaissance correspondant.
 Quit2 : Êtes-vous sûr de vouloir quitter ce quiz maintenant ?
 Quit_Y : Oui
 Quit_N : Non
