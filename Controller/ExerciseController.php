@@ -180,12 +180,13 @@ class ExerciseController extends Controller
             $paper = $this->getDoctrine()
                 ->getManager()
                 ->getRepository('UJMExoBundle:Paper')
-                ->getPaper($user->getId(), $exerciseId);
-            $numAttempt = 0;
+                ->getExerciseUserPapers($user->getId(), $exerciseId);
+            $numAttempt = -1;
             if(count($paper) > 0){
-                $paper = $paper[0];
+                $paper = $paper[count($paper) - 1 ];
                 $numAttempt = $paper->getNumPaper();    
-            }
+            } 
+
             /** SII trouver l'info numAttempt **/
 
         return $this->render(

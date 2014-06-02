@@ -405,12 +405,19 @@ class PaperController extends Controller
         if(count($papersUser) > 0) {
             $display = $this->ctrlDisplayPaper($user, $papersUser[0]);
         }
+
+        /* EDIT SII : provide isAdmin */
+        $exerciseSer = $this->container->get('ujm.exercise_services');
+        $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
+        $exoAdmin = $exerciseSer->isExerciseAdmin($exercise);
+        /* EDIT SII : provide isAdmin */
          
         $divResultSearch = $this->render(
             'UJMExoBundle:Paper:userPaper.html.twig', array(
                 'papers'          => $papersUser,
                 'arrayMarkPapers' => $arrayMarkPapers,
-                'display'         => $display
+                'display'         => $display,
+                'isAdmin'         => $exoAdmin
             )
         );
         // If request is ajax (first display of the first search result (page = 1))
