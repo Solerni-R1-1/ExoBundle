@@ -85,7 +85,7 @@
                     {% endif %}
                      -
                 {% endif %}
-                 {{ numAttempt }}<sup>{% if(maxAttempsAllowed == 1) %}{{ "attempt info3_1" | trans({}, 'solerni') }}{% else %}{{ "attempt info3_x" | trans({}, 'solerni') }}{% endif %}</sup> {{ "attempt info3" | trans({}, 'solerni') }}
+                 {{ numAttempt }}<sup>{% if(numAttempt == 1) %}{{ "attempt info3_1" | trans({}, 'solerni') }}{% else %}{{ "attempt info3_x" | trans({}, 'solerni') }}{% endif %}</sup> {{ "attempt info3" | trans({}, 'solerni') }}
 
             </div>
             <div class="col-md-6 meta text-right">
