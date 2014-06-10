@@ -59,22 +59,22 @@
  <script>
  /*<![CDATA[*/
  
-  {% if allowToCompose == 1 and nbQuestion > 0  and numAttempt == 1 %}
+  {% if allowToCompose == 1 and nbQuestion > 0  and numAttempt < 1 %}
     window.location.href = '{{ path('ujm_exercise_paper', { 'id': entity.id }) }}'; 
   {% else %}
     window.location.href = '{{ path('ujm_paper_list', { 'exoID': entity.id }) }}'; 
   {% endif %}
  
 /*]]>*/
-</script> 
+</script>  
  {#
  {% if allowToCompose == 1 and nbQuestion > 0  and numAttempt < 1 %}
     <a href='{{ path('ujm_exercise_paper', { 'id': entity.id }) }}'>numAttempt : {{numAttempt}}</a>
   {% else %}
     <a href='{{ path('ujm_paper_list', { 'exoID': entity.id }) }}'>numAttempt : {{numAttempt}}</a>
-  {% endif %}#}
+  {% endif %}
 
- {% else %}
+ {% else %} #}
 
  {# ################################################################################### #}
 
