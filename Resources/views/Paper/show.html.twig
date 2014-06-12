@@ -708,7 +708,7 @@
                     {# Devons nous afficher les corrections ? #}
                     {% set displayCorrection = (correction == 1 or (correction == 2 and nbAttemptAllowed == 0)) %}
 
-                    <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{% if displayCorrection %}{{ 'list of question' | trans({}, 'solerni') }}{% else %}{{ 'list of question and response' | trans({}, 'solerni') }}{% endif %}</div></div>
+                    <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{% if displayCorrection %}{{ 'list of question' | trans({}, 'solerni') }}{% else %}{{ 'list of response' | trans({}, 'solerni') }}{% endif %}</div></div>
                     <div class="panel-body">
                             {% set i = 0 %}
                             {% for interaction in interactions %}

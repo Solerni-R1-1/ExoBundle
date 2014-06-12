@@ -241,3 +241,11 @@ a.see:hover{
 .hint_red:hover{
 	text-decoration: underline;
 }
+.topTableBlue{
+	background-color: #dce6f2;
+	padding: 10px;
+	margin: 0;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}
