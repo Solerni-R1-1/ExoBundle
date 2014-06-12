@@ -1,0 +1,251 @@
+@CHARSET "UTF-8";
+
+.content {
+	padding-top:0;
+}
+
+.bg-color-primary {
+	display:none;
+}
+
+.slrn-back {
+}
+.slrn-back__link {
+	font-weight: bold;
+	padding: 0.66em;
+	color: #FFF;
+	display: block;
+	text-decoration: none;
+}
+.slrn-back__link:hover {
+	color: #FFF;
+}
+.no_underline,.no_underline:hover{
+	text-decoration: none;
+	margin-right: 5px;
+}
+
+.exo_title {
+	text-transform: uppercase;
+	color:#999;
+	font-weight: bold;
+	margin-top: 20px;
+}
+
+h1 {
+	font-size: 28px;
+	color: #000;
+	margin: 10px 0;
+}
+h3 {
+	font-size: 14px;
+	color: #000;
+	margin: 10px 0 20px 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+}
+.list_responses{
+	font-size: 12px;
+	color: #000;
+	padding: 10px 0 10px 10px;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 20px 0;
+}
+.exo_time {
+	font-weight: bold;
+}
+.exo_time__span {
+	line-height: 2.2em;
+	background-image: url(../images/clock-24.png);
+	display: block;
+	background-repeat: no-repeat;
+	background-position: 2px 50%;
+	padding-left: 30px;
+}
+.slr__line {
+	margin: 10px 0;
+}
+.slr__line__h3 {
+	font-size: 16px;
+	color: #000;
+	margin: 0;
+}
+.slr__line__h3.success, .slr__line__h3.fail{
+	background-position: 97% 0;
+	background-repeat: no-repeat;
+	height: 26px;
+}
+.slr__line__h3.success {
+	background-image: url(../images/response_ok.png);
+}
+.slr__line__h3.fail {
+	background-image: url(../images/response_ko.png);
+}
+
+.colorize_success {
+	color:#ABC143;
+}
+.colorize_fail, a.red {
+	color:#D90045;
+}
+
+.slr__line__answer__link, .slr__line__answer__link:hover,
+.goToBadges, .goToBadges:hover{
+	color:#D90045;
+}
+#finalLabel{
+	font-size: 24px;
+}
+#paperFinalScore{
+	display: inline;
+	font-size: 30px;
+	color: #ABC143;
+}
+.tryAgain{
+	font-size: 16px;
+	margin-bottom: 10px;
+}
+
+.table-solerni thead > tr > th,
+.table-solerni thead > tr > td,
+.table-solerni tbody > tr > th,
+.table-solerni tbody > tr > td,
+.table-solerni tfoot > tr > th,
+.table-solerni tfoot > tr > td {
+	border:0 none;
+}
+
+
+.table-solerni thead > tr > th,
+.table-solerni thead > tr > td,
+.table-solerni tbody > tr > th,
+.table-solerni tfoot > tr > th{
+	color: #666;
+	padding: 10px 0;
+	background-color: #EEEEEF;
+}
+
+.paper_desc{
+	font-size: 20px;
+}
+
+.dropdown-menu > li > a.colorheader {
+	color:#FFFFFF ;	
+	background-color:transparent ;
+}
+.dropdown-menu > li > a.colorheader:hover, .dropdown-menu > li > a.colorheader:focus {
+	background-color: #385268;
+	border-color: #385268;
+}
+.btn-colorheader, .dropdown-toggle.btn-colorheader {
+	background-color: #4B667C;
+	border-color: #4B667C;
+	color:#FFFFFF;	
+}
+
+.btn-colorheader li:hover, .btn-colorheader li:focus, .btn-colorheader li:active, .btn-colorheader li.active, .open .dropdown-toggle.btn-colorheader {
+	background-color: #385268;
+	border-color: #385268;
+}
+
+.btn-gris, .dropdown-toggle.btn-gris {
+	background-color: #7D7D7D;
+	border-color: #757575;
+	color:#FFFFFF;	
+}
+
+.btn-gris:hover, .btn-gris:focus, .btn-gris:active, .btn-gris.active, .open .dropdown-toggle.btn-gris {
+	background-color: #757575;
+	border-color: #707070;
+	color:#FFFFFF;	
+}
+
+.slrn_lessonTitle{
+	text-transform: uppercase;
+	margin: 30px 0 0 0;
+}
+.meta{
+	font-weight: 700;	
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
+#resultSearch tbody tr{
+	border-bottom: 1px solid #CCC;
+}
+#resultSearch tbody tr td{
+	padding: 15px 0;
+}
+
+a.see{
+	border: 2px solid #999;
+	border-radius: 15px;
+	padding: 5px;
+	width: 30px;
+	height: 30px;
+}
+
+a.see:hover{
+	text-decoration: none;
+	background-color: #999;
+}
+.table-solerni ul.list-unstyled{
+	margin:0;
+}
+
+
+.collapse__div__title{
+	margin-top: 10px;
+	color:#FF004F;
+}
+ .collapse__div__title a{
+ 	color:#FF004F;
+	padding-left:30px;	
+}
+.collapse__div__title:before{
+	content: "";
+	position: absolute;
+	background-image: url('../../clarolinecore/images/sprites_solerni.png');
+	background-position: -129px -582px;
+	width:22px;
+	height:22px;
+}
+.collapse__div__title.open:before{
+	background-position: -153px -582px;	
+}
+.collapse__div__instruction{
+	background-color: #EEEEEF;
+	margin-top: 20px;
+	padding: 10px;
+	margin-left: 10px;
+	display:none;
+}
+.hint_black, .hint_red{
+	background-image: url('../images/hints.png');
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	padding-left:20px;
+	min-height: 20px;
+	display: inline-block;
+}
+.hint_black{
+	color: #000;
+	background-position: 0px -20px;
+}
+
+.hint_red{
+	color: #F00;
+}
+.hint_red:hover{
+	text-decoration: underline;
+}
+.topTableBlue{
+	background-color: #dce6f2;
+	padding: 10px;
+	margin: 0;
+	text-align: center;
+	font-size: 1.2em;
+	font-weight: bold;
+}

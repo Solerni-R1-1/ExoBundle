@@ -175,6 +175,20 @@ class ExerciseController extends Controller
         $nbUserPaper = $exerciseSer->getNbPaper($user->getId(),
                                                 $exercise->getId());
 
+
+            /** SII trouver l'info numAttempt **/
+            $paper = $this->getDoctrine()
+                ->getManager()
+                ->getRepository('UJMExoBundle:Paper')
+                ->getExerciseUserPapers($user->getId(), $exerciseId);
+            $numAttempt = -1;
+            if(count($paper) > 0){
+                $paper = $paper[count($paper) - 1 ];
+                $numAttempt = $paper->getNumPaper();    
+            } 
+
+            /** SII trouver l'info numAttempt **/
+
         return $this->render(
             'UJMExoBundle:Exercise:show.html.twig',
             array(
@@ -185,7 +199,8 @@ class ExerciseController extends Controller
                 'userId'         => $user->getId(),
                 'nbQuestion'     => $nbQuestions['nbq'],
                 'nbUserPaper'    => $nbUserPaper,
-                '_resource'      => $exercise
+                '_resource'      => $exercise,
+                'numAttempt'     => $numAttempt
             )
         );
     }
@@ -374,6 +389,7 @@ class ExerciseController extends Controller
                     $pageGoNow += 1;
                 }
             }
+
 
             return $this->render(
                 'UJMExoBundle:Question:import.html.twig',
@@ -624,7 +640,8 @@ class ExerciseController extends Controller
         $typeInterToRecorded = $request->get('typeInteraction');
 
         $tabOrderInter = $session->get('tabOrderInter');
-        
+        /*
+         * // Edit by Kevin : break solerni user-experience
         if ($paper->getEnd()) {
             
             return $this->forward('UJMExoBundle:Paper:show', 
@@ -633,7 +650,7 @@ class ExerciseController extends Controller
                                       'p'  => -1
                                        )
                                  );
-        }
+        }*/
 
         //To record response
         $exerciseSer = $this->container->get('ujm.exercise_services');

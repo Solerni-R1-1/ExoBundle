@@ -1,0 +1,75 @@
+# A
+actions: Correction
+answer for question : Correction for the question n°
+ask hint : Je souhaite un indice
+attempt info3 : essai
+attempt info3_1 : er
+attempt info3_x : ème
+
+# C
+correction : Quiz's Results
+
+#D
+duree : Durée estimée
+
+#E
+end date: Fin
+
+# G
+good response: Les bonnes réponses étaient
+
+# F
+final mark: See your mark
+finish: Finish
+
+# H
+Hint_title: Attention.
+
+# L
+list of question : Résultats
+list of response: Rappel de vos réponses
+list of all results: Résultats précédents
+
+# N
+next: Validate the answer
+
+# P
+paper exo : Quiz
+previous : Question précédente
+
+# Q
+question_num : Question N°
+quiz_ended : You have already finish this quiz. Here your marks
+Quit_title : Quitter le quiz
+Quit : En quittant le quiz sans le terminer, vous serez décompté de vos essais disponibles pour obtenir le badge de connaissance correspondant.
+Quit2 : Êtes-vous sûr de vouloir quitter ce quiz maintenant ?
+Quit_Y : Oui
+Quit_N : Non
+
+# R
+returnMOOC: Return to the MOOC
+returnResult : Retourn to the results
+
+# S
+see mark : Your final mark
+see all corrections : See the correction of questions
+see papers : Voir ses copies
+Save_title : Attention 
+Save : Êtes vous sûr de vouloir terminer ? (Vous ne pourrez plus modifier vos réponses).
+Save_Y : Valider
+Save_N : Annuler
+SaveNoFinish_title : Attention 
+SaveNoFinish : Vous n'avez pas répondu à toutes les questions.
+SaveNoFinish2 : En validant votre quiz vous ne pourrez plus modifier vos réponses
+SaveNoFinish_Y : Reprendre le quiz
+SaveNoFinish_N : Valider
+start again: Recommencer le quiz
+start date: Début
+
+# T
+time : 2 min
+
+# Y
+your mark : Your mark
+your score : Your mark
+your response : Votre réponse

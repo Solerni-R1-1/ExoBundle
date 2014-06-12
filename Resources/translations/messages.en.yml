@@ -62,7 +62,7 @@ attempt info3: Attempt N°
 attempt info4: You have
 attempt info5: in order to improve your score
 attempt info6: You do not have attempt
-at the end of assessment: At the end of assessment
+at the end of assessment: At the end of attempt
 at the same time that the correction: At the same time that the correction
 availability of correction: Availability of correction
 availability of score: Availability of score
@@ -377,7 +377,7 @@ your answer: Your answer
 
 
 #properties of entities
-At the end of assessment: At the end of assessment
+At the end of assessment: At the end of attempt
 At the same time that the correction: At the same time that the correction
 After the last attempt: After the last attempt
 

@@ -1,12 +1,26 @@
-{% if badgesInfoUser|length > 0 %}
+{#{% if badgesInfoUser|length > 0 %}
     {% for key,info in badgesInfoUser %}
-        <div class="alert alert-info">
+        <div class="">
             {% if(info.issued|date('d/m/Y \\- H\\hi\\ms\\s') == '01/01/1970 - 00h59m59s') %}
-                {{ 'badgeNoObtained'|trans }} : "{{ info.badgeName }}"
+                {{ 'badgeNoObtained'|trans }} : <strong>&laquo; {{ info.badgeName }} &raquo;</strong>
             {% else %}
-                {{ 'badgeObtained'|trans }} : "{{ info.badgeName }}" -
+                {{ 'badgeObtained'|trans }} : <strong>&laquo; {{ info.badgeName }} &raquo;</strong> -
                 {{ info.issued|date('d/m/Y \\- H\\hi\\ms\\s') }}
             {% endif %}
         </div>
     {% endfor %}
+{% endif %}#}
+    
+{% set hasBadge = badgesName|length > 0 %}
+{% set hasBadgeOwned = badgesNameOwned|length > 0 %}
+
+{% if hasBadge or hasBadgeOwned %}
+<p>
+    {% if hasBadgeOwned %}
+        <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesNameOwned|join(', ')}} &raquo;</strong>. <br/>
+        Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+    {% else %}
+        Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+    {% endif %}
+</p>
 {% endif %}
