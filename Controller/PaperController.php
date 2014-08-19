@@ -210,6 +210,24 @@ class PaperController extends Controller
         $em = $this->getDoctrine()->getManager();
         $paper = $em->getRepository('UJMExoBundle:Paper')->find($id);
         $exercise = $paper->getExercise();
+
+        $exoAdmin = false;
+        if ($exerciseSer->isExerciseAdmin($exercise)) {
+            $exoAdmin = true;
+        }
+
+        $nbUserPaper = 0;
+        if ($exoAdmin === true) {
+            
+            $nbUserPaper = $exerciseSer->getNbPaper($user->getId(),
+                                                    $exercise->getId());
+        } else {
+            $papers = $this->getDoctrine()
+                            ->getManager()
+                            ->getRepository('UJMExoBundle:Paper')
+                            ->getExerciseUserPapers($user->getId(), $exercise->getId());
+            $nbUserPaper = count($papers);
+        }
         
         if ($exerciseSer->controlMaxAttemps($exercise,
                 $user, $exerciseSer->isExerciseAdmin($exercise))) {
@@ -303,7 +321,8 @@ class PaperController extends Controller
                 'paperID'          => $paper->getId(),
                 'retryButton'      => $retryButton,
                 'badgesName'       => $badgesName,
-                'badgesNameOwned'  => $badgesNameOwned
+                'badgesNameOwned'  => $badgesNameOwned,
+                'nbUserPaper'      => $nbUserPaper
             )
         );
     }

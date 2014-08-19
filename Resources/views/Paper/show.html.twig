@@ -59,7 +59,7 @@
  <div class="col-xs-3 col-md-3">
         {# FIRST : MOOC  WIDGET #}
         {% render controller(
-            'ClarolineCoreBundle:Solerni:getWorkspacePresentationWidget',
+            'ClarolineCoreBundle:Mooc\\Mooc:getWorkspacePresentationWidget',
             {'workspaceId': workspace.getId(), 'renderProgression': false  }
         ) %}
         <div class='col-xs-12 col-md-12 slrn-widget'>
@@ -855,7 +855,7 @@
                         {% endif %} #}
                     </div>
 
-                    {% if retryButton %}
+                    {% if retryButton and nbUserPaper > 1 %}
                          <a class="btn btn-gris" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
                             {{ 'see papers' | trans({}, 'solerni') }}
                         </a>
