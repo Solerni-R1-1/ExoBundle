@@ -387,7 +387,7 @@
                                 </div>
                                 <div class="modal-footer">
                                             
-                                    <a href="{{ app.session.get('solerni_apprendre_url') }}" class="btn btn-default">{{ 'Quit_Y'|trans({}, 'solerni') }}</a>
+                                    <a href="{{ mooc_service.getBackMoocUrl( workspace, user ) }}" class="btn btn-default">{{ 'Quit_Y'|trans({}, 'solerni') }}</a>
                                     
                                     <a href="#" class="btn btn-primary pull-right" data-dismiss="modal">{{ 'Quit_N'|trans({}, 'solerni') }}</a>
                                 </div>
