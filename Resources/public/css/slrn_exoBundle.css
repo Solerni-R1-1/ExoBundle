@@ -71,7 +71,7 @@ h3 {
 	color: #000;
 	margin: 0;
 }
-.slr__line__h3.success, .slr__line__h3.fail{
+.slr__line__h3.success, .slr__line__h3.fail, .slr__line__h3.failWithHint{
 	background-position: 97% 0;
 	background-repeat: no-repeat;
 	height: 26px;
@@ -79,11 +79,11 @@ h3 {
 .slr__line__h3.success {
 	background-image: url(../images/response_ok.png);
 }
-.slr__line__h3.fail {
+.slr__line__h3.fail, .slr__line__h3.failWithHint {
 	background-image: url(../images/response_ko.png);
 }
 
-.colorize_success {
+.colorize_success, .colorize_failWithHint {
 	color:#ABC143;
 }
 .colorize_fail, a.red {
@@ -248,4 +248,11 @@ a.see:hover{
 	text-align: center;
 	font-size: 1.2em;
 	font-weight: bold;
+}
+.hint_used{
+	color: #D90045;
+	text-transform: uppercase;
+	font-size: 0.8em;
+	float: right;
+	margin: 3px 17px;
 }

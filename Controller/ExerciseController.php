@@ -695,6 +695,7 @@ class ExerciseController extends Controller
         $score = explode('/', $res['score']);
         $response->setMark($score[0]);
         $response->setResponse($res['response']);
+        $response->setMarkUsedForHint($res['penalty']);
 
         $em->persist($response);
         $em->flush();
