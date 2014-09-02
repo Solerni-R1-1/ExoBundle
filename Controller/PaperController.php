@@ -480,7 +480,7 @@ class PaperController extends Controller
                 $rowCSV[] = $row[0]->getUser()->getLastName() . '-' . $row[0]->getUser()->getFirstName();
                 $rowCSV[] = $row[0]->getNumPaper();
                 $rowCSV[] = $row[0]->getStart()->format('Y-m-d H:i:s');
-                $rowCSV[] = $row[0]->getEnd()->format('Y-m-d H:i:s');
+                $rowCSV[] = ($row[0]->getEnd() != NULL ? $row[0]->getEnd()->format('Y-m-d H:i:s') : '');
                 $rowCSV[] = $row[0]->getInterupt();
                 $rowCSV[] = $this->container->get('ujm.exercise_services')->roundUpDown($score);
                 
