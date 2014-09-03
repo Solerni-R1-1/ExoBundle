@@ -857,6 +857,7 @@ class ExerciseController extends Controller
         $em = $this->getDoctrine()->getManager();
         $session = $this->getRequest()->getSession();
         $tabOrderInter = $session->get('tabOrderInter');
+        $user = $this->getUser();
 
         switch ($typeInterToDisplayed) {
             case "InteractionQCM":
@@ -961,6 +962,7 @@ class ExerciseController extends Controller
         $array['dispButtonInterrupt']    = $dispButtonInterrupt;
         $array['maxAttempsAllowed']      = $maxAttempsAllowed;
         $array['_resource']              = $paper->getExercise();
+        $array['user']					 = $user;
 
         return $this->render(
             'UJMExoBundle:Exercise:paper.html.twig',
