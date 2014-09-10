@@ -51,6 +51,7 @@ use Pagerfanta\Pagerfanta;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 use Claroline\CoreBundle\Controller\Badge\Tool;
+use Claroline\CoreBundle\Entity\Badge\Badge;
 
 /**
  * Paper controller.
@@ -148,27 +149,24 @@ class PaperController extends Controller
                 $user->getId(), $exercise->getResourceNode()->getId(),
                 $this->container->getParameter('locale'));
 
-        $badgeC = $this->container->get('orange.badge.controller');
         $badgesName = array();
         $badgesNameOwned = array();
 
-        $badgePager = $badgeC->myWorkspaceBadgeAction($workspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
-        $badgePager = $badgePager['badgePager'];
-        $resultats = $badgePager->getCurrentPageResults();
+        /* Find associated badge */
+        $workspace = $exercise->getResourceNode()->getWorkspace();
+        $associatedBadge = $this->container->get('orange.badge.controller');
+        $badgeList = $associatedBadge->getAllBadgesForWorkspace($user, $workspace, false, true);
 
-        foreach($resultats as $result){
+        foreach ($badgeList as $i => $badge) {
+        	if ($badge['resource']['resource']['exercise']->getId() != $exercise->getId()) {
+        		unset($badgeList[$i]);
+        	}
+        }
+
+        foreach($badgeList as $result){
             $badge = $result['badge'];
-            if(get_class($badge) === 'Claroline\CoreBundle\Entity\Badge\UserBadge'){
-
-                //$userBadges = $badge['badge'];
-                //$userBadges = $badge->getUser();
-
-               /* foreach($userBadges as $aUser){
-                    if($aUser->id === $user->getId()){
-                        $badgesNameOwned[] = $badge->getBadge()->getName();
-                    }
-                }*/
-                $badgesNameOwned[] = $badge->getBadge()->getName();
+            if($result['status'] === Badge::BADGE_STATUS_OWNED){
+                $badgesNameOwned[] = $badge->getName();
             } else {
                 $badgesName[] = $badge->getName();
             }
@@ -270,29 +268,23 @@ class PaperController extends Controller
             }
         }
 
-
-        
-        $badgeC = $this->container->get('orange.badge.controller');
         $badgesName = array();
         $badgesNameOwned = array();
 
-        $badgePager = $badgeC->myWorkspaceBadgeAction($workspace, $user, 1, 'ujm_exercise', $exercise->getResourceNode()->getId(), false);
-        $badgePager = $badgePager['badgePager'];
-        $resultats = $badgePager->getCurrentPageResults();
+        $workspace = $exercise->getResourceNode()->getWorkspace();
+        $associatedBadge = $this->container->get('orange.badge.controller');
+        $badgeList = $associatedBadge->getAllBadgesForWorkspace($user, $workspace, false, true);
 
-        foreach($resultats as $result){
+        foreach ($badgeList as $i => $badge) {
+        	if ($badge['resource']['resource']['exercise']->getId() != $exercise->getId()) {
+        		unset($badgeList[$i]);
+        	}
+        }
+
+        foreach($badgeList as $result){
             $badge = $result['badge'];
-            if(get_class($badge) === 'Claroline\CoreBundle\Entity\Badge\UserBadge'){
-
-                //$userBadges = $badge['badge'];
-                //$userBadges = $badge->getUser();
-
-               /* foreach($userBadges as $aUser){
-                    if($aUser->id === $user->getId()){
-                        $badgesNameOwned[] = $badge->getBadge()->getName();
-                    }
-                }*/
-                $badgesNameOwned[] = $badge->getBadge()->getName();
+            if($result['status'] === Badge::BADGE_STATUS_OWNED){
+                $badgesNameOwned[] = $badge->getName();
             } else {
                 $badgesName[] = $badge->getName();
             }
@@ -322,7 +314,8 @@ class PaperController extends Controller
                 'retryButton'      => $retryButton,
                 'badgesName'       => $badgesName,
                 'badgesNameOwned'  => $badgesNameOwned,
-                'nbUserPaper'      => $nbUserPaper
+                'nbUserPaper'      => $nbUserPaper,
+            	'user'				=> $user
             )
         );
     }
