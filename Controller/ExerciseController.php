@@ -858,6 +858,7 @@ class ExerciseController extends Controller
         $em = $this->getDoctrine()->getManager();
         $session = $this->getRequest()->getSession();
         $tabOrderInter = $session->get('tabOrderInter');
+        $user = $this->getUser();
 
         switch ($typeInterToDisplayed) {
             case "InteractionQCM":
