@@ -46,12 +46,15 @@ use UJM\ExoBundle\Entity\Exercise;
 use UJM\ExoBundle\Entity\Paper;
 use UJM\ExoBundle\Form\PaperType;
 
+use JMS\DiExtraBundle\Annotation as DI;
+
 use Pagerfanta\Adapter\ArrayAdapter;
 use Pagerfanta\Pagerfanta;
 
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 use Claroline\CoreBundle\Controller\Badge\Tool;
 use Claroline\CoreBundle\Entity\Badge\Badge;
+use Claroline\CoreBundle\Manager\BadgeManager;
 
 /**
  * Paper controller.
@@ -59,6 +62,21 @@ use Claroline\CoreBundle\Entity\Badge\Badge;
  */
 class PaperController extends Controller
 {
+	
+	/** @var BadgeManager */
+	private $badgeManager;
+	
+	/**
+	 * Constructor.
+	 *
+	 * @DI\InjectParams({
+	 *     "badgeManager" = @DI\Inject("claroline.manager.badge")
+	 * })
+	 */
+	public function __construct(BadgeManager $badgeManager) {
+		$this->badgeManager = $badgeManager;
+	}
+	
     /**
      * Lists all Paper entities.
      *
@@ -154,7 +172,7 @@ class PaperController extends Controller
 
         /* Find associated badge */
         $workspace = $exercise->getResourceNode()->getWorkspace();
-        $associatedBadge = $this->container->get('orange.badge.controller');
+        $associatedBadge = $this->badgeManager;
         $badgeList = $associatedBadge->getAllBadgesForWorkspace($user, $workspace, false, true);
 
         foreach ($badgeList as $i => $badge) {
@@ -272,7 +290,7 @@ class PaperController extends Controller
         $badgesNameOwned = array();
 
         $workspace = $exercise->getResourceNode()->getWorkspace();
-        $associatedBadge = $this->container->get('orange.badge.controller');
+        $associatedBadge = $this->badgeManager;
         $badgeList = $associatedBadge->getAllBadgesForWorkspace($user, $workspace, false, true);
 
         foreach ($badgeList as $i => $badge) {
