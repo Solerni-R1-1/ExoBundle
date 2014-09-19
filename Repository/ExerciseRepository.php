@@ -38,6 +38,8 @@
 namespace UJM\ExoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use UJM\ExoBundle\Entity\Exercise;
+use Claroline\CoreBundle\Entity\User;
 
 /**
  * ExerciseRepository
@@ -47,8 +49,9 @@ use Doctrine\ORM\EntityRepository;
  */
 class ExerciseRepository extends EntityRepository
 {
-    public function getExerciseMarks($exoId, $order = '')
+public function getExerciseMarks($exoId, $order = '')
     {
+    	$orderBy = '';
         if ($order != '') {
             $orderBy = ' ORDER BY '.$order;
         }
@@ -59,5 +62,27 @@ class ExerciseRepository extends EntityRepository
         $query = $this->_em->createQuery($dql);
 
         return $query->getResult();
+    }
+    
+    public function getExerciseMarksForUser(Exercise $exercise, User $user)
+    {
+    	$dql = 'SELECT 
+    				sum(r.mark) AS noteExo
+            	FROM UJM\ExoBundle\Entity\Response r 
+    			JOIN r.paper p
+            	WHERE p.exercise = :exercise
+    			AND   p.interupt = 0
+    			AND   p.user 	 = :user 
+    			GROUP BY p.id';
+    
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameters(array(
+    			"exercise" 	=> $exercise,
+    			"user"		=> $user
+    	));
+    
+    	$results = $query->getResult();
+    	
+    	return count($results) > 0 ? $results[0]['noteExo'] : null;
     }
 }

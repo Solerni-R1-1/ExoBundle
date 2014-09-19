@@ -854,6 +854,7 @@ class ExerciseController extends Controller
         $workspace, $paper
     )
     {
+    	$user = $this->container->get('security.context')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
         $session = $this->getRequest()->getSession();
         $tabOrderInter = $session->get('tabOrderInter');
