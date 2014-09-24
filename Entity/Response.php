@@ -95,6 +95,13 @@ class Response
     private $interaction;
 
     /**
+     * @var integer $markUsedForHint
+     *
+     * @ORM\Column(name="mark_used_for_hint", type="integer")
+     */
+    private $markUsedForHint;
+
+    /**
      * Get id
      *
      * @return integer
@@ -202,5 +209,13 @@ class Response
     public function setInteraction(\UJM\ExoBundle\Entity\Interaction $interaction)
     {
         $this->interaction = $interaction;
+    }
+
+    public function setMarkUsedForHint($markUsedForHint){
+        $this->markUsedForHint = $markUsedForHint;
+    }
+
+    public function getMarkUsedForHint(){
+        return $this->markUsedForHint;
     }
 }

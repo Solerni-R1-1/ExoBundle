@@ -695,6 +695,7 @@ class ExerciseController extends Controller
         $score = explode('/', $res['score']);
         $response->setMark($score[0]);
         $response->setResponse($res['response']);
+        $response->setMarkUsedForHint($res['penalty']);
 
         $em->persist($response);
         $em->flush();
@@ -853,9 +854,11 @@ class ExerciseController extends Controller
         $workspace, $paper
     )
     {
+    	$user = $this->container->get('security.context')->getToken()->getUser();
         $em = $this->getDoctrine()->getManager();
         $session = $this->getRequest()->getSession();
         $tabOrderInter = $session->get('tabOrderInter');
+        $user = $this->getUser();
 
         switch ($typeInterToDisplayed) {
             case "InteractionQCM":
@@ -960,6 +963,7 @@ class ExerciseController extends Controller
         $array['dispButtonInterrupt']    = $dispButtonInterrupt;
         $array['maxAttempsAllowed']      = $maxAttempsAllowed;
         $array['_resource']              = $paper->getExercise();
+        $array['user']					 = $user;
 
         return $this->render(
             'UJMExoBundle:Exercise:paper.html.twig',
