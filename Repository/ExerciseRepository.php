@@ -40,6 +40,7 @@ namespace UJM\ExoBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use UJM\ExoBundle\Entity\Exercise;
 use Claroline\CoreBundle\Entity\User;
+use UJM\ExoBundle\Entity\Paper;
 
 /**
  * ExerciseRepository
@@ -83,6 +84,36 @@ public function getExerciseMarks($exoId, $order = '')
     
     	$results = $query->getResult();
     	
-    	return count($results) > 0 ? $results[0]['noteExo'] : null;
+    	return $results;
+    }
+    
+	public function getMaximalMarkForPaperQCM(Paper $paper) {
+    	$dql = "SELECT SUM(CASE WHEN (qcm.weightResponse = 0) THEN qcm.scoreRightResponse ELSE choice.weight END) as score
+					FROM UJM\ExoBundle\Entity\InteractionQCM qcm
+					JOIN qcm.interaction int
+					JOIN UJM\ExoBundle\Entity\Response resp WITH resp.interaction = int
+					JOIN UJM\ExoBundle\Entity\Paper paper WITH paper = resp.paper
+    				JOIN UJM\ExoBundle\Entity\Choice choice WITH choice.interactionQCM = qcm
+					WHERE paper = :paper
+    				AND choice.rightResponse = true";
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter("paper", $paper);
+    	return $query->getSingleScalarResult();
+    }
+    
+    public function getMaximalMarkForPaperHole(Paper $paper) {
+    	$dql = "SELECT SUM(word.score) as score
+    				FROM UJM\ExoBundle\Entity\WordResponse word
+    				JOIN word.hole hole
+					JOIN hole.interactionHole intHole
+					JOIN intHole.interaction int
+					JOIN UJM\ExoBundle\Entity\Response resp WITH resp.interaction = int
+					JOIN resp.paper paper
+					WHERE paper = :paper";
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter("paper", $paper);
+    	return $query->getSingleScalarResult();
     }
 }

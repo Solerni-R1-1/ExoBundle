@@ -67,14 +67,14 @@ class PaperRepository extends EntityRepository
      * Returns the user's papers for an exercise
      *
      */
-    public function getExerciseUserPapers($userID, $exerciseID)
+    public function getExerciseUserPapers($userID, $exerciseID, $orderBy = "id", $orderDirection = "ASC")
     {
         $qb = $this->createQueryBuilder('p');
         $qb->join('p.user', 'u')
             ->join('p.exercise', 'e')
             ->where($qb->expr()->in('u.id', $userID))
             ->andWhere($qb->expr()->in('e.id', $exerciseID))
-            ->orderBy('p.id', 'ASC');
+            ->orderBy('p.'.$orderBy, $orderDirection);
 
         return $qb->getQuery()->getResult();
     }

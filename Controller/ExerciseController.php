@@ -591,6 +591,7 @@ class ExerciseController extends Controller
                     $exercise->getMaxAttempts(),
                     $workspace, $paper);
         } else {
+        	// Add flashbag message to tell that quizz is finished 
             return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $id)));
         }
     }
