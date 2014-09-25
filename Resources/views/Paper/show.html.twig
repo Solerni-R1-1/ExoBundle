@@ -93,38 +93,12 @@
     </div>    
     <hr/>
     
-    {% set exoMark = 0 %}
-    {% set exoScoreMax = 0 %}
     {% set exoScoreMax20 = 20 %}
-    {% set len = responses|length - 1 %}
-    
-    {% for i in 0..len %}
-
-        {% if responses[i].mark != -1 %}
-            {% set exoMark = exoMark + responses[i].mark %}
-        {% endif %}
- 
-        {% if(interactions[i].type == 'InteractionQCM') %}
-            {% set interInfo = getInterTwig(interactions[i].id, 'InteractionQCM') %}
-        {% elseif(interactions[i].type == 'InteractionGraphic') %}
-            {% set interInfo = getInterTwig(interactions[i].id, 'InteractionGraphic') %}
-	    {% elseif(interactions[i].type == 'InteractionHole') %}
-		    {% set interInfo = getInterTwig(interactions[i].id, 'InteractionHole') %}
-		{% elseif(interactions[i].type == 'InteractionOpen') %}
-            {% set interInfo = getInterTwig(interactions[i].id, 'InteractionOpen') %}
-		{% endif %}
-		
-		{% set exoScoreMax = exoScoreMax + interInfo['maxScore'] %}
-		
-    {% endfor %}
-
-    
     {% set hasBadge = badgesName|length > 0 %}
     {% set hasBadgeOwned = badgesNameOwned|length > 0 %}
-    {% set isPassed = exoMark * 2 >= exoScoreMax %}
-    {% set exoMark20 = (exoMark * exoScoreMax20 / exoScoreMax) %}
+    {% set isPassed = scorePaper * 2 >= maxExoScore %}
+    {% set exoMark20 = (scorePaper * exoScoreMax20 / maxExoScore) %}
     {% set exoMark20 = roundUpOrDown(exoMark20) %} {# tronqué à 1 digit #}
-    
     <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ exoMark20 }}/{{ exoScoreMax20 }}</div></h3>
 
     <p>

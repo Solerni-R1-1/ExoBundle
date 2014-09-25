@@ -65,6 +65,7 @@ class exerciseServices
 {
     protected $doctrine;
     protected $securityContext;
+    protected $exerciseRepository;
 
     /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
     protected $eventDispatcher;
@@ -74,6 +75,8 @@ class exerciseServices
         $this->doctrine        = $doctrine;
         $this->securityContext = $securityContext;
         $this->eventDispatcher = $eventDispatcher;
+        
+        $this->exerciseRepository = $this->doctrine->getManager()->getRepository('UJMExoBundle:Exercise');
     }
 
     public function getIP()
@@ -680,7 +683,7 @@ class exerciseServices
     public function isExerciseAdmin($exercise)
     {
         $user = $this->securityContext->getToken()->getUser();
-
+		
         $subscription = $this->doctrine
             ->getManager()
             ->getRepository('UJMExoBundle:Subscription')
@@ -723,18 +726,8 @@ class exerciseServices
         $responses = $this->orderResponses($responses, $paper->getOrdreQuestion());
 
         $infosPaper['responses'] = $responses;
-
-        $infosPaper['maxExoScore'] = $this->getExercisePaperTotalScore($paper->getId());
-
-        foreach ($responses as $response) {
-            if ($response->getMark() != -1) {
-                $scorePaper += $response->getMark();
-            } else {
-                $scoreTemp = true;
-            }
-        }
-
-        $infosPaper['scorePaper'] = $scorePaper;
+        $infosPaper['maxExoScore'] = $this->getPaperMaxScore($paper);
+        $infosPaper['scorePaper'] = $this->getPaperScore($paper);
         $infosPaper['scoreTemp'] = $scoreTemp;
 
         return $infosPaper;
@@ -974,6 +967,7 @@ class exerciseServices
                     break;
                 }
             }
+
             //if no response
             if ($tem == 0) {
                 $response = new \UJM\ExoBundle\Entity\Response();
@@ -985,5 +979,30 @@ class exerciseServices
         }
 
         return $resp;
+    }
+
+    public function getPaperMaxScore(Paper $paper) {
+    	$totalScore = 0;
+    	 
+    	$totalScore += $this->exerciseRepository->getMaximalMarkForPaperQCM($paper);
+    	$totalScore += $this->exerciseRepository->getMaximalMarkForPaperHole($paper);
+    	 
+    	return $totalScore;
+    }
+    
+
+    public function getPaperScore(Paper $paper) {
+    	$totalScore = 0;
+    	
+    	$totalScore += $this->exerciseRepository->getMarkForPaper($paper);
+    	
+    	return $totalScore;
+    }
+    
+    public function getPaperNormalizedScore(Paper $paper) {
+    	$score = $this->getPaperScore($paper);
+    	$max = $this->getPaperMaxScore($paper);
+    	
+    	return ($max == 0 ? $score : ($score * 20) / $max);
     }
 }
