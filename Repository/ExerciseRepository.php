@@ -56,9 +56,15 @@ public function getExerciseMarks($exoId, $order = '')
         if ($order != '') {
             $orderBy = ' ORDER BY '.$order;
         }
-        $dql = 'SELECT sum(r.mark) as noteExo, p.id as paper
-            FROM UJM\ExoBundle\Entity\Response r JOIN r.paper p JOIN p.exercise e
-            WHERE e.id='.$exoId.' AND p.interupt=0 group by p.id'.$orderBy;
+        $dql = 'SELECT 
+        			sum(r.mark) as noteExo,
+        			p as paper
+            	FROM UJM\ExoBundle\Entity\Response r
+        		JOIN r.paper p
+        		JOIN p.exercise e
+            	WHERE e.id='.$exoId.' 
+            	AND p.interupt=0 
+            	GROUP BY p.id'.$orderBy;
 
         $query = $this->_em->createQuery($dql);
 
@@ -88,28 +94,37 @@ public function getExerciseMarks($exoId, $order = '')
     }
     
 	public function getMaximalMarkForPaperQCM(Paper $paper) {
+		$questionsIds = explode(';', $paper->getOrdreQuestion());
     	$dql = "SELECT SUM(CASE WHEN (qcm.weightResponse = 0) THEN qcm.scoreRightResponse ELSE choice.weight END) as score
 					FROM UJM\ExoBundle\Entity\InteractionQCM qcm
 					JOIN qcm.interaction int
-					JOIN UJM\ExoBundle\Entity\Response resp WITH resp.interaction = int
-					JOIN UJM\ExoBundle\Entity\Paper paper WITH paper = resp.paper
     				JOIN UJM\ExoBundle\Entity\Choice choice WITH choice.interactionQCM = qcm
-					WHERE paper = :paper
-    				AND choice.rightResponse = true";
+					WHERE choice.rightResponse = true
+    				AND int.id IN (:questionsIds)";
     	
     	$query = $this->_em->createQuery($dql);
-    	$query->setParameter("paper", $paper);
+    	$query->setParameter("questionsIds", $questionsIds);
     	return $query->getSingleScalarResult();
     }
     
     public function getMaximalMarkForPaperHole(Paper $paper) {
+		$questionsIds = explode(';', $paper->getOrdreQuestion());
     	$dql = "SELECT SUM(word.score) as score
     				FROM UJM\ExoBundle\Entity\WordResponse word
     				JOIN word.hole hole
 					JOIN hole.interactionHole intHole
 					JOIN intHole.interaction int
-					JOIN UJM\ExoBundle\Entity\Response resp WITH resp.interaction = int
-					JOIN resp.paper paper
+					WHERE int.id IN (:questionsIds)";
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter("questionsIds", $questionsIds);
+    	return $query->getSingleScalarResult();
+    }
+    
+    public function getMarkForPaper(Paper $paper) {
+    	$dql = "SELECT SUM(resp.mark) as score
+    				FROM UJM\ExoBundle\Entity\Response resp
+    				JOIN resp.paper paper
 					WHERE paper = :paper";
     	
     	$query = $this->_em->createQuery($dql);

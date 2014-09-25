@@ -55,6 +55,7 @@ use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 use Claroline\CoreBundle\Controller\Badge\Tool;
 use Claroline\CoreBundle\Entity\Badge\Badge;
 use Claroline\CoreBundle\Manager\BadgeManager;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Paper controller.
@@ -510,7 +511,7 @@ class PaperController extends Controller
             
         } else {
             
-            throw new \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException();
+            throw new AccessDeniedHttpException();
         }
     }
 
