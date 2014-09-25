@@ -378,8 +378,10 @@ class QuestionController extends Controller
         $user     = $this->container->get('security.context')->getToken()->getUser();
         $catID    = -1;
 
-        if(count($share) > 0) {
+        if (count($share) > 0) {
             $shareAllowEdit = $share[0]->getAllowToModify();
+        } else {
+        	$shareAllowEdit = false;
         }
 
         if ( (count($question) > 0) || ($shareAllowEdit) ) {
