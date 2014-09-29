@@ -14,6 +14,7 @@ duree : Durée estimée
 
 #E
 end date: Fin
+exercise_ended: La date limite pour effectuer cet exercise à été dépassée. 
 
 # F
 final mark: Voir votre note
