@@ -78,7 +78,7 @@
       {#  <a href="{{ path('ujm_exercise_open', { 'exerciseId': exoID }) }}" class="btn btn-primary">
             <i class="icon-arrow-left"></i> {{ 'back' | trans }}
         </a>#}
-        {% if retryButton and nbUserPaper == 0 %}
+        {% if not (maxAttemptsAchieved or endedExercise) and nbUserPaper == 0 %}
             <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
                 <i class="icon-check"></i> {{ 'compose' | trans }}
             </a>
@@ -127,15 +127,20 @@
 
         {% include "UJMExoBundle:Partial:badgeInfos/infos.html.twig" %}
         {% include "UJMExoBundle:Partial:correction/attemptInfo.html.twig" %}
-
-        {% if retryButton %}<br/>
-            <div class="input-group">
-                <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
-                    {{ 'start again' | trans({}, 'solerni') }}
-                </a>
-            </div><br/>
+		<br/>
+        
+        {% if maxAttemptsAchieved %}
+        <p>{{ 'exercise_no_more_tries' | trans({}, 'solerni') }}</p>
+        {% elseif endedExercise %}
+        <p>{{ 'exercise_ended' | trans({}, 'solerni') }}</p>
+        {% else %}
+		<div class="input-group">
+			<a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
+				{{ 'start again' | trans({}, 'solerni') }}
+			</a>
+		</div>
         {% endif %}
-
+		<br/>
         <div class='topTableBlue'>{{'list of all results' | trans({}, 'solerni') }}</div>
         {#<h6 style="color: red; text-align: right;">({{ 'paperLegend' | trans }}).</h6>#}
 

@@ -85,7 +85,8 @@ class PaperController extends Controller
     public function indexAction($exoID, $page, $all)
     {
         $nbUserPaper = 0;
-        $retryButton = false;
+        $maxAttemptsAchieved = false;
+        $endedExercise = false;
         $nbAttemptAllowed = -1;
         $exerciseSer = $this->container->get('ujm.exercise_services');
         
@@ -95,7 +96,9 @@ class PaperController extends Controller
         $user = $this->container->get('security.context')->getToken()->getUser();
 
         $em = $this->getDoctrine()->getManager();
+        /* @var $exercise Exercise */
         $exercise = $em->getRepository('UJMExoBundle:Exercise')->find($exoID);
+        
         $workspace = $exercise->getResourceNode()->getWorkspace();
 
         $this->checkAccess($exercise);
@@ -153,9 +156,12 @@ class PaperController extends Controller
             $arrayMarkPapers[$p->getId()] = $this->container->get('ujm.exercise_services')->getInfosPaper($p);
         }
 
-        if ($exerciseSer->controlMaxAttemps($exercise,
+        $now = new \DateTime();
+        if (!$exerciseSer->controlMaxAttemps($exercise,
                 $user, $exerciseSer->isExerciseAdmin($exercise))) {
-            $retryButton = true;
+            $maxAttemptsAchieved = true;
+        } else if ($exercise->getUseDateEnd() && $exercise->getEndDate() < $now) {
+        	$endedExercise = true;
         }
         
         if ($exercise->getMaxAttempts() > 0) {
@@ -184,7 +190,7 @@ class PaperController extends Controller
 
         foreach($badgeList as $result){
             $badge = $result['badge'];
-            if($result['status'] === Badge::BADGE_STATUS_OWNED){
+            if ($result['status'] === Badge::BADGE_STATUS_OWNED) {
                 $badgesNameOwned[] = $badge->getName();
             } else {
                 $badgesName[] = $badge->getName();
@@ -195,20 +201,21 @@ class PaperController extends Controller
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
-                'workspace'        => $workspace,
-                'papers'           => $papers,
-                'isAdmin'          => $exoAdmin,
-                'pager'            => $pagerfanta,
-                'exoID'            => $exoID,
-                'display'          => $display,
-                'retryButton'      => $retryButton,
-                'nbAttemptAllowed' => $nbAttemptAllowed,
-                'badgesInfoUser'   => $badgesInfoUser,
-                'nbUserPaper'      => $nbUserPaper,
-                '_resource'        => $exercise,
-                'arrayMarkPapers'  => $arrayMarkPapers,
-                'badgesName'       => $badgesName,
-                'badgesNameOwned'  => $badgesNameOwned
+                'workspace'				=> $workspace,
+                'papers'				=> $papers,
+                'isAdmin'				=> $exoAdmin,
+                'pager'					=> $pagerfanta,
+                'exoID'					=> $exoID,
+                'display'				=> $display,
+                'maxAttemptsAchieved'	=> $maxAttemptsAchieved,
+            	'endedExercise'			=> $endedExercise,
+                'nbAttemptAllowed'		=> $nbAttemptAllowed,
+                'badgesInfoUser'		=> $badgesInfoUser,
+                'nbUserPaper'			=> $nbUserPaper,
+                '_resource'				=> $exercise,
+                'arrayMarkPapers'		=> $arrayMarkPapers,
+                'badgesName'			=> $badgesName,
+                'badgesNameOwned'		=> $badgesNameOwned
             )
         );
     }
