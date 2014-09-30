@@ -87,6 +87,7 @@ class PaperController extends Controller
         $nbUserPaper = 0;
         $maxAttemptsAchieved = false;
         $endedExercise = false;
+        $startedExercise = false;
         $nbAttemptAllowed = -1;
         $exerciseSer = $this->container->get('ujm.exercise_services');
         
@@ -160,9 +161,13 @@ class PaperController extends Controller
         if (!$exerciseSer->controlMaxAttemps($exercise,
                 $user, $exerciseSer->isExerciseAdmin($exercise))) {
             $maxAttemptsAchieved = true;
-        } else if ($exercise->getUseDateEnd() && $exercise->getEndDate() < $now) {
+        } 
+        if ($exercise->getUseDateEnd() && $exercise->getEndDate() < $now) {
         	$endedExercise = true;
         }
+      	if ($exercise->getStartDate() <= $now) {
+      		$startedExercise = true;
+      	}
         
         if ($exercise->getMaxAttempts() > 0) {
             if ($exoAdmin === false) {
@@ -209,6 +214,8 @@ class PaperController extends Controller
                 'display'				=> $display,
                 'maxAttemptsAchieved'	=> $maxAttemptsAchieved,
             	'endedExercise'			=> $endedExercise,
+            	'startedExercise'		=> $startedExercise,
+            	'exerciseStartDate'		=> $exercise->getStartDate(),
                 'nbAttemptAllowed'		=> $nbAttemptAllowed,
                 'badgesInfoUser'		=> $badgesInfoUser,
                 'nbUserPaper'			=> $nbUserPaper,
