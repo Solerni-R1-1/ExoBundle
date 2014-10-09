@@ -776,7 +776,7 @@ class exerciseServices
         $paperInfos = $this->getInfosPaper($paper);
 
         if (!$paperInfos['scoreTemp']) {
-            $event = new LogExerciseEvaluatedEvent($paper->getExercise(), $paperInfos['scorePaper']);
+            $event = new LogExerciseEvaluatedEvent($paper->getExercise(), ($paperInfos['scorePaper'] * 20) / $paperInfos['maxExoScore']);
             $this->eventDispatcher->dispatch('log', $event);
         }
     }
