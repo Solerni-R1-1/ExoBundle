@@ -76,6 +76,7 @@ class LoadOptionsData extends AbstractFixture
     private function newTQCM($val, $code)
     {
         $tqcm = new TypeQCM();
+        $tqcm->setId($code);
         $tqcm->setValue($val);
         $tqcm->setCode($code);
 
