@@ -234,7 +234,13 @@
                                         </ul>
                                     </td>
 
-                                    {% set scoreFinal = arrayMarkPapers[paper.id].scorePaper / arrayMarkPapers[paper.id].maxExoScore %}
+
+
+                                    {% if arrayMarkPapers[paper.id].maxExoScore == 0 %}
+                                        {% set scoreFinal = 0 %}
+                                    {% else %}
+                                        {% set scoreFinal = arrayMarkPapers[paper.id].scorePaper / arrayMarkPapers[paper.id].maxExoScore %}
+                                    {% endif %}
                                     {% set scoreFinal = scoreFinal * 20 %}
                                     {% set scoreFinal = roundUpOrDown(scoreFinal) %}
 
