@@ -132,7 +132,6 @@
         {% if not startedExercise %}
         <p>{{ 'exercise_not_started' | trans({"%date%" : exerciseStartDate|date(format)}, 'solerni') | raw}}</p>
         {% elseif maxAttemptsAchieved %}
-        <p>{{ 'exercise_no_more_tries' | trans({}, 'solerni') }}</p>
         {% elseif endedExercise %}
         <p>{{ 'exercise_ended' | trans({}, 'solerni') }}</p>
         {% else %}
@@ -234,7 +233,13 @@
                                         </ul>
                                     </td>
 
-                                    {% set scoreFinal = arrayMarkPapers[paper.id].scorePaper / arrayMarkPapers[paper.id].maxExoScore %}
+
+
+                                    {% if arrayMarkPapers[paper.id].maxExoScore == 0 %}
+                                        {% set scoreFinal = 0 %}
+                                    {% else %}
+                                        {% set scoreFinal = arrayMarkPapers[paper.id].scorePaper / arrayMarkPapers[paper.id].maxExoScore %}
+                                    {% endif %}
                                     {% set scoreFinal = scoreFinal * 20 %}
                                     {% set scoreFinal = roundUpOrDown(scoreFinal) %}
 

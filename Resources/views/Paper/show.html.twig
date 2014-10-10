@@ -136,12 +136,11 @@
     
     <div class="panel-body">
         {% if  p == -2 %}
-
 	        {% if retryButton %}
                 <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoId }) }}">
 	                {{ 'start again' | trans({}, 'solerni') }}
 	            </a>
-            {% else %}
+            {% elseif nbUserPaper > 1 %}
                  <a class="btn btn-gris" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
                     {{ 'see papers' | trans({}, 'solerni') }}
                 </a>
