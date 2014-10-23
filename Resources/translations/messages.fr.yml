@@ -256,7 +256,7 @@ noUserFound: Pas d'utilisateur trouvé
 nQuestion: Question n°
 number of papers: Nombre de copies
 number of questions: Nombre de questions
-number of questions to draw: Nombre de questions à tirer
+number of questions to draw: Nombre de questions à tirer (mettre zéro pour toutes les questions disponible)
 numerical: Numérique
 num_paper: Numéro de la copie
 
