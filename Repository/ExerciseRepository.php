@@ -92,19 +92,24 @@ public function getExerciseMarks($exoId, $order = '')
     	
     	return $results;
     }
+
+    public function getMaximalMarkForPaperQCM(Paper $paper) {
+    	return $this->getMaximalMarkForPaperQCMOrdreQuestion($paper->getOrdreQuestion());
+    }
     
-	public function getMaximalMarkForPaperQCM(Paper $paper) {
-		$questionsIds = explode(';', $paper->getOrdreQuestion());
-		// First request gives us the max score for all QCM with general mark
+
+    public function getMaximalMarkForPaperQCMOrdreQuestion($ordreQuestion) {
+    	$questionsIds = explode(';', $ordreQuestion);
+    	// First request gives us the max score for all QCM with general mark
     	$dql = "SELECT SUM(qcm.scoreRightResponse) as score
 					FROM UJM\ExoBundle\Entity\InteractionQCM qcm
 					JOIN qcm.interaction int
 					WHERE qcm.weightResponse = 0
     				AND int.id IN (:questionsIds)";
-    	
+    	 
     	$query = $this->_em->createQuery($dql);
     	$query->setParameter("questionsIds", $questionsIds);
-
+    
     	// Second request gives us the max score for all QCM with per questions mark
     	$dql2 = "SELECT SUM(choice.weight) as score
 					FROM UJM\ExoBundle\Entity\InteractionQCM qcm
@@ -113,7 +118,7 @@ public function getExerciseMarks($exoId, $order = '')
 					WHERE choice.rightResponse = true
     				AND qcm.weightResponse = 1
     				AND int.id IN (:questionsIds)";
-    	 
+    
     	$query2 = $this->_em->createQuery($dql2);
     	$query2->setParameter("questionsIds", $questionsIds);
     	return $query->getSingleScalarResult() + $query2->getSingleScalarResult();
