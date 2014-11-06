@@ -97,7 +97,7 @@
 
         <hr/>
 
-        {% if isAdmin == 1 and  papers is not empty %}
+        {% if isAdmin == 1 and  pager.getNbResults() > 0 %}
             {{ 'searchUserPaper' | trans }} :
             <div class="input-group">
                 <input type="text" class="form-control" id="nameUser" placeholder="{{ 'search'|trans({}, 'platform') }}"
@@ -108,11 +108,11 @@
                 <i class="icon-search"></i></button>
                 </span>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': papers[0].exercise.id }) }}">
+                <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': exercise.id }) }}">
                     <i class="icon-repeat"></i> {{ 'reset' | trans }}
                </a>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': papers[0].exercise.id, 'all': 1 }) }}">
+                <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': exercise.id, 'all': 1 }) }}">
                     <i class="icon-list"></i> {{ 'displayAllList' | trans }}
                 </a>
             </div>
@@ -149,7 +149,7 @@
             {% if divResultSearch is defined %}
                 {{ divResultSearch | raw }}
             {% else %}
-                {% if papers is not empty %}
+                {% if pager.getNbResults() > 0 %}
                     <table class="table table-condensed records_list table-solerni table-solerni_withmargin" id="UserArray">
                         <thead>
                             <tr style="background-color: lightsteelblue;">
@@ -199,33 +199,23 @@
 
                         
 
-                        {% for paper in papers %}
+                        {% for paper in pager.currentPageResults %}
                             <tr>
                                 <td class="classic">
-                                    {{ paper.user.firstname }} {{ paper.user.lastName }}
-                                </td>
-                            {#    <td class="classic">
-                                    {{ paper.numpaper }}
-                                </td> #}
-                                <td class="classic">
-                                    {% if paper.start %}{{ paper.start|date(format) }}{% else %}-{% endif %}
+                                    {{ paper.user_firstname }} {{ paper.user_lastname }}
                                 </td>
                                 <td class="classic">
-                                    {% if paper.end %}{{ paper.end|date(format) }}{% else %}-{% endif %}
+                                    {% if paper.paper_start %}{{ paper.paper_start|date(format) }}{% else %}-{% endif %}
                                 </td>
-                            {#}    <td class="classic">
-                                     {% if paper.interupt %}
-                                        {{ 'yes'|trans }}
-                                    {% else %}
-                                        {{ 'no'|trans }}
-                                     {% endif %}
-                                </td>#}
+                                <td class="classic">
+                                    {% if paper.paper_end %}{{ paper.paper_end|date(format) }}{% else %}-{% endif %}
+                                </td>
                                 {% if display != 'none' %}
                                     <td class="classic">
                                         <ul class="list-unstyled">
                                             <li>
-                                                {% if ((paper.end) or (isAdmin == 1)) %}
-                                                    <a class="see" data-toggle="tooltip" title="{{ 'show'|trans }}" href="{{ path('ujm_paper_show', { 'id': paper.id }) }}">
+                                                {% if ((paper.paper_end) or (isAdmin == 1)) %}
+                                                    <a class="see" data-toggle="tooltip" title="{{ 'show'|trans }}" href="{{ path('ujm_paper_show', { 'id': paper.paper_id }) }}">
                                                         <i class="icon-eye-open"></i>
                                                      </a>
                                                 {% endif %}
@@ -235,15 +225,15 @@
 
 
 
-                                    {% if arrayMarkPapers[paper.id].maxExoScore == 0 %}
+                                    {% if arrayMarkPapers[paper.paper_id].maxExoScore == 0 %}
                                         {% set scoreFinal = 0 %}
                                     {% else %}
-                                        {% set scoreFinal = arrayMarkPapers[paper.id].scorePaper / arrayMarkPapers[paper.id].maxExoScore %}
+                                        {% set scoreFinal = arrayMarkPapers[paper.paper_id].scorePaper / arrayMarkPapers[paper.paper_id].maxExoScore %}
+	                                    {% set scoreFinal = scoreFinal * 20 %}
+	                                    {% set scoreFinal = roundUpOrDown(scoreFinal) %}
                                     {% endif %}
-                                    {% set scoreFinal = scoreFinal * 20 %}
-                                    {% set scoreFinal = roundUpOrDown(scoreFinal) %}
 
-                                    {% if arrayMarkPapers[paper.id].scoreTemp == true %}
+                                    {% if arrayMarkPapers[paper.paper_id].scoreTemp == true %}
                                         <td class="classic" style="color: red;"> {{ scoreFinal }} / 20</td>
                                     {% else %}
                                         <td class="classic"> {{ scoreFinal }} / 20</td>
@@ -257,7 +247,7 @@
                     {% if pager.haveToPaginate %}
                         <div class="text-center panel-footer">
                             {{ pagerfanta(pager, 'twitter_bootstrap_translated', {'routeName': 'ujm_paper_list',
-                                'routeParams': { 'exoID': papers[0].exercise.id } }) }}
+                                'routeParams': { 'exoID': exercise.id } }) }}
                         </div>
                     {% endif %}
                 {% else %}

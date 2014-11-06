@@ -184,7 +184,7 @@ class ExerciseController extends Controller
             $numAttempt = -1;
             if(count($paper) > 0){
                 $paper = $paper[count($paper) - 1 ];
-                $numAttempt = $paper->getNumPaper();    
+                $numAttempt = $paper['paper']->getNumPaper();    
             } 
 
             /** SII trouver l'info numAttempt **/
@@ -660,7 +660,7 @@ class ExerciseController extends Controller
         $response = $this->getDoctrine()
             ->getManager()
             ->getRepository('UJMExoBundle:Response')
-            ->getAlreadyResponded($session->get('paper'), $interactionToValidatedID);
+            ->getAlreadyResponded($paper->getId(), $interactionToValidatedID);
 
         switch ($typeInterToRecorded) {
             case "InteractionQCM":
