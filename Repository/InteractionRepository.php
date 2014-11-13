@@ -38,6 +38,7 @@
 namespace UJM\ExoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use UJM\ExoBundle\Entity\Exercise;
 
 /**
  * InteractionRepository
@@ -84,15 +85,18 @@ class InteractionRepository extends EntityRepository
      * Interactions by Exercise's Questions
      *
      */
-    public function getExerciseInteraction($em, $exoId, $shuffle, $nbQuestions = 0)
+    public function getExerciseInteraction(Exercise $exercise, $shuffle, $nbQuestions = 0)
     {
         $interactions = array();
         $questionsList = array();
         $nbQuestionsTot = 0;
 
-        $dql = 'SELECT eq FROM UJM\ExoBundle\Entity\ExerciseQuestion eq WHERE eq.exercise=' . $exoId
-            . ' ORDER BY eq.ordre';
-        $query = $em->createQuery($dql);
+        $dql = 'SELECT eq
+        		FROM UJM\ExoBundle\Entity\ExerciseQuestion eq
+        		WHERE eq.exercise = :exercise
+            	ORDER BY eq.ordre';
+        $query = $this->_em->createQuery($dql);
+        $query->setParameter("exercise", $exercise);
         $eqs = $query->getResult();
 
         foreach ($eqs as $eq) {
@@ -122,9 +126,12 @@ class InteractionRepository extends EntityRepository
         }
 
         foreach ($questionsList as $q) {
-            $dql = 'SELECT i FROM UJM\ExoBundle\Entity\Interaction i JOIN i.question q '
-                . 'WHERE q=' . $q;
-            $query = $em->createQuery($dql);
+            $dql = 'SELECT i
+            		FROM UJM\ExoBundle\Entity\Interaction i
+            		JOIN i.question q 
+            		WHERE q = :question';
+            $query = $this->_em->createQuery($dql);
+            $query->setParameter("question", $q);
             $inter = $query->getResult();
             $interactions[] = $inter[0];
         }

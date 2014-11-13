@@ -38,6 +38,7 @@
 namespace UJM\ExoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use UJM\ExoBundle\Entity\Exercise;
 
 /**
  * ExerciseQuestionRepository
@@ -73,5 +74,17 @@ class ExerciseQuestionRepository extends EntityRepository
         $query = $this->_em->createQuery($dql);
 
         return $query->getSingleResult();
+    }
+    
+    public function getMaxOrder(Exercise $exercise) {
+    	$dql = 'SELECT max(eq.ordre)
+    			FROM UJM\ExoBundle\Entity\ExerciseQuestion eq
+    			WHERE eq.exercise = :exercise';
+    	
+    	$query = $this->_em->createQuery($dql);
+    	
+    	$query->setParameter("exercise", $exercise);
+    	
+    	return $query->getSingleScalarResult();
     }
 }

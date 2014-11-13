@@ -50,7 +50,7 @@ use UJM\ExoBundle\Entity\Paper;
  */
 class ExerciseRepository extends EntityRepository
 {
-public function getExerciseMarks($exoId, $order = '')
+public function getExerciseMarks(Exercise $exercise, $order = '')
     {
     	$orderBy = '';
         if ($order != '') {
@@ -59,14 +59,16 @@ public function getExerciseMarks($exoId, $order = '')
         $dql = 'SELECT 
         			sum(r.mark) as noteExo,
         			p as paper
-            	FROM UJM\ExoBundle\Entity\Response r
-        		JOIN r.paper p
+            	FROM UJM\ExoBundle\Entity\Paper p
+        		LEFT JOIN UJM\ExoBundle\Entity\Response r
+        			WITH r.paper = p
         		JOIN p.exercise e
-            	WHERE e.id='.$exoId.' 
+            	WHERE e.id = :exercise
             	AND p.interupt=0 
             	GROUP BY p.id'.$orderBy;
 
         $query = $this->_em->createQuery($dql);
+        $query->setParameter('exercise', $exercise);
 
         return $query->getResult();
     }

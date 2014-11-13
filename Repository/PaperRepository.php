@@ -38,6 +38,8 @@
 namespace UJM\ExoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use UJM\ExoBundle\Entity\Exercise;
+use Claroline\CoreBundle\Entity\User;
 
 /**
  * PaperRepository
@@ -95,7 +97,7 @@ class PaperRepository extends EntityRepository
      * Returns all papers for an exercise
      *
      */
-    public function getExerciseAllPapers($exerciseID, $getQuery = false)
+    public function getExerciseAllPapers(Exercise $exercise, $getQuery = false)
     {
     	$dql = "SELECT u.firstName		AS user_firstname,
     					u.lastName		AS user_lastname,
@@ -103,14 +105,15 @@ class PaperRepository extends EntityRepository
     					p 				AS paper,
     					p.id			AS paper_id,
     					p.start			AS paper_start,
-    					p.end			AS paper_end
+    					p.end			AS paper_end,
+    					p.ordreQuestion AS paper_ordre_question
     			FROM UJM\ExoBundle\Entity\Paper p
     			JOIN p.exercise e
-    				WITH e.id = :exerciseId
+    				WITH e = :exercise
     			JOIN p.user u
     			GROUP BY p.id";
     	$query = $this->_em->createQuery($dql);
-    	$query->setParameter("exerciseId", $exerciseID);
+    	$query->setParameter("exercise", $exercise);
     	
     	return $getQuery ? $query : $query->getResult();
     }
@@ -141,5 +144,18 @@ class PaperRepository extends EntityRepository
         $query = $this->_em->createQuery($dql);
 
         return $query->getResult();
+    }
+    
+    public function getMaxNumPaper(Exercise $exercise, User $user) {
+    	$dql = 'SELECT max(p.numPaper)
+    			FROM UJM\ExoBundle\Entity\Paper p 
+    			WHERE p.exercise = :exercise
+    				AND p.user = :user';
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter('exercise', $exercise);
+    	$query->setParameter('user', $user);
+    	
+    	return $query->getSingleScalarResult();
     }
 }
