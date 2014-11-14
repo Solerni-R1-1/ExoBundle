@@ -1518,8 +1518,8 @@ class ExerciseController extends Controller
         switch ( $interaction[0]->getType()) {
             case "InteractionQCM":
                 $interQCM = $this->em->getRepository('UJMExoBundle:InteractionQCM')
-                               ->getInteractionQCM($interaction[0]->getId());
-                $scoreMax = $this->exerciseServices->qcmMaxScore($interQCM[0]);
+                               ->getInteractionQCM($interaction[0]);
+                $scoreMax = $this->exerciseServices->qcmMaxScore($interQCM);
                 $responsesTab = $this->responseStatus($responses, $scoreMax);
                 break;
 
