@@ -534,7 +534,7 @@ class PaperController extends Controller
                 $rowCSV[] = $row[0]->getStart()->format('Y-m-d H:i:s');
                 $rowCSV[] = ($row[0]->getEnd() != NULL ? $row[0]->getEnd()->format('Y-m-d H:i:s') : '');
                 $rowCSV[] = $row[0]->getInterupt();
-                $rowCSV[] = $this->exercise_services->roundUpDown($score);
+                $rowCSV[] = $this->exerciseServices->roundUpDown($score);
                 
                 fputcsv($handle, $rowCSV);
                 $em->detach($row[0]);

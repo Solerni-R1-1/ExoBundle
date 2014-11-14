@@ -692,30 +692,35 @@ class ExerciseController extends Controller
     	// Check access to :
     	// - Exercise
     	// - Paper (is it mine ? is it finished ? is it in correct exercise ?)
-    	
-    	// Init vars
-    	$workspace = $exercise->getResourceNode()->getWorkspace();
-    	switch ($request->getMethod()) {
-    		case Request::METHOD_GET:
-    			// Do nothing
-    			break;
-    		case Request::METHOD_POST:
-    			// Write response
-    			$this->processAnswer($request);
-    			break;
-    		default:
-    			// Throw error : not allowed
-    			break;
+    	if ($paper->getUser()->getId() != $user->getId()) {
+    		return $this->redirect($this->generateUrl('ujm_exercise_paper', array(
+    				'id' => $paper->getExercise()->getId()
+    		)));
     	}
-
-    	$paper->setInterupt(0);
-        $paper->setEnd(new \Datetime());
-        $this->em->persist($paper);
-        $this->em->flush();
-
-        $this->exerciseServices->manageEndOfExercise($paper);
-
-        return $this->forward('UJMExoBundle:Paper:show', array('id' => $paper->getId()));
+    	
+    	if ($paper->getEnd() == null) { 
+	    	switch ($request->getMethod()) {
+	    		case Request::METHOD_GET:
+	    			// Do nothing
+	    			break;
+	    		case Request::METHOD_POST:
+	    			// Write response
+	    			$this->processAnswer($request);
+	    			break;
+	    		default:
+	    			// Throw error : not allowed
+	    			break;
+	    	}
+	
+	    	$paper->setInterupt(0);
+	        $paper->setEnd(new \Datetime());
+	        $this->em->persist($paper);
+	        $this->em->flush();
+	
+	        $this->exerciseServices->manageEndOfExercise($paper);
+    	}
+    	
+        return $this->redirect($this->generateUrl('ujm_paper_show', array('id' => $paper->getId())));//'UJMExoBundle:Paper:show', array('id' => $paper->getId()));
     }
     
     private function processAnswer(Request $request) {
@@ -759,11 +764,17 @@ class ExerciseController extends Controller
      */
     public function displayQuestionAction(Request $request, User $user, Exercise $exercise, Paper $paper, Interaction $interaction) {
     	// Check access to :
-    	// - Exercise
     	// - Paper (is it mine ? is it finished ? is it in correct exercise ?)
-    	
+    	if ($paper->getUser()->getId() != $user->getId()) {
+    		return $this->redirect($this->generateUrl('ujm_exercise_paper', array(
+    				'id' => $paper->getExercise()->getId()
+    		)));
+    	}
+    	if ($paper->getEnd() != null) {
+    		return $this->redirect($this->generateUrl('ujm_paper_show', array('id' => $paper->getId())));
+    	}
     	// Init vars
-    	$workspace = $exercise->getResourceNode()->getWorkspace();
+    	$workspace = $paper->getExercise()->getResourceNode()->getWorkspace();
     	switch ($request->getMethod()) {
     		case Request::METHOD_GET:
     			// Do nothing
@@ -805,6 +816,14 @@ class ExerciseController extends Controller
     		}
     	}
     	$interactionPosition = array_search($interaction->getId(), $offsettedInteractionsIds);
+    	// If interaction is not in the ordre question list, we redirect the user to the first question of the paper.
+    	if ($interactionPosition === false) {
+    		return $this->redirect($this->generateUrl('ujm_exercise_paper_question', array(
+    			'exerciseId'	=> $exercise->getId(),
+    			'paperId'		=> $paper->getId(),
+    			'interactionId'	=> $offsettedInteractionsIds[1]
+    		)));
+    	}
     	$parameters = array('workspace' 				=> $workspace,
 					    	'exercise'					=> $exercise,
 					    	'paper'						=> $paper,
