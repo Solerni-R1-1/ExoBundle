@@ -67,33 +67,52 @@ class PaperRepository extends EntityRepository
      * Returns the user's papers for an exercise
      *
      */
-    public function getExerciseUserPapers($userID, $exerciseID, $orderBy = "id", $orderDirection = "ASC")
+    public function getExerciseUserPapers($userID, $exerciseID, $orderBy = "paper_id", $orderDirection = "ASC", $getQuery = false)
     {
-        $qb = $this->createQueryBuilder('p');
-        $qb->join('p.user', 'u')
-            ->join('p.exercise', 'e')
-            ->where($qb->expr()->in('u.id', $userID))
-            ->andWhere($qb->expr()->in('e.id', $exerciseID))
-            ->orderBy('p.'.$orderBy, $orderDirection);
 
-        return $qb->getQuery()->getResult();
+    	$dql = "SELECT u.firstName		AS user_firstname,
+    					u.lastName		AS user_lastname,
+    					u.id			AS user_id,
+    					p 				AS paper,
+    					p.id			AS paper_id,
+    					p.start			AS paper_start,
+    					p.end			AS paper_end
+    			FROM UJM\ExoBundle\Entity\Paper p
+    			JOIN p.exercise e
+    				WITH e.id = :exerciseId
+    			JOIN p.user u
+    				WITH u.id = :userId
+    			GROUP BY p.id
+    			ORDER BY ".$orderBy." ".$orderDirection;
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter("exerciseId", $exerciseID);
+    	$query->setParameter("userId", $userID);
+    	 
+    	return $getQuery ? $query : $query->getResult();
     }
 
     /**
      * Returns all papers for an exercise
      *
      */
-    public function getExerciseAllPapers($exerciseID)
+    public function getExerciseAllPapers($exerciseID, $getQuery = false)
     {
-        $qb = $this->createQueryBuilder('p');
-        $qb->join('p.exercise', 'e')
-            ->join('p.user', 'u')
-            ->where($qb->expr()->in('e.id', $exerciseID))
-            ->orderBy('u.lastName', 'ASC')
-            ->addOrderBy('u.firstName', 'ASC')
-            ->addOrderBy('p.id', 'ASC');
-
-        return $qb->getQuery()->getResult();
+    	$dql = "SELECT u.firstName		AS user_firstname,
+    					u.lastName		AS user_lastname,
+    					u.id			AS user_id,
+    					p 				AS paper,
+    					p.id			AS paper_id,
+    					p.start			AS paper_start,
+    					p.end			AS paper_end
+    			FROM UJM\ExoBundle\Entity\Paper p
+    			JOIN p.exercise e
+    				WITH e.id = :exerciseId
+    			JOIN p.user u
+    			GROUP BY p.id";
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter("exerciseId", $exerciseID);
+    	
+    	return $getQuery ? $query : $query->getResult();
     }
     
     /**

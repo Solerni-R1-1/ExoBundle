@@ -47,7 +47,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use UJM\ExoBundle\Services\classes\exerciseServices;
 
-class TwigExtensions extends \Twig_Extension
+class twigExtensions extends \Twig_Extension
 {
     protected $doctrine;
     protected $exerciseSer;

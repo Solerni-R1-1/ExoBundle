@@ -105,21 +105,24 @@
 <script type="text/javascript" src="{{ asset('bundles/frontend/jquery/jquery-ui-1.9.2/jquery-ui-1.9.2.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/ext/jquery-ui-touch-punch.js') }}"></script>
 <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/category_pop.js') }}"></script>
-<script type="text/javascript" src="{{ asset('bundles/ujmexo/js/hint.js') }}"></script>
 
 {# functions javascript #}
 {% if error is defined %}
     <script type="text/javascript">
     $.getScript("{{ asset('bundles/ujmexo/js/interactionQCM.js') }}", function() {
-        creationQCMEdit('{{ 'expected answer' | trans }}', '{{ 'response' | trans }}', '{{ 'point' | trans }}', '{{ 'comment' | trans }}', '{{ 'Choice.positionForce' | trans }}', '{{ 'addChoice' | trans }}', '{{ 'delete' | trans }}', 0);
-        newHintEdit('{{ 'hint' | trans }}', '{{ 'penalty' | trans }}', '{{ 'add hint' | trans }}', '{{ 'delete' | trans }}');
+    	$.getScript("{{ asset('bundles/ujmexo/js/hint.js') }}", function() {
+	        creationQCMEdit('{{ 'expected answer' | trans }}', '{{ 'response' | trans }}', '{{ 'point' | trans }}', '{{ 'comment' | trans }}', '{{ 'Choice.positionForce' | trans }}', '{{ 'addChoice' | trans }}', '{{ 'delete' | trans }}', 0);
+	        newHintEdit('{{ 'hint' | trans }}', '{{ 'penalty' | trans }}', '{{ 'add hint' | trans }}', '{{ 'delete' | trans }}');
+    	});
     });
     </script>
 {% else %}
     <script type="text/javascript">
     $.getScript("{{ asset('bundles/ujmexo/js/interactionQCM.js') }}", function() {
-        creationQCM('{{ 'expected answer' | trans }}', '{{ 'response' | trans }}', '{{ 'point' | trans }}', '{{ 'comment' | trans }}', '{{ 'Choice.positionForce' | trans }}', '{{ 'addChoice' | trans }}', '{{ 'delete' | trans }}');
-        newHint('{{ 'hint' | trans }}', '{{ 'penalty' | trans }}', '{{ 'add hint' | trans }}', '{{ 'delete' | trans }}');
+    	$.getScript("{{ asset('bundles/ujmexo/js/hint.js') }}", function() {
+	        creationQCM('{{ 'expected answer' | trans }}', '{{ 'response' | trans }}', '{{ 'point' | trans }}', '{{ 'comment' | trans }}', '{{ 'Choice.positionForce' | trans }}', '{{ 'addChoice' | trans }}', '{{ 'delete' | trans }}');
+	        newHint('{{ 'hint' | trans }}', '{{ 'penalty' | trans }}', '{{ 'add hint' | trans }}', '{{ 'delete' | trans }}');
+    	});
     });
     </script>
 {% endif %}

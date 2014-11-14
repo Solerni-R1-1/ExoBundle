@@ -85,7 +85,7 @@ class Hole
     private $selector;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\InteractionHole")
+     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\InteractionHole", inversedBy="holes")
      * @ORM\JoinColumn(name="interaction_hole_id", referencedColumnName="id")
      */
     private $interactionHole;

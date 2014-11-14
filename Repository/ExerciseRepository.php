@@ -139,13 +139,17 @@ public function getExerciseMarks($exoId, $order = '')
     }
     
     public function getMarkForPaper(Paper $paper) {
-    	$dql = "SELECT SUM(resp.mark) as score
+    	$dql = "SELECT MAX(resp.mark) as score
     				FROM UJM\ExoBundle\Entity\Response resp
     				JOIN resp.paper paper
-					WHERE paper = :paper";
+					WHERE paper = :paper
+    				GROUP BY resp.interaction";
     	
     	$query = $this->_em->createQuery($dql);
     	$query->setParameter("paper", $paper);
-    	return $query->getSingleScalarResult();
+    	
+    	$result = $query->getArrayResult();
+    	$result = array_map(function($a) { return $a['score'];}, $result);
+    	return array_sum($result);
     }
 }
