@@ -47,6 +47,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InteractionGraphic
 {
+	public static $TYPE = "InteractionGraphic";
+	
     /**
      * @var integer $id
      *
@@ -148,5 +150,9 @@ class InteractionGraphic
     public function setDocument(\UJM\ExoBundle\Entity\Document $document)
     {
         $this->document = $document;
+    }
+    
+    public function getType() {
+    	return self::$TYPE;
     }
 }

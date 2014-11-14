@@ -49,10 +49,7 @@
 
 {% block title %} {{ 'paper' | trans }} {% endblock %}
 
-{% block resourceBreadcrumb %}{#
-    <li><a href="{{ path('claro_resource_open', { 'resourceType': _resource.resourceNode.resourceType.name(), 'node': _resource.resourceNode.id }) }}">{{ _resource.getResourceNode().getName() }}</a></li>
-    <li class="active">{{ 'nQuestion' | trans }}{{numQ}}</li>
-#}{% endblock %}
+{% block resourceBreadcrumb %}{% endblock %}
 
 {% block section_content %}
     <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/paper.js') }}"></script>
@@ -72,53 +69,37 @@
 </div>
 <div class='col-xs-9 col-md-9'>    
      <div class="panel-heading">
-        {#<div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>#}
-        <h1>{{'paper exo'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}</h1>
+        <h1>{{'paper exo'|trans({}, 'solerni')}} : {{ exercise.getResourceNode().getName() }}</h1>
         <div class="row">
             <div class="col-md-6 meta">
-            {% if(maxAttempsAllowed > 0) %}
-                    {{ "attempt info1" | trans }} {{ maxAttempsAllowed }}
-                    {% if(maxAttempsAllowed > 1) %}
+            {% if(exercise.getMaxAttempts() > 0) %}
+                    {{ "attempt info1" | trans }} {{ exercise.getMaxAttempts() }}
+                    {% if(exercise.getMaxAttempts() > 1) %}
                         {{ "attempt info2plur" | trans }}
                     {% else %}
                         {{ "attempt info2sing" | trans }}
                     {% endif %}
                      -
                 {% endif %}
-                 {{ numAttempt }}<sup>{% if(numAttempt == 1) %}{{ "attempt info3_1" | trans({}, 'solerni') }}{% else %}{{ "attempt info3_x" | trans({}, 'solerni') }}{% endif %}</sup> {{ "attempt info3" | trans({}, 'solerni') }}
+                 {{ paper.getNumPaper() }}<sup>{% if(paper.getNumPaper() == 1) %}{{ "attempt info3_1" | trans({}, 'solerni') }}{% else %}{{ "attempt info3_x" | trans({}, 'solerni') }}{% endif %}</sup> {{ "attempt info3" | trans({}, 'solerni') }}
 
             </div>
-            <div class="col-md-6 meta text-right">
-
-                {#{{ "duree" | trans({}, 'solerni') }} : TODO min#}            
+            <div class="col-md-6 meta text-right">       
                 
             </div>
         </div>
     </div>
-{#    <div class="panel-heading">
-        <h3 class="panel-title">{{ _resource.getResourceNode().getName() }}
-            <span style="float:right;">
-                {% if(maxAttempsAllowed > 0) %}
-                    {{ "attempt info1" | trans }} {{ maxAttempsAllowed }}
-                    {% if(maxAttempsAllowed > 1) %}
-                        {{ "attempt info2plur" | trans }}
-                    {% else %}
-                        {{ "attempt info2sing" | trans }}
-                    {% endif %}
-                     -
-                {% endif %}
-                {{ "attempt info3" | trans }} {{ numAttempt }}
-            </span>
-        </h3>
-    </div> #}
     <hr/>
     <div class="panel-body">
-        <form action="{{ path('ujm_exercise_paper_nav') }}" method="post" name="formResponse" id="formResponse">
+        <form method="post" name="formResponse" id="formResponse">
+	        <input type="hidden" name="answeredInteractionId" id="answeredInteractionId" value="{{ interaction.getId() }}"/>
+	        <input type="hidden" name="answeredPaperId" id="answeredPaperId" value="{{ paper.getId() }}"/>
+	        <input type="hidden" name="answeredExerciseId" id="answeredExerciseId" value="{{ exercise.getId() }}"/>
             <input type="hidden" name="numQuestionToDisplayed" id="numQuestionToDisplayed" value=""/>
 
             {#-------------------------------------------------- QCM ------------------------------------------------------------#}
 
-            {% if interactionType == 'InteractionQCM' %}
+            {% if interaction.getType() == 'InteractionQCM' %}
 
                 <!--<div class="panel-body">-->
 
@@ -126,22 +107,21 @@
                     <h3>{{ 'nQuestion' | trans }}{{numQ}}/{{ tabOrderInter | length }}</h3>
                 </div>
 				<div class="panel-body">
-                    {{ interactionToDisplayed.interaction.invite | raw}}
+                    {{ interaction.interaction.invite | raw}}
                 
-                    <input class="form-control" type="hidden" name="interactionQCMToValidated" value="{{ interactionToDisplayed.id }}"/>
-                    <input class="form-control" type="hidden" name="interactionToValidated" value="{{ interactionToDisplayed.interaction.id }}"/>
+                    <input class="form-control" type="hidden" name="interactionQCMToValidated" value="{{ interaction.id }}"/>
+                    <input class="form-control" type="hidden" name="interactionToValidated" value="{{ interaction.interaction.id }}"/>
                     <input class="form-control" type="hidden" name="typeInteraction" value="InteractionQCM"/>
 
-                   {# {% include "UJMExoBundle:Partial:interactionPaper.html.twig" %} #}
 
                     <table cellspacing="5" cellpadding="2" border="0">
-                        {% for choice in interactionToDisplayed.choices %}
+                        {% for choice in interaction.choices %}
                             {% set checked = "" %}
                             <tr>
                                 {% if regexTwig('/' ~ choice.id ~ ';/', response) > 0 %}
                                     {% set checked = "checked" %}
                                 {% endif %}
-                                {% if interactionToDisplayed.typeQCM.id == 2 %}
+                                {% if interaction.typeQCM.id == 2 %}
                                     <td><p><INPUT type="radio" name="choice" value="{{ choice.id }}" {{ checked }}/></p></td>
                                 {% else %}
                                     <td><p><INPUT type="checkbox" name="choice[]" value="{{ choice.id }}" {{ checked }}/></p></td>
@@ -157,14 +137,14 @@
                 <!--</div>-->
 
                 <input type="hidden" name="testQCM" value="testQCM" />
-                <input type="hidden" name="interaction" value="{{ interactionToDisplayed.id }}"/>
+                <input type="hidden" name="interaction" value="{{ interaction.id }}"/>
 
             {#------------------------------------------------- Graphic ---------------------------------------------------------#}
 
-            {% elseif interactionType == 'InteractionGraphic' %}
+            {% elseif interaction.getType() == 'InteractionGraphic' %}
 
                 <!--<div class="panel-body">-->
-                    <input type="hidden" name="interactionToValidated" value="{{ interactionToDisplayed.interaction.id }}"/>
+                    <input type="hidden" name="interactionToValidated" value="{{ interaction.interaction.id }}"/>
                     <input type="hidden" name="typeInteraction" value="InteractionGraphic"/>
 
                     {% include "UJMExoBundle:Partial:interactionPaper.html.twig" %}
@@ -188,24 +168,24 @@
                                 {% set response = 'empty' %}
                             {% endif %}
 
-                            <img src="{{ asset(interactionToDisplayed.document.url) }}" alt="AnswerImg" id="AnswerImg"
-                                width="{{ interactionToDisplayed.width }}" height="{{ interactionToDisplayed.height }}"
+                            <img src="{{ asset(interaction.document.url) }}" alt="AnswerImg" id="AnswerImg"
+                                width="{{ interaction.width }}" height="{{ interaction.height }}"
                                 style="margin-top: 30px" onload="displayAnswersGraph('{{ response }}');"/>
                         </p>
                     </div>
 
                     <input type="hidden" id="nbpointer" name="nbpointer" value="{{ i }}"/>
                     <input type="hidden" id="answers" name="answers" value=""/>
-                    <input type="hidden" id="graphId" name="graphId" value="{{ interactionToDisplayed.id }}"/>
+                    <input type="hidden" id="graphId" name="graphId" value="{{ interaction.id }}"/>
 
                     {% include "UJMExoBundle:Partial:hintPaper.html.twig" %}
 
-                    <input type="hidden" name="interaction" value="{{ interactionToDisplayed.id }}"/>
+                    <input type="hidden" name="interaction" value="{{ interaction.id }}"/>
 
                 <!--</div>-->
             {#-------------------------------------------------- OPEN -----------------------------------------------------------#}
 
-            {% elseif interactionType == 'InteractionOpen' %}
+            {% elseif interaction.getType() == 'InteractionOpen' %}
 
                 <!--<div class="panel-body">-->
 
@@ -214,37 +194,37 @@
                     <h3>{{ 'nQuestion' | trans }}{{numQ}}/{{ tabOrderInter | length }}</h3>
                 </div>
 				<div class="panel-body">
-                    <input type="hidden" name="interactionOpenToValidated" value="{{ interactionToDisplayed.id }}"/>
-                    <input type="hidden" name="interactionToValidated" value="{{ interactionToDisplayed.interaction.id }}"/>
+                    <input type="hidden" name="interactionOpenToValidated" value="{{ interaction.id }}"/>
+                    <input type="hidden" name="interactionToValidated" value="{{ interaction.interaction.id }}"/>
                     <input type="hidden" name="typeInteraction" value="InteractionOpen"/>
 
                     {#{% include "UJMExoBundle:Partial:interactionPaper.html.twig" %}#}
-					{{ interactionToDisplayed.interaction.invite | raw }}
+					{{ interaction.interaction.invite | raw }}
 
-                    {% if interactionToDisplayed.typeopenquestion == 'long' %}
+                    {% if interaction.typeopenquestion == 'long' %}
                         <textarea name="interOpenLong" class="claroline-tiny-mce hide" data-theme="advanced" data-resource-picker="off">{{ response }}</textarea>
                     {% endif %}
 
                     {% include "UJMExoBundle:Partial:hintPaper.html.twig" %}
 
                     <input type="hidden" name="testOpen" value="testOpen" />
-                    <input type="hidden" name="interaction" value="{{ interactionToDisplayed.id }}"/>
+                    <input type="hidden" name="interaction" value="{{ interaction.id }}"/>
 				</div>
 				<br/>
                 <!--</div>-->
             {#--------------------------------------------------- Hole ----------------------------------------------------------#}
 
-            {% elseif interactionType == 'InteractionHole' %}
+            {% elseif interaction.getType() == 'InteractionHole' %}
 
                     <!--<div class="panel-body">-->
-                        <input class="form-control" type="hidden" name="interactionHoleToValidated" value="{{ interactionToDisplayed.id }}"/>
-                        <input class="form-control" type="hidden" name="interactionToValidated" value="{{ interactionToDisplayed.interaction.id }}"/>
+                        <input class="form-control" type="hidden" name="interactionHoleToValidated" value="{{ interaction.id }}"/>
+                        <input class="form-control" type="hidden" name="interactionToValidated" value="{{ interaction.interaction.id }}"/>
                         <input class="form-control" type="hidden" name="typeInteraction" value="InteractionHole"/>
 
                         {% include "UJMExoBundle:Partial:interactionPaper.html.twig" %}
 
                         <div id="interHoleResponse">
-                            {{ interactionToDisplayed.htmlWithoutValue | raw }}
+                            {{ interaction.htmlWithoutValue | raw }}
                             {% if response != '' %}
                                 <script type="text/javascript">
                                     $(document).ready(function() {
@@ -259,7 +239,7 @@
                     <!--</div>-->
 
                     <input type="hidden" name="testQCM" value="testQCM" />
-                    <input type="hidden" name="interaction" value="{{ interactionToDisplayed.id }}"/>
+                    <input type="hidden" name="interaction" value="{{ interaction.id }}"/>
 
 
             {% endif %}
@@ -289,7 +269,7 @@
 	                {% if numQ == 1 %}
 	                    <input type='button' value='{{ 'previous' | trans({}, 'solerni') }}' class='btn btn-primary disabled'/>
 	                {% else %}
-	                    <input type='button' onclick="submitForm({{ numQ-1 }}, '{{ interactionType }}');" value='{{ 'previous' | trans({}, 'solerni') }}' class='btn btn-primary'/>
+	                    <input href="#" type='button' onclick="submitForm({{ tabOrderInter[numQ - 1] }});" value='{{ 'previous' | trans({}, 'solerni') }}' class='btn btn-primary' />
 	                {% endif %}
                 </div>
                 
@@ -301,7 +281,7 @@
 					  </button>
 					  <ul class="dropdown-menu btn-colorheader" role="menu">
 					  {% for interactionID in tabOrderInter %}
-					    <li><a class='colorheader' href="#" onclick="submitForm({{ loop.index }}, '{{ interactionType }}');">{{ 'nQuestion' | trans }}{{ loop.index }} / {{ tabOrderInter | length }}</a></li>
+					    <li><a class='colorheader' href="#" onclick="submitForm({{ interactionID }});">{{ 'nQuestion' | trans }}{{ loop.index }} / {{ tabOrderInter | length }}</a></li>
 					  {% endfor %}
 					  </ul>
 					</div>
@@ -311,7 +291,7 @@
                 <div class="col-md-4 text-right">
 	                {# Page Suivante #}
 	                {% if numQ != indexMax %}
-	                    <input type='button' onclick="submitForm({{ numQ+1 }}, '{{ interactionType }}');" value='{{ 'next' | trans({}, 'solerni')   }}' class='btn btn-primary'/>
+	                    <input type='button' onclick="submitForm({{ tabOrderInter[numQ + 1] }});" value='{{ 'next' | trans({}, 'solerni')   }}' class='btn btn-primary'/>
 	                {% else %}
 	                    <a data-toggle="modal" href="#saveModal" class="btn btn-primary">{{ "finish" | trans }}</a>
 	                {% endif %}
@@ -323,42 +303,42 @@
 {#
                 {% if numQ == indexMax %}
                     
-                        <a href="#" onClick="submitForm({{ numQ-1 }}, '{{ interactionType }}');">
+                        <a href="#" onClick="submitForm({{ numQ-1 }}, '{{ interaction.getType() }}');">
                             <i class="icon-chevron-left"></i> &nbsp; {{ 'previous' | trans }}
                         </a>
                         
                     <li class="disabled"><a href="#" onclick="event.preventDefault();">{{ 'next' | trans }} &nbsp; <i class="icon-chevron-right"></i></a></li>
                     <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                     <li>
-                        <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interactionType }}', '{{ 'alert ending' | trans }}');"
+                        <input type="button" value="{{ "finish" | trans }}" onClick="finish('{{ interaction.getType() }}', '{{ 'alert ending' | trans }}');"
                             class="btn btn-primary"/>
                     </li>
                 {% endif %}
 
                 {% if numQ != indexMax and numQ != 1 %}
                     <li>
-                        <a href="#" onClick="submitForm({{ numQ-1 }}, '{{ interactionType }}');">
+                        <a href="#" onClick="submitForm({{ numQ-1 }}, '{{ interaction.getType() }}');">
                             <i class="icon-chevron-left"></i> &nbsp; {{ 'previous' | trans }}
                         </a>
                     </li>
                     <li>
-                        <a href="#" onClick="submitForm({{ numQ+1 }}, '{{ interactionType }}');">
+                        <a href="#" onClick="submitForm({{ numQ+1 }}, '{{ interaction.getType() }}');">
                             {{ 'next' | trans }} &nbsp; <i class="icon-chevron-right"></i>
                         </a>
                     </li>
                 {% endif %}
             {% endif %}
 
-            {% if dispButtonInterrupt %}
+            {% if exercise.getDispButtonInterrupt() %}
                 <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
                 <li>
-                    <input type="button" value="{{ "interupt" | trans }}" onClick="interupt('{{ interactionType }}');" class="btn btn-primary"/>
+                    <input type="button" value="{{ "interupt" | trans }}" onClick="interupt('{{ interaction.getType() }}');" class="btn btn-primary"/>
                 </li>
             {% endif %}
             <li>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</li>
 
             <li>
-                <select id="Qnumber" onchange="submitForm(this.options[this.selectedIndex].value, '{{ interactionType }}');">
+                <select id="Qnumber" onchange="submitForm(this.options[this.selectedIndex].value, '{{ interaction.getType() }}');">
                     {% for interactionID in tabOrderInter %}
                         <option value="{{ loop.index }}">{{ 'nQuestion' | trans }}{{ loop.index }} / {{ tabOrderInter | length }}</option>
                     {% endfor %}
@@ -382,7 +362,7 @@
                                     <h4 class="modal-title">{{ 'Quit_title'|trans({}, 'solerni') | raw }}</h4>
                                 </div>
                                 <div class="modal-body">
-                                    {% if maxAttempsAllowed == numAttempt %}{{ 'Quit'|trans({}, 'solerni') }}<br/><br/>{% endif %}
+                                    {% if exercise.getMaxAttempts() == paper.getNumPaper() %}{{ 'Quit'|trans({}, 'solerni') }}<br/><br/>{% endif %}
                                     {{ 'Quit2'|trans({}, 'solerni') }}
                                 </div>
                                 <div class="modal-footer">
@@ -409,7 +389,7 @@
                                 <div class="modal-footer">
                                     <a href="#" class="btn btn-default" data-dismiss="modal">{{ 'Save_N'|trans({}, 'solerni') }}</a>
 
-                                    <button type="button" class="btn btn-primary pull-right" onclick="finish('{{ interactionType }}', null);">
+                                    <button type="button" class="btn btn-primary pull-right" onclick="finish('{{ interaction.getType() }}', null);">
                                         {{ 'Save_Y'|trans({}, 'solerni') }}
                                     </button>
                         
@@ -449,7 +429,7 @@
 {% block javascripts %}
     {{ parent() }}
 
-    {% if interactionType == 'InteractionGraphic' %}
+    {% if interaction.getType() == 'InteractionGraphic' %}
         <script type="text/javascript" src="{{ asset('bundles/frontend/jquery/jquery-ui-1.9.2/jquery-ui-1.9.2.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/ext/jquery-ui-touch-punch.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/graphicdisplay.js') }}"></script>
@@ -460,5 +440,17 @@
         $(document).ready(function() {
             $('#Qnumber option[value="' + {{ numQ }} + '"]').attr('selected', 'selected');
         });
+
+        function submitForm(interactionId) {
+            var route = Routing.generate('ujm_exercise_paper_question', {exerciseId:{{ exercise.getId() }}, paperId:{{ paper.getId() }}, interactionId:interactionId});
+			$('#formResponse').attr('action', route);
+			$('#formResponse').submit();
+        }
+
+        function finish() {
+        	var route = Routing.generate('ujm_finish_paper', {exerciseId:{{ exercise.getId() }}, paperId:{{ paper.getId() }}});
+			$('#formResponse').attr('action', route);
+			$('#formResponse').submit();
+        }
     </script>
 {% endblock %}

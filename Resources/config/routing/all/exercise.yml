@@ -10,3 +10,15 @@ ujm_exercise_paper_nav:
     pattern:  /paper/nav/
     defaults: { _controller: "UJMExoBundle:Exercise:exercisePaperNav" }
     requirements: { _method: post }
+
+ujm_exercise_paper_question:
+    pattern: /{exerciseId}/paper/{paperId}/interaction/{interactionId}
+    defaults: { _controller: "UJMExoBundle:Exercise:displayQuestion" }
+    options:
+        expose: true
+
+ujm_finish_paper:
+    pattern: /{exerciseId}/paper/{paperId}/finish
+    defaults: { _controller: "UJMExoBundle:Exercise:finishPaper" }
+    options:
+        expose: true

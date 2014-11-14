@@ -38,6 +38,8 @@
 namespace UJM\ExoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use UJM\ExoBundle\Entity\Interaction;
+use UJM\ExoBundle\Entity\Paper;
 
 /**
  * ResponseRepository
@@ -51,15 +53,19 @@ class ResponseRepository extends EntityRepository
      * Allow to know if exists already a response for a question of a student's paper
      *
      */
-    public function getAlreadyResponded($paperID, $interactionID)
+    public function getAlreadyResponded(Paper $paper, Interaction $interaction)
     {
-        $qb = $this->createQueryBuilder('r');
-        $qb->join('r.paper', 'p')
-            ->join('r.interaction', 'i')
-            ->where($qb->expr()->in('p.id', $paperID))
-            ->andWhere($qb->expr()->in('i.id', $interactionID));
+    	$dql = "SELECT r
+    			FROM UJM\ExoBundle\Entity\Response r
+    			WHERE r.paper = :paper
+    				AND r.interaction = :interaction";
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameters(array(
+    			"paper"			=> $paper,
+    			"interaction"	=> $interaction
+    	));
 
-        return $qb->getQuery()->getResult();
+        return $query->getOneOrNullResult();
     }
 
     /**

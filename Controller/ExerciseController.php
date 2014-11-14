@@ -583,11 +583,11 @@ class ExerciseController extends Controller
             //if not exist a paper no finished
             if (count($paper) == 0) {
                 if ($this->exerciseServices->controlMaxAttemps($exercise, $user, $exoAdmin) === false) {
-                   return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $id)));
+                   return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $exercise->getId())));
                 }
 
                 $paper = new Paper();
-                $paper->setNumPaper((int) $maxNumPaper[0][1] + 1);
+                $paper->setNumPaper((int) $maxNumPaper + 1);
                 $paper->setExercise($exercise);
                 $paper->setUser($user);
                 $paper->setStart(new \Datetime());
@@ -595,9 +595,9 @@ class ExerciseController extends Controller
                 $paper->setInterupt(0);
 
                 if ( ($exercise->getNbQuestion() > 0) && ($exercise->getKeepSameQuestion()) == true ) {
-                    $papers = $this->paperRepository->getExerciseUserPapers($user->getId(), $id);
+                    $papers = $this->paperRepository->getExerciseUserPapers($user->getId(), $exercise->getId());
                     if(count($papers) == 0) {
-                        $tab = $this->prepareInteractionsPaper($id, $exercise);
+                        $tab = $this->prepareInteractionsPaper($exercise);
                         $interactions  = $tab['interactions'];
                         $orderInter    = $tab['orderInter'];
                         $tabOrderInter = $tab['tabOrderInter'];
@@ -609,7 +609,7 @@ class ExerciseController extends Controller
                         $interactions[0] = $this->interactionRepository->find($tabOrderInter[0]);
                     }
                 } else {
-                    $tab = $this->prepareInteractionsPaper($id, $exercise);
+                    $tab = $this->prepareInteractionsPaper($exercise);
                     $interactions  = $tab['interactions'];
                     $orderInter    = $tab['orderInter'];
                     $tabOrderInter = $tab['tabOrderInter'];
@@ -630,28 +630,22 @@ class ExerciseController extends Controller
             $this->session->set('exerciseID', $exercise->getId());
 
             $typeInter = $interactions[0]->getType();
-
+			$firstInteraction = $interactions[0];
             //To display selectioned question
-            return $this->displayQuestion(1, $interactions[0], $typeInter, 
-                    $exercise->getDispButtonInterrupt(),
-                    $exercise->getMaxAttempts(),
-                    $workspace, $paper);
+            return $this->redirect($this->generateUrl('ujm_exercise_paper_question', array(
+            		'exerciseId' => $exercise->getId(),
+            		'paperId' => $paper->getId(),
+            		'interactionId' => $firstInteraction->getId())));
         } else {
         	// Add flashbag message to tell that quizz is finished 
-            return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $id)));
+            return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $exercise->getId())));
         }
     }
 
     /**
      * To create new paper
-     *
-     * @EXT\ParamConverter(
-     *      "exercise",
-     *      class="UJMExoBundle:Exercise",
-     *      options={"id" = "id", "strictId" = true}
-     * )
      */
-    private function prepareInteractionsPaper($id, $exercise)
+    private function prepareInteractionsPaper(Exercise $exercise)
     {
         $em = $this->getDoctrine()->getManager();
         $orderInter = '';
@@ -659,7 +653,7 @@ class ExerciseController extends Controller
         $tab = array();
 
         $interactions = $this->interactionRepository->getExerciseInteraction(
-        		$id,
+        		$exercise,
 				$exercise->getShuffle(),
         		$exercise->getNbQuestion());
 
@@ -674,7 +668,158 @@ class ExerciseController extends Controller
 
         return $tab;
     }
+    
+    /**
+     * Display an answerable question to the user.
+     *
+     * @EXT\ParamConverter("user", options={"authenticatedUser" = true})
+     * @EXT\ParamConverter(
+     *      "exercise",
+     *      class="UJMExoBundle:Exercise",
+     *      options={"id" = "exerciseId", "strictId" = true}
+     * )
+     * @EXT\ParamConverter(
+     *      "paper",
+     *      class="UJMExoBundle:Paper",
+     *      options={"id" = "paperId", "strictId" = true}
+     * )
+     *
+     *
+     * @param Exercise $exercise
+     * @param Paper $paper
+     */
+    public function finishPaperAction(Request $request, User $user, Exercise $exercise, Paper $paper) {
+    	// Check access to :
+    	// - Exercise
+    	// - Paper (is it mine ? is it finished ? is it in correct exercise ?)
+    	
+    	// Init vars
+    	$workspace = $exercise->getResourceNode()->getWorkspace();
+    	switch ($request->getMethod()) {
+    		case Request::METHOD_GET:
+    			// Do nothing
+    			break;
+    		case Request::METHOD_POST:
+    			// Write response
+    			$this->processAnswer($request);
+    			break;
+    		default:
+    			// Throw error : not allowed
+    			break;
+    	}
 
+    	$paper->setInterupt(0);
+        $paper->setEnd(new \Datetime());
+        $this->em->persist($paper);
+        $this->em->flush();
+
+        $this->exerciseServices->manageEndOfExercise($paper);
+
+        return $this->forward('UJMExoBundle:Paper:show', array('id' => $paper->getId()));
+    }
+    
+    private function processAnswer(Request $request) {
+    	// TODO : Check if paper exists etc...
+    	$answeredInteractionId = $request->get('answeredInteractionId');
+    	$answeredPaperId = $request->get('answeredPaperId');
+    	$answeredExerciseId = $request->get('answeredExerciseId');
+    	 
+    	$answeredInteraction = $this->interactionRepository->find($answeredInteractionId);
+    	$answeredPaper = $this->paperRepository->find($answeredPaperId);
+    	 
+    	$choices = $request->get('choice');
+    	 
+    	$this->exerciseServices->processInteractionAnswer($answeredPaper, $answeredInteraction, is_array($choices) ? $choices : array($choices));
+    }
+
+    /**
+     * Display an answerable question to the user.
+     * 
+     * @EXT\ParamConverter("user", options={"authenticatedUser" = true})
+     * @EXT\ParamConverter(
+     *      "exercise",
+     *      class="UJMExoBundle:Exercise",
+     *      options={"id" = "exerciseId", "strictId" = true}
+     * )
+     * @EXT\ParamConverter(
+     *      "paper",
+     *      class="UJMExoBundle:Paper",
+     *      options={"id" = "paperId", "strictId" = true}
+     * )
+     * @EXT\ParamConverter(
+     *      "interaction",
+     *      class="UJMExoBundle:Interaction",
+     *      options={"id" = "interactionId", "strictId" = true}
+     * )
+     * 
+     * 
+     * @param Exercise $exercise
+     * @param Paper $paper
+     * @param Interaction $interaction
+     */
+    public function displayQuestionAction(Request $request, User $user, Exercise $exercise, Paper $paper, Interaction $interaction) {
+    	// Check access to :
+    	// - Exercise
+    	// - Paper (is it mine ? is it finished ? is it in correct exercise ?)
+    	
+    	// Init vars
+    	$workspace = $exercise->getResourceNode()->getWorkspace();
+    	switch ($request->getMethod()) {
+    		case Request::METHOD_GET:
+    			// Do nothing
+    			break;
+    		case Request::METHOD_POST:
+    			// Write response
+    			$this->processAnswer($request);
+    			break;
+    		default:
+    			// Throw error : not allowed
+    			break;
+    	}
+    	
+    	switch ($interaction->getType()) {
+    		case "InteractionQCM":
+    			// Get real interaction (and shuffle or sort its possible answers)
+    			$realInteraction = $this->interactionQCMRepository->getInteractionQCM($interaction);
+                if ($realInteraction->getShuffle()) {
+                    $realInteraction->shuffleChoices();
+                } else {
+                    $realInteraction->sortChoices();
+                }
+
+                // Get response if already answered
+                $responseGiven = $this->responseRepository->getAlreadyResponded($paper, $interaction);
+                if ($responseGiven != null) {
+                    $responseGiven = $responseGiven->getResponse().";";
+                } else {
+                    $responseGiven = '';
+                }
+    			break;
+    	}
+
+    	$interactionsIds = explode(';', $paper->getOrdreQuestion());
+    	$offsettedInteractionsIds = array();
+    	foreach ($interactionsIds as $i => $interactionId) {
+    		if ($interactionId != null && $interactionId != "") {
+    			$offsettedInteractionsIds[$i + 1] = $interactionId;
+    		}
+    	}
+    	$interactionPosition = array_search($interaction->getId(), $offsettedInteractionsIds);
+    	$parameters = array('workspace' 				=> $workspace,
+					    	'exercise'					=> $exercise,
+					    	'paper'						=> $paper,
+					    	'user'						=> $user,
+					    	'tabOrderInter'				=> $offsettedInteractionsIds,
+					    	'interaction'				=> $realInteraction,
+					    	'numQ'						=> $interactionPosition,
+					    	'response'					=> $responseGiven);
+    	
+    	return $this->render(
+    			'UJMExoBundle:Exercise:paper.html.twig',
+    			$parameters
+    	);
+    }
+    
     /**
      * To navigate in the Questions of the assessment
      *
@@ -911,10 +1056,7 @@ class ExerciseController extends Controller
         switch ($typeInterToDisplayed) {
             case "InteractionQCM":
 
-                $interactionToDisplayed = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionQCM')
-                    ->getInteractionQCM($interactionToDisplay->getId());
+                $interactionToDisplayed = $this->interactionQCMRepository->getInteractionQCM($interactionToDisplay->getId());
 
                 if ($interactionToDisplayed[0]->getShuffle()) {
                     $interactionToDisplayed[0]->shuffleChoices();
@@ -922,10 +1064,7 @@ class ExerciseController extends Controller
                     $interactionToDisplayed[0]->sortChoices();
                 }
 
-                $responseGiven = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:Response')
-                    ->getAlreadyResponded($session->get('paper'), $interactionToDisplay->getId());
+                $responseGiven = $this->responseRepository->getAlreadyResponded($session->get('paper'), $interactionToDisplay->getId());
 
                 if (count($responseGiven) > 0) {
                     $responseGiven = $responseGiven[0]->getResponse();
@@ -937,17 +1076,13 @@ class ExerciseController extends Controller
 
             case "InteractionGraphic":
 
-                $interactionToDisplayed = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionGraphic')
+                $interactionToDisplayed = $this->interactionGraphicRepository
                     ->getInteractionGraphic($interactionToDisplay->getId());
 
                 $coords = $em->getRepository('UJMExoBundle:Coords')
                     ->findBy(array('interactionGraphic' => $interactionToDisplayed[0]->getId()));
 
-                $responseGiven = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:Response')
+                $responseGiven = $this->responseRepository
                     ->getAlreadyResponded($session->get('paper'), $interactionToDisplay->getId());
 
                 if (count($responseGiven) > 0) {
@@ -961,14 +1096,10 @@ class ExerciseController extends Controller
                 break;
 
             case "InteractionHole":
-                $interactionToDisplayed = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionHole')
+                $interactionToDisplayed = $this->interactionHoleRepository
                     ->getInteractionHole($interactionToDisplay->getId());
 
-                $responseGiven = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:Response')
+                $responseGiven = $this->responseRepository
                     ->getAlreadyResponded($session->get('paper'), $interactionToDisplay->getId());
 
                 if (count($responseGiven) > 0) {
@@ -981,14 +1112,10 @@ class ExerciseController extends Controller
 
             case "InteractionOpen":
 
-                $interactionToDisplayed = $this->getDoctrine()
-                    ->getManager()
-                    ->getRepository('UJMExoBundle:InteractionOpen')
+                $interactionToDisplayed = $this->interactionOpenRepository
                     ->getInteractionOpen($interactionToDisplay->getId());
 
-                $responseGiven = $this->getDoctrine()
-                                      ->getManager()
-                                      ->getRepository('UJMExoBundle:Response')
+                $responseGiven = $this->responseRepository
                                       ->getAlreadyResponded($session->get('paper'), $interactionToDisplay->getId());
 
                 if (count($responseGiven) > 0) {

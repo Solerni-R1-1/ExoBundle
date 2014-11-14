@@ -47,6 +47,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InteractionHole
 {
+	public static $TYPE = "InteractionHole";
+	
     /**
      * @var integer $id
      *
@@ -163,4 +165,7 @@ class InteractionHole
         
     }
 
+    public function getType() {
+    	return self::$TYPE;
+    }
 }

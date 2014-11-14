@@ -60,23 +60,35 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use UJM\ExoBundle\Entity\ExerciseQuestion;
 use UJM\ExoBundle\Entity\Paper;
 use UJM\ExoBundle\Event\Log\LogExerciseEvaluatedEvent;
+use UJM\ExoBundle\Entity\Interaction;
+use UJM\ExoBundle\Entity\Choice;
+use UJM\ExoBundle\Entity\InteractionQCM;
+use UJM\ExoBundle\Entity\Response;
+use UJM\ExoBundle\Entity\Exercise;
 
 class exerciseServices
 {
     protected $doctrine;
     protected $securityContext;
     protected $exerciseRepository;
-
+	protected $responseRepository;
+	protected $interactionQCMRepository;
+    
     /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface */
     protected $eventDispatcher;
+    
+    protected $em;
 
     public function __construct(Registry $doctrine, SecurityContextInterface $securityContext, EventDispatcherInterface $eventDispatcher)
     {
         $this->doctrine        = $doctrine;
+        $this->em			   = $doctrine->getManager();
         $this->securityContext = $securityContext;
         $this->eventDispatcher = $eventDispatcher;
         
         $this->exerciseRepository = $this->doctrine->getManager()->getRepository('UJMExoBundle:Exercise');
+        $this->responseRepository = $this->doctrine->getManager()->getRepository('UJMExoBundle:Response');
+        $this->interactionQCMRepository = $this->doctrine->getManager()->getRepository('UJMExoBundle:InteractionQCM');
     }
 
     public function getIP()
@@ -90,6 +102,37 @@ class exerciseServices
         }
 
         return $ip;
+    }
+    
+    public function processInteractionAnswer(Paper $paper, Interaction $interaction, array $choices) {
+	    $response = $this->responseRepository->getAlreadyResponded($paper, $interaction);
+    	if ($response != null) {
+    		$response->setNbTries($response->getNbTries() + 1);
+    	} else {
+    		$response = new Response();
+    		$response->setInteraction($interaction);
+    		$response->setPaper($paper);
+    		$response->setNbTries(1);
+    	}
+    	$response->setIp($this->getIP());
+    	
+    	switch ($interaction->getType()) {
+    		case "InteractionQCM":
+    			/* @var $interactionQCM InteractionQCM */
+    			$interactionQCM = $this->interactionQCMRepository->findOneByInteraction($interaction->getId());
+    			$allChoices = $interactionQCM->getChoices();
+    			
+    			$penalty = $this->getPenalty($interaction, $paper->getId());
+    			$score = $this->qcmMark($interactionQCM, $choices, $allChoices, $penalty);
+    			break;
+    	}
+    	
+    	$response->setMark($score);
+    	$response->setMarkUsedForHint($penalty);
+    	$response->setResponse(implode(';', $choices));
+    	
+    	$this->em->persist($response);
+    	$this->em->flush();
     }
 
     public function responseQCM($request, $paperID = 0)

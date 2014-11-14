@@ -28,7 +28,7 @@ function show_hint2(idHint, path_hint_show, nbr_hint, penalty, paper) {
     });
 }
 
-function submitForm(numQuestionToDisplayed, interactionType) {
+/*function submitForm(numQuestionToDisplayed, interactionType) {
     $('#numQuestionToDisplayed').val(numQuestionToDisplayed);
 
     if (interactionType == 'InteractionGraphic') {
@@ -36,19 +36,19 @@ function submitForm(numQuestionToDisplayed, interactionType) {
     }
 
     $('#formResponse').submit();
-}
-
-function finish(interactionType, alert) {
-    $('#numQuestionToDisplayed').val('finish');
-
-    if (interactionType == 'InteractionGraphic') {
-        recordGraph();
-    }
-    
-    if (alert == null || confirm(alert)) {
-        $('#formResponse').submit();
-    } 
-}
+}*/
+//
+//function finish(interactionType, alert) {
+//    $('#numQuestionToDisplayed').val('finish');
+//
+//    if (interactionType == 'InteractionGraphic') {
+//        recordGraph();
+//    }
+//    
+//    if (alert == null || confirm(alert)) {
+//        $('#formResponse').submit();
+//    } 
+//}
 
 function interupt(interactionType) {
     $('#numQuestionToDisplayed').val('interupt');

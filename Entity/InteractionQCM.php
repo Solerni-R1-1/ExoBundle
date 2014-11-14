@@ -47,6 +47,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InteractionQCM
 {
+	public static $TYPE = "InteractionQCM";
     /**
      * @var integer $id
      *
@@ -289,5 +290,9 @@ class InteractionQCM
         }
 
         $this->choices = $choices;
+    }
+    
+    public function getType() {
+    	return self::$TYPE;
     }
 }

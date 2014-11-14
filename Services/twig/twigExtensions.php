@@ -83,17 +83,18 @@ class twigExtensions extends \Twig_Extension
 
     public function getInterTwig($interId, $typeInter)
     {
-        //$em = $this->doctrine->getManager();
-
+        $em = $this->doctrine->getManager();
+		
+    	$interaction = $em->getRepository('UJMExoBundle:Interaction')->find($interId);
         switch ($typeInter)
         {
             case "InteractionQCM":
                 $interQCM = $this->doctrine
                                  ->getManager()
                                  ->getRepository('UJMExoBundle:InteractionQCM')
-                                 ->getInteractionQCM($interId);
-                $inter['question'] = $interQCM[0];
-                $inter['maxScore'] = $this->getQCMScoreMax($interQCM[0]);
+                                 ->getInteractionQCM($interaction);
+                $inter['question'] = $interQCM;
+                $inter['maxScore'] = $this->getQCMScoreMax($interQCM);
             break;
 
             case "InteractionGraphic":

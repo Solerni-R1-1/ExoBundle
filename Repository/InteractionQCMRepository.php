@@ -38,6 +38,7 @@
 namespace UJM\ExoBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use UJM\ExoBundle\Entity\Interaction;
 
 /**
  * InteractionQCMRepository
@@ -48,16 +49,18 @@ use Doctrine\ORM\EntityRepository;
 class InteractionQCMRepository extends EntityRepository
 {
 
-    /**
-     * InteractionQCM by Interaction
-     *
-     */
-    public function getInteractionQCM($interactionId)
-    {
-        $qb = $this->createQueryBuilder('iqcm');
-        $qb->join('iqcm.interaction', 'i')
-            ->where($qb->expr()->in('i.id', $interactionId));
-
-        return $qb->getQuery()->getResult();
-    }
+	/**
+	 * InteractionQCM by Interaction
+	 *
+	 */
+	public function getInteractionQCM(Interaction $interaction)
+	{
+		$dql = "SELECT iqcm
+    			FROM UJM\ExoBundle\Entity\InteractionQCM iqcm
+    			WHERE iqcm.interaction = :interaction";
+		$query = $this->_em->createQuery($dql);
+		$query->setParameter("interaction", $interaction);
+	
+		return $query->getSingleResult();
+	}
 }

@@ -47,6 +47,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class InteractionOpen
 {
+	public static $TYPE = "InteractionOpen";
+	
     /**
      * @var integer $id
      *
@@ -173,5 +175,9 @@ class InteractionOpen
     public function getScoreMaxLongResp()
     {
         return $this->scoreMaxLongResp;
+    }
+    
+    public function getType() {
+    	return self::$TYPE;
     }
 }
