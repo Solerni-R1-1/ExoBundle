@@ -116,17 +116,10 @@
                             <td class="classic">{{ interaction.invite|raw }}</td>
                             <td class="classic">
                                 {% if allowEdit[interaction.id] == 1 %}
-                                    {% if (questionWithResponse[interaction.id] == 0) %}
-                                        <a class="btn btn-default" title="{{ 'edit' | trans }}"
+                                    <a class="btn btn-default" title="{{ 'edit' | trans }}" {% if (not questionWithResponse[interaction.id]) %}style="color: red;{% endif %}"
                                            href="{{ path('ujm_question_edit', { 'id': interaction.question.id, 'exoID': exerciseID }) }}">
-                                            <i class="icon-pencil"></i>
-                                        </a>
-                                    {% else %}
-                                        <a class="btn btn-default" title="{{ 'edit' | trans }}" style="color: red;"
-                                           href="{{ path('ujm_question_edit', { 'id': interaction.question.id, 'exoID': exerciseID }) }}">
-                                            <i class="icon-pencil"></i>
-                                        </a>
-                                    {% endif %}
+                                    	<i class="icon-pencil"></i>
+                                    </a>
                                 {% endif %}
                                 <a class="btn btn-default" title="{{ 'delete of my exercise' | trans }}"
                                    href="{{ path('ujm_exercise_question_delete', {

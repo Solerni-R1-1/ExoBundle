@@ -112,4 +112,18 @@ class ResponseRepository extends EntityRepository
 
         return $query->getResult();
     }
+    
+    public function countByInteractionIn(array $interactions) {
+    	$dql = "SELECT COUNT(DISTINCT r) AS nbResponses,
+    				i.id AS interactionId
+    			FROM UJM\ExoBundle\Entity\Response r
+    			JOIN r.interaction i
+    				WITH i IN (:interactions)
+    			GROUP BY i.id";
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter("interactions", $interactions);
+    	
+    	return $query->getResult();
+    }
 }

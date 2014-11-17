@@ -410,23 +410,23 @@ class QuestionController extends Controller
                     $interactionQCM = $this->getDoctrine()
                         ->getManager()
                         ->getRepository('UJMExoBundle:InteractionQCM')
-                        ->getInteractionQCM($interaction[0]->getId());
+                        ->getInteractionQCM($interaction[0]);
                     //fired a sort function
-                    $interactionQCM[0]->sortChoices();
+                    $interactionQCM->sortChoices();
 
                     if ($form == null) {
                         $editForm = $this->createForm(
                             new InteractionQCMType(
                                 $this->container->get('security.context')
                                     ->getToken()->getUser(), $catID
-                            ), $interactionQCM[0]
+                            ), $interactionQCM
                         );
                     } else {
                         $editForm = $form;
                     }
-                    $deleteForm = $this->createDeleteForm($interactionQCM[0]->getId());
+                    $deleteForm = $this->createDeleteForm($interactionQCM->getId());
 
-                    $variables['entity']         = $interactionQCM[0];
+                    $variables['entity']         = $interactionQCM;
                     $variables['edit_form']      = $editForm->createView();
                     $variables['delete_form']    = $deleteForm->createView();
                     $variables['nbResponses']    = $nbResponses;

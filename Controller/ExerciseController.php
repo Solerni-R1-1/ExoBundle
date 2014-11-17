@@ -299,28 +299,48 @@ class ExerciseController extends Controller
                 $max = count($interactions);
             }
 
-            $questionWithResponse = array();
+            $interactionIds = array();
+            $questionIds = array();
+
+            $shares = array();
             foreach ($interactions as $interaction) {
-                $response = $this->responseRepository->findByInteraction($interaction->getId());
-                if (count($response) > 0) {
-                    $questionWithResponse[$interaction->getId()] = 1;
-                } else {
-                    $questionWithResponse[$interaction->getId()] = 0;
-                }
-
-                $share = $this->exerciseServices->controlUserSharedQuestion(
+            	/* @var $interaction Interaction */
+            	$interactionIds[] = $interaction->getId();
+            	$questionIds[] = $interaction->getQuestion()->getId();
+                
+                $shares[$interaction->getId()] = $this->exerciseServices->controlUserSharedQuestion(
                         $interaction->getQuestion()->getId());
-
-                if ($user->getId() == $interaction->getQuestion()->getUser()->getId()) {
-                    $allowEdit[$interaction->getId()] = 1;
-                } else if(count($share) > 0) {
-                    $allowEdit[$interaction->getId()] = $share[0]->getAllowToModify();
-                } else {
-                    $allowEdit[$interaction->getId()] = 0;
-                }
-
             }
 
+            $orderedResponses = array();
+            $responsesCount = $this->responseRepository->countByInteractionIn($interactions);
+            foreach ($responsesCount as $responseCount) {
+            	if (!array_key_exists($responseCount['interactionId'], $orderedResponses)) {
+            		$orderedResponses[$responseCount['interactionId']] = array();
+            	}
+            	$orderedResponses[$responseCount['interactionId']][] = $responseCount['nbResponses'];
+            }
+
+            $questionWithResponse = array();
+            $allowEdit = array();
+            foreach ($interactions as $interaction) {
+            	$id = $interaction->getId();
+             	$responseCount = $orderedResponses[$id];
+             	$share = $shares[$id];
+            	if ($responseCount > 0) {
+            		$questionWithResponse[$id] = true;
+            	} else {
+            		$questionWithResponse[$id] = false;
+            	}
+            	 
+            	if ($user->getId() == $interaction->getQuestion()->getUser()->getId()) {
+            		$allowEdit[$id] = 1;
+            	} else if(count($share) > 0) {
+            		$allowEdit[$id] = $share[0]->getAllowToModify();
+            	} else {
+            		$allowEdit[$id] = 0;
+            	}
+            }
             if ($categoryToFind != '' && $titleToFind != '' && $categoryToFind != 'z' && $titleToFind != 'z') {
                 $i = 1 ;
                 $pos = 0 ;

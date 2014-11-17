@@ -87,56 +87,39 @@ class InteractionRepository extends EntityRepository
      */
     public function getExerciseInteraction(Exercise $exercise, $shuffle, $nbQuestions = 0)
     {
-        $interactions = array();
-        $questionsList = array();
-        $nbQuestionsTot = 0;
-
-        $dql = 'SELECT eq
-        		FROM UJM\ExoBundle\Entity\ExerciseQuestion eq
-        		WHERE eq.exercise = :exercise
-            	ORDER BY eq.ordre';
-        $query = $this->_em->createQuery($dql);
-        $query->setParameter("exercise", $exercise);
-        $eqs = $query->getResult();
-
-        foreach ($eqs as $eq) {
-            $questionsList[] = $eq->getQuestion()->getId();
-        }
-
-        if ($shuffle == 1) {
-            shuffle($questionsList);
-        }
-
-        $nbQuestionsTot = count($questionsList);
-
-        if ($nbQuestions > 0) {
-            $i = 0;
-            $y = 0;
-            $newQuestionsList = array();
-            while ($i < $nbQuestions) {
-                $y = rand(0, $nbQuestionsTot - 1);
-                $newQuestionsList[] = $questionsList[$y];
-                unset($questionsList[$y]);
-                $questionsList = array_merge($questionsList);
-                $nbQuestionsTot = count($questionsList);
-                $i++;
-            }
-            $questionsList = array();
-            $questionsList = $newQuestionsList;
-        }
-
-        foreach ($questionsList as $q) {
-            $dql = 'SELECT i
-            		FROM UJM\ExoBundle\Entity\Interaction i
-            		JOIN i.question q 
-            		WHERE q = :question';
-            $query = $this->_em->createQuery($dql);
-            $query->setParameter("question", $q);
-            $inter = $query->getResult();
-            $interactions[] = $inter[0];
-        }
-
-        return $interactions;
+    	$dql = "SELECT i
+    			FROM UJM\ExoBundle\Entity\Interaction i
+    			JOIN i.question q
+    			JOIN UJM\ExoBundle\Entity\ExerciseQuestion eq
+    				WITH eq.exercise = :exercise
+    				AND eq.question = q
+    			ORDER BY eq.ordre";
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter('exercise', $exercise);
+    	$interactions = $query->getResult();
+    	
+    	if ($shuffle == 1) {
+    		shuffle($interactions);
+    	}
+    	
+    	if ($nbQuestions > 0) {
+    		$i = 0;
+    		$y = 0;
+    		$orderedInteractions = array();
+    		$nbQuestionsTot = count($interactions);
+    		while ($i < $nbQuestions) {
+    		    $y = rand(0, $nbQuestionsTot - 1);
+    		    $orderedInteractions[] = $interactions[$y];
+    		    unset($interactions[$y]);
+    		    $nbQuestionsTot = count($interactions);
+    		    $interactions = array_merge($interactions);
+    			$i++;
+    		}
+    		$interactions = $orderedInteractions;
+    	}
+    	
+    	return $interactions;
     }
 
     /**
