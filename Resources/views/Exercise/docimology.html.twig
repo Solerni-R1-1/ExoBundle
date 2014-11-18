@@ -187,7 +187,6 @@
                             },
                             pad: 1,
                             min: 0,
-                            max: {{ maxY }},
                             tickOptions: {formatString: '%d'}
                         }
                     }
@@ -253,7 +252,6 @@
 
                             pad: 1,
                             min: 0,
-                            max: {{ maxY2 }},
 
                             tickOptions: {formatString: '%d'}
                         }
@@ -273,7 +271,7 @@
                 });
 
                 /*********************************histoDiscrimination******************************************************/
-                if ({{ coeffQ }} != 'none') {
+                if ('{{ coeffQ }}' != 'none') {
 
                     var s1 = [{{ coeffQ }}];
 

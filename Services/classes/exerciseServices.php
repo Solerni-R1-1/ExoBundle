@@ -551,8 +551,8 @@ class exerciseServices
                     $interQCM = $this->doctrine
                                      ->getManager()
                                      ->getRepository('UJMExoBundle:InteractionQCM')
-                                     ->getInteractionQCM($interaction[0]->getId());
-                    $scoreMax = $this->qcmMaxScore($interQCM[0]);
+                                     ->getInteractionQCM($interaction[0]);
+                    $scoreMax = $this->qcmMaxScore($interQCM);
                     break;
                 case 'InteractionGraphic':
                     $interGraphic = $this->doctrine

@@ -1003,17 +1003,15 @@ class ExerciseController extends Controller
     public function docimologyAction(Exercise $exercise, $nbPapers)
     {
         $this->checkAccess($exercise);
-
-        $eqs = $this->exerciseQuestionRepository->findBy(
-            array('exercise' => $exercise->getId()),
-            array('ordre' => 'ASC')
-        );
-
-        $papers = $this->paperRepository->getExerciseAllPapers($exercise);
-
         if ($this->exerciseServices->isExerciseAdmin($exercise)) {
-
             $workspace = $exercise->getResourceNode()->getWorkspace();
+            
+        	$eqs = $this->exerciseQuestionRepository->findBy(
+        			array('exercise' => $exercise->getId()),
+        			array('ordre' => 'ASC')
+        	);
+        	
+        	$papers = $this->paperRepository->getExerciseAllPapers($exercise);
 
             $parameters['nbPapers']  = $nbPapers;
             $parameters['workspace'] = $workspace;
@@ -1027,17 +1025,15 @@ class ExerciseController extends Controller
                 if ($exercise->getNbQuestion() == 0) {
                     $histoDiscrimination = $this->histoDiscrimination($exercise, $eqs, $papers);
                 } else {
-                    $histoDiscrimination['coeffQ'] = 'none';
+                    $histoDiscrimination['coeffQ'] = "none";
                 }
 
                 $histoMeasureDifficulty = $this->histoMeasureOfDifficulty($exercise->getId(), $eqs);
 
                 $parameters['scoreList']          = $histoMark['scoreList'];
                 $parameters['frequencyMarks']     = $histoMark['frequencyMarks'];
-                $parameters['maxY']               = $histoMark['maxY'];
                 $parameters['questionsList']      = $histoSuccess['questionsList'];
                 $parameters['seriesResponsesTab'] = $histoSuccess['seriesResponsesTab'];
-                $parameters['maxY2']              = $histoSuccess['maxY'];
                 $parameters['coeffQ']             = $histoDiscrimination['coeffQ'];
                 $parameters['MeasureDifficulty']  = $histoMeasureDifficulty;
             }
@@ -1261,12 +1257,10 @@ class ExerciseController extends Controller
      */
     private function histoMark(Exercise $exercise)
     {
-        $em = $this->getDoctrine()->getManager();
-        $maxY = 4;
         if ($exercise->getNbQuestion() == 0) {
             $exoScoreMax = $this->exerciseServices->getExerciseTotalScore($exercise->getId());
         }
-        //$marks = $this->exerciseServices->getExerciseHistoMarks($exerciseId);
+        
         $marks = $this->exerciseRepository->getExerciseMarks($exercise, 'noteExo');
         $tabMarks = array();
         $histoMark = array();
@@ -1289,13 +1283,8 @@ class ExerciseController extends Controller
         ksort($tabMarks);
         $scoreList = implode(",", array_keys($tabMarks));//echo $scoreList;die();
 
-        if (max($tabMarks) > 4) {
-            $maxY = max($tabMarks);
-        }
-
         $frequencyMarks = implode(",", $tabMarks);
 
-        $histoMark['maxY']           = $maxY;
         $histoMark['scoreList']      = $scoreList;
         $histoMark['frequencyMarks'] = $frequencyMarks;
 
@@ -1317,7 +1306,6 @@ class ExerciseController extends Controller
         $seriesResponsesTab[3] = '';
         $questionList = array();
         $histoSuccess = array();
-        $maxY = 4;
 
         foreach ($eqs as $eq) {
             $questionList[] = $eq->getQuestion()->getTitle();
@@ -1327,7 +1315,6 @@ class ExerciseController extends Controller
             $questionsResponsesTab[$eq->getQuestion()->getId()] = $responsesTab;
 
         }
-
         //no response
         foreach ($papers as $paper) {
             $interQuestions = $paper['paper_ordre_question'];//->getOrdreQuestion();
@@ -1351,23 +1338,14 @@ class ExerciseController extends Controller
 
         //creation serie for the graph jqplot
         foreach ($questionsResponsesTab as $responses) {
-            $tot = (int) $responses['correct'] + (int) $responses['partiallyRight'] + (int) $responses['wrong'] + (int) $responses['noResponse'];
-            if ($tot > $maxY ) {
-                $maxY = $tot;
-            }
             $seriesResponsesTab[0] .= (string) $responses['correct'].',';
             $seriesResponsesTab[1] .= (string) $responses['partiallyRight'].',';
             $seriesResponsesTab[2] .= (string) $responses['wrong'].',';
             $seriesResponsesTab[3] .= (string) $responses['noResponse'].',';
         }
 
-        foreach ($seriesResponsesTab as $s) {
-            $s = substr($s, 0, strlen($s) - 1);
-        }
-
         $histoSuccess['questionsList'] = $questionList;
         $histoSuccess['seriesResponsesTab'] = $seriesResponsesTab;
-        $histoSuccess['maxY'] = $maxY;
 
         return $histoSuccess;
     }
@@ -1389,13 +1367,9 @@ class ExerciseController extends Controller
 
         //Array of exercise's scores
         foreach ($marks as $mark) {
-            $tabScoreExo[] = $mark["noteExo"];
-        }
-        //var_dump($tabScoreExo);die();
-
-        //Average exercise's score
-        foreach ($tabScoreExo as $se) {
-            $scoreAverageExo += (float) $se;
+        	$e = $mark["noteExo"];
+            $tabScoreExo[] = $e;
+            $scoreAverageExo += floatval($e);
         }
 
         $scoreAverageExo = $scoreAverageExo / count($tabScoreExo);

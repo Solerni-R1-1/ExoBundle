@@ -246,17 +246,17 @@ class QuestionController extends Controller
                     $interactionQCM = $this->getDoctrine()
                         ->getManager()
                         ->getRepository('UJMExoBundle:InteractionQCM')
-                        ->getInteractionQCM($interaction[0]->getId());
+                        ->getInteractionQCM($interaction[0]);
 
-                    if ($interactionQCM[0]->getShuffle()) {
-                        $interactionQCM[0]->shuffleChoices();
+                    if ($interactionQCM->getShuffle()) {
+                        $interactionQCM->shuffleChoices();
                     } else {
-                        $interactionQCM[0]->sortChoices();
+                        $interactionQCM->sortChoices();
                     }
 
                     $form   = $this->createForm(new ResponseType(), $response);
 
-                    $vars['interactionToDisplayed'] = $interactionQCM[0];
+                    $vars['interactionToDisplayed'] = $interactionQCM;
                     $vars['form']           = $form->createView();
                     $vars['exoID']          = $exoID;
 

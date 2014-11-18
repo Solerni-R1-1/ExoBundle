@@ -63,9 +63,10 @@ public function getExerciseMarks(Exercise $exercise, $order = '')
         		LEFT JOIN UJM\ExoBundle\Entity\Response r
         			WITH r.paper = p
         		JOIN p.exercise e
-            	WHERE e.id = :exercise
-            	AND p.interupt=0 
-            	GROUP BY p.id'.$orderBy;
+            		WITH e.id = :exercise
+            	WHERE p.interupt = 0 
+            	GROUP BY p.id'
+        		.$orderBy;
 
         $query = $this->_em->createQuery($dql);
         $query->setParameter('exercise', $exercise);
