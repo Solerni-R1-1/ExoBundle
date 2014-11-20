@@ -78,7 +78,8 @@ class PaperRepository extends EntityRepository
     					p 				AS paper,
     					p.id			AS paper_id,
     					p.start			AS paper_start,
-    					p.end			AS paper_end
+    					p.end			AS paper_end,
+    					p.mark			AS paper_mark
     			FROM UJM\ExoBundle\Entity\Paper p
     			JOIN p.exercise e
     				WITH e.id = :exerciseId
@@ -106,7 +107,8 @@ class PaperRepository extends EntityRepository
     					p.id			AS paper_id,
     					p.start			AS paper_start,
     					p.end			AS paper_end,
-    					p.ordreQuestion AS paper_ordre_question
+    					p.ordreQuestion AS paper_ordre_question,
+    					p.mark 			AS paper_mark
     			FROM UJM\ExoBundle\Entity\Paper p
     			JOIN p.exercise e
     				WITH e = :exercise

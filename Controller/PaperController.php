@@ -370,11 +370,12 @@ class PaperController extends Controller
                 'p'                => $p,
                 'nbMaxQuestion'    => $nbMaxQuestion,
                 'paperID'          => $paper->getId(),
+            	'paper'			   => $paper,
                 'retryButton'      => $retryButton,
                 'badgesName'       => $badgesName,
                 'badgesNameOwned'  => $badgesNameOwned,
                 'nbUserPaper'      => $nbUserPaper,
-            	'user'				=> $user
+            	'user'			   => $user
             )
         );
     }

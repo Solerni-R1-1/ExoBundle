@@ -89,7 +89,7 @@
                     {% if arrayMarkPapers[paper.id].scoreTemp == true %}
                         <td class="classic" style="color: red;"> {{ scoreFinal }} / 20</td>
                     {% else %}
-                        <td class="classic"> {{ scoreFinal }} / 20</td>
+                        <td class="classic"> {{ paper.getMark() }} / 20</td>
                     {% endif %}
                 {% endif %}
             </tr>

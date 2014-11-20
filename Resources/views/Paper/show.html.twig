@@ -99,7 +99,7 @@
     {% set isPassed = scorePaper * 2 >= maxExoScore %}
     {% set exoMark20 = (scorePaper * exoScoreMax20 / maxExoScore) %}
     {% set exoMark20 = roundUpOrDown(exoMark20) %} {# tronqué à 1 digit #}
-    <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ exoMark20 }}/{{ exoScoreMax20 }}</div></h3>
+    <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ paper.getMark() }} / 20</div></h3>
 
     <p>
             
