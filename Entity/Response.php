@@ -85,7 +85,8 @@ class Response
     private $response;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Paper")
+     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Paper",
+     * 		inversedBy="responses")
      */
     private $paper;
 

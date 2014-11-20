@@ -40,19 +40,19 @@ namespace UJM\ExoBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * UJM\ExoBundle\Entity\ExerciseQuestion
+ * UJM\ExoBundle\Entity\PaperQuestion
  *
- * @ORM\Entity(repositoryClass="UJM\ExoBundle\Repository\ExerciseQuestionRepository")
- * @ORM\Table(name="ujm_exercise_question")
+ * @ORM\Entity(repositoryClass="UJM\ExoBundle\Repository\PaperQuestionRepository")
+ * @ORM\Table(name="ujm_paper_question")
  */
-class ExerciseQuestion
+class PaperQuestion
 {
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Exercise",
-     * 		inversedBy="exerciseQuestions")
+     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Paper",
+     * 		inversedBy="paperQuestions")
      */
-    private $exercise;
+    private $paper;
 
     /**
      * @ORM\Id
@@ -68,20 +68,20 @@ class ExerciseQuestion
     private $ordre;
 
 
-    public function __construct(\UJM\ExoBundle\Entity\Exercise $exercise, \UJM\ExoBundle\Entity\Question $question)
+    public function __construct(\UJM\ExoBundle\Entity\Paper $paper, \UJM\ExoBundle\Entity\Question $question)
     {
-        $this->exercise = $exercise;
+        $this->paper = $paper;
         $this->question = $question;
     }
 
-    public function setExercise(\UJM\ExoBundle\Entity\Exercise $exercise)
+    public function setPaper(\UJM\ExoBundle\Entity\Paper $paper)
     {
-        $this->exercise = $exercise;
+        $this->paper = $paper;
     }
 
-    public function getExercise()
+    public function getPaper()
     {
-        return $this->exercise;
+        return $this->paper;
     }
 
     public function setQuestion(\UJM\ExoBundle\Entity\Question $question)

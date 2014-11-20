@@ -64,6 +64,7 @@ use Pagerfanta\Pagerfanta;
 use Claroline\CoreBundle\Entity\User;
 use UJM\ExoBundle\Services\classes\exerciseServices;
 use Doctrine\ORM\EntityManager;
+use UJM\ExoBundle\Entity\Question;
 
 /**
  * Exercise controller.
@@ -325,7 +326,11 @@ class ExerciseController extends Controller
             $allowEdit = array();
             foreach ($interactions as $interaction) {
             	$id = $interaction->getId();
-             	$responseCount = $orderedResponses[$id];
+            	if (array_key_exists($id, $orderedResponses)) {
+             		$responseCount = $orderedResponses[$id];
+            	} else {
+            		$responseCount = 0;
+            	}
              	$share = $shares[$id];
             	if ($responseCount > 0) {
             		$questionWithResponse[$id] = true;
@@ -622,7 +627,7 @@ class ExerciseController extends Controller
                         $orderInter    = $tab['orderInter'];
                         $tabOrderInter = $tab['tabOrderInter'];
                     } else {
-                        $lastPaper = $papers[count($papers) - 1];
+                        $lastPaper = $papers[count($papers) - 1]['paper'];
                         $orderInter = $lastPaper->getOrdreQuestion();
                         $tabOrderInter = explode(';', $lastPaper->getOrdreQuestion());
                         unset($tabOrderInter[count($tabOrderInter) - 1]);
@@ -1004,40 +1009,110 @@ class ExerciseController extends Controller
     {
         $this->checkAccess($exercise);
         if ($this->exerciseServices->isExerciseAdmin($exercise)) {
-            $workspace = $exercise->getResourceNode()->getWorkspace();
-            
-        	$eqs = $this->exerciseQuestionRepository->findBy(
-        			array('exercise' => $exercise->getId()),
-        			array('ordre' => 'ASC')
+        	// Order questions in exercise for list
+        	$questions = array();
+        	foreach ($exercise->getExerciseQuestions() as $eq) {
+        		if (!array_key_exists($eq->getOrdre(), $questions)) {
+        			$questions[$eq->getOrdre()] = array();
+        		}
+        		$questionData = array();
+        		$questionData['title'] = $eq->getQuestion()->getTitle();
+        		$questionData['interaction'] = $eq->getQuestion()->getInteractions();
+        		$questions[$eq->getOrdre()][] = $questionData;
+        	}
+        	ksort($questions);
+        	$orderedQuestions = array();
+        	foreach ($questions as $ordre => $questionArray) {
+        		foreach ($questionArray as $question) {
+        			$orderedQuestions[] = $question['title'];
+        		}
+        	}
+
+        	// Get papers scores and frequencies
+        	//$avgScore = 0;
+        	//$papers = $this->paperRepository->findByExercise($exercise);
+        	//$nbPapers = count($papers);
+        	
+//         	// Discriminant calculation (coeffQ)
+//         	$marksArray = array();
+//         	$avgMarksArray = array();
+//         	$productMarginMark = array();
+//         	// Store all marks in an array
+//         	foreach ($questions as $questionArray) {
+//         		foreach ($questionArray as $question) {
+// 	        		$interactionId = $question['interaction'][0]->getId();
+// 	        		if (!array_key_exists($interactionId, $marksArray)) {
+// 	        			$marksArray[$interactionId] = array();
+// 	        		}
+// 	        		if (!array_key_exists($interactionId, $avgMarksArray)) {
+// 	        			$avgMarksArray[$interactionId] = 0;
+// 	        		}
+// 	        		if (!array_key_exists($interactionId, $productMarginMark)) {
+// 	        			$productMarginMark[$interactionId] = 0;
+// 	        		}
+// 	        		if (array_key_exists($interactionId, $orderedResponses)) {
+// 		        		foreach ($orderedResponses[$interactionId] as $orderedResponse) {
+// 		        			$marksArray[$interactionId][] = $orderedResponse->getMark();
+// 		        			$avgMarksArray[$interactionId] += $orderedResponse->getMark();
+// 		        			/*$productMarginArray[$interactionId][] = $orderedResponse->getMark();*/
+// 		        		}
+// 	        		}
+//         		}
+//         	}
+        	
+//         	// Calculate means
+//         	foreach ($avgMarksArray as $i => $avgMarks) {
+//         		$avgMarksArray[$i] = $avgMarks / $nbPapers; 
+//         	}
+        	
+//         	// Calculate product margins
+//         	foreach ($marksArray as $i => $marks) {
+//         		foreach ($marks as $j => $mark) {
+//         			$productMarginArray[$i][$j] = ($mark - $avgMarksArray[$i]) * (1);
+//         		}
+//         	}
+        	
+        	
+        	// Calculate marks histogram
+        	$marksHistogram = $this->paperRepository->getMarksHistogram($exercise);
+        	$scores = "";
+        	$frequencies = "";
+        	foreach ($marksHistogram as $markHistogram) {
+        		$scores = $scores.$markHistogram['mark'].',';
+        		$frequencies = $frequencies.$markHistogram['nbPapers'].',';
+        	}
+        	
+        	// Calculate interactions histograms
+        	$interactionsHistogram = $this->paperRepository->getInteractionsHistogram($exercise);
+        	$success = "";
+        	$partiallyRight = "";
+        	$wrong = "";
+        	$noResponse = "";
+        	$difficulty = "";
+        	foreach ($interactionsHistogram as $interaction) {
+        		$success = $success.$interaction['success'].",";
+        		$partiallyRight = $partiallyRight.$interaction['partial'].",";
+        		$wrong = $wrong.$interaction['wrong'].",";
+        		$noResponse = $noResponse.$interaction['noResponse'].",";
+        		$difficulty = $difficulty.$interaction['difficulty'].",";
+        	}
+        	
+        	
+        	$parameters = array(
+        			"nbPapers"				=> $nbPapers,
+        			"workspace"				=> $exercise->getResourceNode()->getWorkspace(),
+        			"_resource"				=> $exercise,
+        			"scoreList"				=> $scores,
+        			"frequencyMarks"		=> $frequencies,
+        			"questionsList"			=> $orderedQuestions,
+        			"seriesResponsesTab"	=> array('success'			=> $success,
+        											'partiallyRight'	=> $partiallyRight,
+        											'wrong'				=> $wrong,
+        											'noResponse'		=> $noResponse),
+        			"coeffQ"				=> "none",
+        			"MeasureDifficulty"		=> $difficulty
         	);
         	
-        	$papers = $this->paperRepository->getExerciseAllPapers($exercise);
-
-            $parameters['nbPapers']  = $nbPapers;
-            $parameters['workspace'] = $workspace;
-            $parameters['exoID']     = $exercise->getId();
-            $parameters['_resource'] = $exercise;
-
-            if ($nbPapers >= 12) {
-                $histoMark = $this->histoMark($exercise);
-                $histoSuccess = $this->histoSuccess($exercise->getId(), $eqs, $papers);
-
-                if ($exercise->getNbQuestion() == 0) {
-                    $histoDiscrimination = $this->histoDiscrimination($exercise, $eqs, $papers);
-                } else {
-                    $histoDiscrimination['coeffQ'] = "none";
-                }
-
-                $histoMeasureDifficulty = $this->histoMeasureOfDifficulty($exercise->getId(), $eqs);
-
-                $parameters['scoreList']          = $histoMark['scoreList'];
-                $parameters['frequencyMarks']     = $histoMark['frequencyMarks'];
-                $parameters['questionsList']      = $histoSuccess['questionsList'];
-                $parameters['seriesResponsesTab'] = $histoSuccess['seriesResponsesTab'];
-                $parameters['coeffQ']             = $histoDiscrimination['coeffQ'];
-                $parameters['MeasureDifficulty']  = $histoMeasureDifficulty;
-            }
-
             return $this->render('UJMExoBundle:Exercise:docimology.html.twig', $parameters);
         } else {
 
@@ -1461,7 +1536,19 @@ class ExerciseController extends Controller
     private function sd($array)
     {
 
-        return sqrt(array_sum(array_map(array($this, "sd_square"), $array, array_fill(0, count($array), (array_sum($array) / count($array))))) / (count($array) - 1));
+        return sqrt(
+        		array_sum(
+        				array_map(
+        						array($this, "sd_square"),
+        						$array,
+        						array_fill(
+        								0,
+        								count($array),
+        								(array_sum($array) / count($array))
+        						)
+        				)
+        		) / (count($array) - 1)
+        );
     }
 
     /**

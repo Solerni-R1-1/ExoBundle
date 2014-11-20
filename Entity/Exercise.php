@@ -186,6 +186,14 @@ class Exercise extends AbstractResource
      * )
      */
     private $groupes;
+    
+    
+    /**
+     * @ORM\OneToMany(targetEntity="UJM\ExoBundle\Entity\ExerciseQuestion",
+     * 			mappedBy="exercise")
+     * @var ExerciseQuestion $exerciseQuestions
+     */
+    private $exerciseQuestions;
 
     public function __construct()
     {
@@ -577,5 +585,9 @@ class Exercise extends AbstractResource
     public function archiveExercise()
     {
         $this->resourceNode = null;
+    }
+    
+    public function getExerciseQuestions() {
+    	return $this->exerciseQuestions;
     }
 }

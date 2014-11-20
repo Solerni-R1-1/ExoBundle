@@ -58,7 +58,7 @@
         <h1>{{ 'docimology' | trans }}</h1>
     </div>
     <div class="panel-body">
-        <a href="{{ path('ujm_exercise_open', { 'exerciseId': exoID }) }}" class="btn btn-primary">
+        <a href="{{ path('ujm_exercise_open', { 'exerciseId': _resource.getId() }) }}" class="btn btn-primary">
             <i class="icon-arrow-left"></i> {{ "back" | trans }}
         </a><br/><br/>
 

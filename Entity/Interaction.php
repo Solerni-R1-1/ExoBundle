@@ -105,7 +105,7 @@ class Interaction
     private $documents;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Question", cascade={"remove"})
+     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Question", cascade={"remove"}, inversedBy="interactions")
      */
     private $question;
 

@@ -127,6 +127,11 @@ class Question
      */
     private $category;
 
+    /**
+     * @ORM\OneToMany(targetEntity="UJM\ExoBundle\Entity\Interaction",
+     * 			mappedBy="question")
+     */
+    private $interactions;
 
     /**
      * Constructs a new instance of Expertises / Documents
@@ -312,5 +317,9 @@ class Question
     public function setCategory(\UJM\ExoBundle\Entity\Category $category)
     {
         $this->category = $category;
+    }
+    
+    public function getInteractions() {
+    	return $this->interactions;
     }
 }

@@ -116,6 +116,28 @@ class Paper
     private $exercise;
 
     /**
+     * @ORM\OneToMany(
+     * 		targetEntity="UJM\ExoBundle\Entity\PaperQuestion",
+     * 		mappedBy="paper")
+     */
+    private $paperQuestions;
+    
+    /**
+     * @var float $mark
+     * 
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $mark;
+    
+    /**
+     * @ORM\OneToMany(
+     * 		targetEntity="UJM\ExoBundle\Entity\Response",
+     * 		mappedBy="paper")
+     */
+    private $responses;
+    
+
+    /**
      * Get id
      *
      * @return integer
@@ -279,5 +301,25 @@ class Paper
     public function setExercise(\UJM\ExoBundle\Entity\Exercise $exercise)
     {
         $this->exercise = $exercise;
+    }
+    
+    public function getPaperQuestions() {
+    	return $this->paperQuestions;
+    }
+    
+    public function setPaperQuestions($paperQuestions) {
+    	$this->paperQuestions = $paperQuestions;
+    }
+    
+    public function getMark() {
+    	return $this->mark;
+    }
+    
+    public function setMark($mark) {
+    	$this->mark = $mark;
+    }
+    
+    public function getResponses() {
+    	return $this->responses;
     }
 }

@@ -158,4 +158,66 @@ class PaperRepository extends EntityRepository
     	
     	return $query->getSingleScalarResult();
     }
+    
+    public function getMarksHistogram(Exercise $exercise) {
+    	$dql = 'SELECT
+    				count(DISTINCT p.id)	AS nbPapers,
+    				p.mark					AS mark
+    			FROM UJM\ExoBundle\Entity\Paper p
+    			WHERE p.exercise = :exercise
+    			GROUP BY mark';
+    	
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameter('exercise', $exercise);
+    	
+    	return $query->getResult();
+    }
+    
+    /**
+     * WARNING : This method uses SQL directly to allow use of subqueries in FROM clause.
+     */
+    public function getInteractionsHistogram(Exercise $exercise) {
+    	$stmt = $this->_em->getConnection()->prepare(
+	    	'SELECT
+			    interaction_id,
+			    partial,
+			    success,
+			    noResponse,
+			    wrong,
+			    ROUND(((success * 100) / (success + wrong + partial)) * 2) / 2 AS difficulty
+			FROM (
+			    SELECT
+			        interaction_id,
+			        SUM(CASE WHEN score > 0 AND score < scoreMax THEN 1 ELSE 0 END) AS partial,
+			        SUM(CASE WHEN score = scoreMax THEN 1 ELSE 0 END) AS success,
+			        SUM(CASE WHEN score IS NULL THEN 1 ELSE 0 END) AS noResponse,
+			        SUM(CASE WHEN score = 0 AND score IS NOT NULL THEN 1 ELSE 0 END) AS wrong
+			    FROM (
+			        SELECT
+			            i.id AS interaction_id,
+			            p.id AS paper_id,
+			            (CASE WHEN r.response != "" THEN r.mark ELSE NULL END) AS score,
+			            CASE WHEN iq.weight_response = 1 THEN SUM(c.right_response) ELSE iq.score_right_response END AS scoreMax
+			        FROM ujm_paper AS p
+			        JOIN ujm_paper_question AS pq
+			            ON pq.paper_id = p.id
+			        JOIN ujm_question AS q
+			            ON q.id = pq.question_id
+			        JOIN ujm_interaction AS i
+			            ON i.question_id = q.id
+			        JOIN ujm_interaction_qcm AS iq
+			            ON iq.interaction_id = q.id
+			        JOIN ujm_choice AS c
+			            ON c.interaction_qcm_id = iq.id
+			        LEFT JOIN ujm_response AS r
+			            ON r.paper_id = p.id
+			            AND r.interaction_id = i.id
+			        WHERE p.exercise_id = '.$exercise->getId().'
+			        GROUP BY r.id, p.id, iq.id
+				) AS t1
+				GROUP BY interaction_id
+			) AS t2;');
+    	$stmt->execute();
+    	return $stmt->fetchAll();
+    }
 }
