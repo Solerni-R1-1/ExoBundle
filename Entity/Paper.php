@@ -111,7 +111,8 @@ class Paper
     private $user;
 
     /**
-     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Exercise")
+     * @ORM\ManyToOne(targetEntity="UJM\ExoBundle\Entity\Exercise",
+     * 			inversedBy="papers")
      */
     private $exercise;
 

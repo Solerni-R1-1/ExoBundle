@@ -65,6 +65,7 @@ use Claroline\CoreBundle\Entity\User;
 use UJM\ExoBundle\Services\classes\exerciseServices;
 use Doctrine\ORM\EntityManager;
 use UJM\ExoBundle\Entity\Question;
+use UJM\ExoBundle\Entity\PaperQuestion;
 
 /**
  * Exercise controller.
@@ -626,22 +627,36 @@ class ExerciseController extends Controller
                         $interactions  = $tab['interactions'];
                         $orderInter    = $tab['orderInter'];
                         $tabOrderInter = $tab['tabOrderInter'];
+                        $questions 		= $tab['tabOrderInterEntities'];
                     } else {
                         $lastPaper = $papers[count($papers) - 1]['paper'];
                         $orderInter = $lastPaper->getOrdreQuestion();
                         $tabOrderInter = explode(';', $lastPaper->getOrdreQuestion());
                         unset($tabOrderInter[count($tabOrderInter) - 1]);
                         $interactions[0] = $this->interactionRepository->find($tabOrderInter[0]);
+                        
+                        $questions = array();
+                        foreach ($lastPaper->getPaperQuestions() as $paperQuestion) {
+                        	$questions[$paperQuestion->getOrdre()] = $paperQuestion->getQuestion();
+                        }
                     }
                 } else {
                     $tab = $this->prepareInteractionsPaper($exercise);
-                    $interactions  = $tab['interactions'];
-                    $orderInter    = $tab['orderInter'];
-                    $tabOrderInter = $tab['tabOrderInter'];
+                    $interactions	= $tab['interactions'];
+                    $orderInter		= $tab['orderInter'];
+                    $tabOrderInter	= $tab['tabOrderInter'];
+                    $questions 		= $tab['tabOrderInterEntities'];
                 }
 
                 $paper->setOrdreQuestion($orderInter);
+                $questionOrders = explode(';', $orderInter);
                 $this->em->persist($paper);
+                $this->em->flush();
+                foreach ($questions as $i => $question) {
+                	$paperQuestion = new PaperQuestion($paper, $question);
+                	$paperQuestion->setOrdre($i);
+                	$this->em->persist($paperQuestion); 
+                }
                 $this->em->flush();
             } else {
                 $paper = $paper[0];
@@ -682,14 +697,17 @@ class ExerciseController extends Controller
 				$exercise->getShuffle(),
         		$exercise->getNbQuestion());
 
-        foreach ($interactions as $interaction) {
+        $questions = array();
+        foreach ($interactions as $i => $interaction) {
             $orderInter = $orderInter.$interaction->getId().';';
             $tabOrderInter[] = $interaction->getId();
+            $questions[$i] = $interaction->getQuestion();
         }
 
         $tab['interactions']  = $interactions;
         $tab['orderInter']    = $orderInter;
         $tab['tabOrderInter'] = $tabOrderInter;
+        $tab['tabOrderInterEntities'] = $questions;
 
         return $tab;
     }
@@ -1028,74 +1046,39 @@ class ExerciseController extends Controller
         		}
         	}
 
-        	// Get papers scores and frequencies
-        	//$avgScore = 0;
-        	//$papers = $this->paperRepository->findByExercise($exercise);
-        	//$nbPapers = count($papers);
+        	if ($nbPapers >= 12) {
+	        	// Calculate marks histogram
+	        	$marksHistogram = $this->paperRepository->getMarksHistogram($exercise);
+	        	$scores = "";
+	        	$frequencies = "";
+	        	foreach ($marksHistogram as $markHistogram) {
+	        		$scores = $scores.$markHistogram['mark'].',';
+	        		$frequencies = $frequencies.$markHistogram['nbPapers'].',';
+	        	}
+	        	
+	        	// Calculate interactions histograms
+	        	$interactionsHistogram = $this->paperRepository->getInteractionsHistogram($exercise);
+	        	$success = "";
+	        	$partiallyRight = "";
+	        	$wrong = "";
+	        	$noResponse = "";
+	        	$difficulty = "";
+	        	foreach ($interactionsHistogram as $interaction) {
+	        		$success = $success.$interaction['success'].",";
+	        		$partiallyRight = $partiallyRight.$interaction['partial'].",";
+	        		$wrong = $wrong.$interaction['wrong'].",";
+	        		$noResponse = $noResponse.$interaction['noResponse'].",";
+	        		$difficulty = $difficulty.$interaction['difficulty'].",";
+	        	}
         	
-//         	// Discriminant calculation (coeffQ)
-//         	$marksArray = array();
-//         	$avgMarksArray = array();
-//         	$productMarginMark = array();
-//         	// Store all marks in an array
-//         	foreach ($questions as $questionArray) {
-//         		foreach ($questionArray as $question) {
-// 	        		$interactionId = $question['interaction'][0]->getId();
-// 	        		if (!array_key_exists($interactionId, $marksArray)) {
-// 	        			$marksArray[$interactionId] = array();
-// 	        		}
-// 	        		if (!array_key_exists($interactionId, $avgMarksArray)) {
-// 	        			$avgMarksArray[$interactionId] = 0;
-// 	        		}
-// 	        		if (!array_key_exists($interactionId, $productMarginMark)) {
-// 	        			$productMarginMark[$interactionId] = 0;
-// 	        		}
-// 	        		if (array_key_exists($interactionId, $orderedResponses)) {
-// 		        		foreach ($orderedResponses[$interactionId] as $orderedResponse) {
-// 		        			$marksArray[$interactionId][] = $orderedResponse->getMark();
-// 		        			$avgMarksArray[$interactionId] += $orderedResponse->getMark();
-// 		        			/*$productMarginArray[$interactionId][] = $orderedResponse->getMark();*/
-// 		        		}
-// 	        		}
-//         		}
-//         	}
+
+                if ($exercise->getNbQuestion() == 0) {
+                    $histoDiscrimination = $this->histoDiscrimination($exercise);
+                } else {
+                    $histoDiscrimination['coeffQ'] = 'none';
+                }
+            }
         	
-//         	// Calculate means
-//         	foreach ($avgMarksArray as $i => $avgMarks) {
-//         		$avgMarksArray[$i] = $avgMarks / $nbPapers; 
-//         	}
-        	
-//         	// Calculate product margins
-//         	foreach ($marksArray as $i => $marks) {
-//         		foreach ($marks as $j => $mark) {
-//         			$productMarginArray[$i][$j] = ($mark - $avgMarksArray[$i]) * (1);
-//         		}
-//         	}
-        	
-        	
-        	// Calculate marks histogram
-        	$marksHistogram = $this->paperRepository->getMarksHistogram($exercise);
-        	$scores = "";
-        	$frequencies = "";
-        	foreach ($marksHistogram as $markHistogram) {
-        		$scores = $scores.$markHistogram['mark'].',';
-        		$frequencies = $frequencies.$markHistogram['nbPapers'].',';
-        	}
-        	
-        	// Calculate interactions histograms
-        	$interactionsHistogram = $this->paperRepository->getInteractionsHistogram($exercise);
-        	$success = "";
-        	$partiallyRight = "";
-        	$wrong = "";
-        	$noResponse = "";
-        	$difficulty = "";
-        	foreach ($interactionsHistogram as $interaction) {
-        		$success = $success.$interaction['success'].",";
-        		$partiallyRight = $partiallyRight.$interaction['partial'].",";
-        		$wrong = $wrong.$interaction['wrong'].",";
-        		$noResponse = $noResponse.$interaction['noResponse'].",";
-        		$difficulty = $difficulty.$interaction['difficulty'].",";
-        	}
         	
         	
         	$parameters = array(
@@ -1109,7 +1092,7 @@ class ExerciseController extends Controller
         											'partiallyRight'	=> $partiallyRight,
         											'wrong'				=> $wrong,
         											'noResponse'		=> $noResponse),
-        			"coeffQ"				=> "none",
+        			"coeffQ"				=> $histoDiscrimination['coeffQ'],
         			"MeasureDifficulty"		=> $difficulty
         	);
         	
@@ -1429,8 +1412,10 @@ class ExerciseController extends Controller
      * To draw histogram of discrimination
      *
      */
-    private function histoDiscrimination(Exercise $exercise, $eqs, $papers)
+    private function histoDiscrimination(Exercise $exercise)
     {
+    	$papers = $exercise->getPapers();
+    	$eqs = $exercise->getExerciseQuestions();
         $tabScoreExo = array();
         $tabScoreQ = array();
         $tabScoreAverageQ = array();
@@ -1452,7 +1437,7 @@ class ExerciseController extends Controller
         //Array of each question's score
         foreach ($eqs as $eq) {
             $interaction = $this->interactionRepository->getInteraction($eq->getQuestion()->getId());
-            $responses = $this->responseRepository->getExerciseInterResponses($exerciseId, $interaction[0]->getId());
+            $responses = $this->responseRepository->getExerciseInterResponses($exercise->getId(), $interaction[0]->getId());
             foreach ($responses as $response) {
                 $tabScoreQ[$eq->getQuestion()->getId()][] = $response['mark'];
             }

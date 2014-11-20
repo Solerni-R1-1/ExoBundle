@@ -819,8 +819,12 @@ class exerciseServices
         $paperInfos = $this->getInfosPaper($paper);
 
         if (!$paperInfos['scoreTemp']) {
-            $event = new LogExerciseEvaluatedEvent($paper->getExercise(), ($paperInfos['scorePaper'] * 20) / $paperInfos['maxExoScore']);
+        	$score = ($paperInfos['scorePaper'] * 20) / $paperInfos['maxExoScore'];
+            $event = new LogExerciseEvaluatedEvent($paper->getExercise(), $score);
             $this->eventDispatcher->dispatch('log', $event);
+            $paper->setMark($score);
+            $this->em->persist($paper);
+            $this->em->flush();
         }
     }
 
