@@ -119,7 +119,7 @@
         {% endif %}
 
 
-        {% if nbAttemptAllowed > 0 %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %}
+        {% if nbAttemptAllowed > 0 and not givenUp %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %}
     </p>
     
     {#
@@ -140,8 +140,13 @@
                 <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoId }) }}">
 	                {{ 'start again' | trans({}, 'solerni') }}
 	            </a>
+	            {% if not givenUp %}
+                <a class="btn btn-primary" href="{{ path('ujm_paper_give_up', { 'id': paperID }) }}">
+	                {{ 'display_correction'|trans({}, 'solerni') }}
+	            </a>
+	            {% endif %}
             {% elseif nbUserPaper > 1 %}
-                 <a class="btn btn-gris" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
+                <a class="btn btn-gris" href="{{ path('ujm_paper_list', { 'exoID': exoId , 'page': 1 }) }}">
                     {{ 'see papers' | trans({}, 'solerni') }}
                 </a>
             {% endif %}
@@ -582,7 +587,7 @@
                 <div class="panel panel-default">
                     {% set needLegend = false %}
                     {# Devons nous afficher les corrections ? #}
-                    {% set displayCorrection = (correction == 1 or (correction == 2 and nbAttemptAllowed == 0)) %}
+                    {% set displayCorrection = (correction == 1 or (correction == 2 and (nbAttemptAllowed == 0 or givenUp))) %}
 
                     <div class="panel-heading"><div class='list_responses bg-color-grey-1'>{% if displayCorrection %}{{ 'list of question' | trans({}, 'solerni') }}{% else %}{{ 'list of response' | trans({}, 'solerni') }}{% endif %}</div></div>
                     <div class="panel-body">

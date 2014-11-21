@@ -11,6 +11,7 @@ correction : Résultats du quiz
 
 #D
 duree : Durée estimée
+display_correction : 'Afficher la correction (consommera vos essais restants)'
 
 #E
 end date: Fin

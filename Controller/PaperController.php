@@ -61,6 +61,7 @@ use Claroline\CoreBundle\Entity\User;
 use Claroline\CoreBundle\Pager\PagerFactory;
 use UJM\ExoBundle\Repository\PaperRepository;
 use UJM\ExoBundle\Services\classes\exerciseServices;
+use UJM\ExoBundle\Entity\ExerciseUser;
 
 /**
  * Paper controller.
@@ -95,6 +96,10 @@ class PaperController extends Controller
 
     /** @var ResponseRepository */
     protected $responseRepository;
+
+    /** @var ExerciseUserRepository */
+    protected $exerciseUserRepository;
+    
 	/**
 	 * Constructor.
 	 *
@@ -123,6 +128,7 @@ class PaperController extends Controller
 		$this->exerciseRepository		= $this->em->getRepository('UJMExoBundle:Exercise');
 		$this->userRepository			= $this->em->getRepository('ClarolineCoreBundle:User');
 		$this->responseRepository		= $this->em->getRepository('UJMExoBundle:Response');
+		$this->exerciseUserRepository	= $this->em->getRepository('UJMExoBundle:ExerciseUser');
 	}
 	
     /**
@@ -350,6 +356,11 @@ class PaperController extends Controller
 
         }
         
+        $givenUp = $user->hasGivenUpExercise($paper->getExercise());
+        if ($givenUp) {
+        	$retryButton = false;
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:show.html.twig',
             array(
@@ -375,7 +386,8 @@ class PaperController extends Controller
                 'badgesName'       => $badgesName,
                 'badgesNameOwned'  => $badgesNameOwned,
                 'nbUserPaper'      => $nbUserPaper,
-            	'user'			   => $user
+            	'user'			   => $user,
+            	'givenUp'		   => $givenUp 
             )
         );
     }
@@ -593,5 +605,34 @@ class PaperController extends Controller
         }
 
         return $display;
+    }
+    
+    /**
+     * @EXT\ParamConverter(
+     *      "paper",
+     *      class="UJMExoBundle:Paper",
+     *      options={"id" = "id", "strictId" = true})
+     *     
+     * @EXT\ParamConverter("user", options={"authenticatedUser" = true})
+     */
+    public function giveUpAction(User $user, Paper $paper) {
+    	$exerciseUser = $this->exerciseUserRepository->getExerciseUser($paper->getExercise(), $user);
+    	if ($exerciseUser == null) {
+    		$exerciseUser = new ExerciseUser($paper->getExercise(), $user);
+    	}
+    	$exerciseUser->setGivenUp(true);
+    	$this->em->persist($exerciseUser);
+    	$this->em->flush();
+    	
+    	$unfinishedPapers = $this->paperRepository->getPaper($user->getId(), $paper->getExercise()->getId());
+    	if ($unfinishedPapers != null) {
+    		foreach ($unfinishedPapers as $unfinishedPaper) {
+	    		$unfinishedPaper->setEnd(new \DateTime());
+	    		$unfinishedPaper->setInterupt(0);
+	    		$this->exerciseServices->manageEndOfExercise($unfinishedPaper);
+    		}
+    	}
+    	
+    	return $this->redirect($this->generateUrl("ujm_paper_show", array("id" => $paper->getId())));
     }
 }
