@@ -743,10 +743,10 @@ class ExerciseController extends Controller
     	
     	if ($paper->getEnd() == null) { 
 	    	switch ($request->getMethod()) {
-	    		case Request::METHOD_GET:
+	    		case 'GET':
 	    			// Do nothing
 	    			break;
-	    		case Request::METHOD_POST:
+	    		case 'POST':
 	    			// Write response
 	    			$this->processAnswer($request);
 	    			break;
@@ -819,10 +819,10 @@ class ExerciseController extends Controller
     	// Init vars
     	$workspace = $paper->getExercise()->getResourceNode()->getWorkspace();
     	switch ($request->getMethod()) {
-    		case Request::METHOD_GET:
+    		case 'GET':
     			// Do nothing
     			break;
-    		case Request::METHOD_POST:
+    		case 'POST':
     			// Write response
     			$this->processAnswer($request);
     			break;
