@@ -76,17 +76,17 @@ class ExerciseType extends AbstractType
                 )
             )
             //->add('dateCreate')
-            ->add(
+            /*->add(
                 'duration', 'text', array(
                     'label' => 'Exercise.duration'
                 )
-            )
+            )*/
             //->add('nbQuestionPage')
-            ->add(
+            /*->add(
                 'doprint', 'checkbox', array(
                     'required' => false, 'label' => 'print paper'
                 )
-            )
+            )*/
             ->add(
                 'maxAttempts', 'text', array(
                     'label' => 'maximum number of tries'
@@ -150,11 +150,11 @@ class ExerciseType extends AbstractType
                     'required' => false, 'label' => 'test exit'
                 )
             )
-            ->add(
+            /*->add(
                 'lockAttempt', 'checkbox', array(
                     'required' => false, 'label' => 'lock attempt'
                 )
-            );
+            )*/;
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
