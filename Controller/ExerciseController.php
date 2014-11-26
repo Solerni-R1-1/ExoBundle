@@ -248,14 +248,22 @@ class ExerciseController extends Controller
                                                 $exercise->getId());
 
 
-            /** SII trouver l'info numAttempt **/
-            $paper = $this->paperRepository->getExerciseUserPapers($user->getId(), $exercise->getId());
-            $numAttempt = -1;
-            if(count($paper) > 0){
-                $paper = $paper[count($paper) - 1 ];
-                $numAttempt = $paper['paper']->getNumPaper();    
-            } 
-
+        /** SII trouver l'info numAttempt **/
+        $paper = $this->paperRepository->getExerciseUserPapers($user->getId(), $exercise->getId());
+        $numAttempt = -1;
+        if(count($paper) > 0){
+            $paper = $paper[count($paper) - 1 ];
+            $numAttempt = $paper['paper']->getNumPaper();    
+        }
+        
+        if ($exercise->getDispButtonInterrupt()) {
+        	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
+        	if ($currentPaper != null) {
+        		$numAttempt--;
+        	}
+        }
+        
+            
         return $this->render(
             'UJMExoBundle:Exercise:show.html.twig',
             array(

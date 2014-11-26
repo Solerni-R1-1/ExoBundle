@@ -222,4 +222,20 @@ class PaperRepository extends EntityRepository
     	$stmt->execute();
     	return $stmt->fetchAll();
     }
+    
+    public function getCurrentPaperForUser(Exercise $exercise, User $user) {
+    	$dql = "SELECT p
+    			FROM UJM\ExoBundle\Entity\Paper p
+    			WHERE p.exercise = :exercise
+    			AND p.user = :user
+    			AND p.end IS NULL";
+    			
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameters(array(
+    			"exercise"	=> $exercise,
+    			"user"		=> $user
+    	));
+    	
+    	return $query->getOneOrNullResult();
+    }
 }

@@ -238,6 +238,12 @@ class PaperController extends Controller
 
         $givenUp = $user->hasGivenUpExercise($exercise);
 
+        if ($exercise->getDispButtonInterrupt()) {
+        	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
+        } else {
+        	$currentPaper = null;
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
@@ -259,7 +265,8 @@ class PaperController extends Controller
                 'arrayMarkPapers'		=> $arrayMarkPapers,
                 'badgesName'			=> $badgesName,
                 'badgesNameOwned'		=> $badgesNameOwned,
-            	'givenUp'		   		=> $givenUp 
+            	'givenUp'		   		=> $givenUp,
+            	'currentPaper'			=> $currentPaper 
             )
         );
     }
@@ -364,6 +371,15 @@ class PaperController extends Controller
         	$retryButton = false;
         }
         
+        if ($exercise->getMaxAttempts() > 0) {
+        	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
+        	if ($currentPaper != null) {
+        		$retryButton = true;
+        	}
+        } else {
+        	$currentPaper = null;
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:show.html.twig',
             array(
@@ -390,7 +406,8 @@ class PaperController extends Controller
                 'badgesNameOwned'  => $badgesNameOwned,
                 'nbUserPaper'      => $nbUserPaper,
             	'user'			   => $user,
-            	'givenUp'		   => $givenUp 
+            	'givenUp'		   => $givenUp,
+            	'currentPaper'	   => $currentPaper
             )
         );
     }

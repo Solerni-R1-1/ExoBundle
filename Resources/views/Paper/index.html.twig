@@ -137,7 +137,7 @@
         {% elseif not givenUp %}
 		<div class="input-group">
 			<a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
-				{{ 'start again' | trans({}, 'solerni') }}
+				{% if currentPaper is defined and currentPaper != null %}{{ 'SaveNoFinish_Y' | trans({}, 'solerni') }}{% else %}{{ 'start again' | trans({}, 'solerni') }}{% endif %}
 			</a>
 		</div>
         {% endif %}
@@ -197,9 +197,9 @@
                         </thead>
                         <tbody>
 
-                        
-
+            
                         {% for paper in pager.currentPageResults %}
+                        	{% if (not exercise.getDispButtonInterrupt()) or (paper.paper_end or isAdmin == 1) %}
                             <tr>
                                 <td class="classic">
                                     {{ paper.user_firstname }} {{ paper.user_lastname }}
@@ -240,6 +240,7 @@
                                     {% endif %}
                                  {% endif %}
                              </tr>
+                             {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>
