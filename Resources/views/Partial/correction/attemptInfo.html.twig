@@ -1,4 +1,4 @@
-{% if nbAttemptAllowed == 0 %}
+{% if nbAttemptAllowed == 0 or givenUp %}
     <div class="">{{ 'attempt info6'|trans }}</div>
 {% elseif nbAttemptAllowed > 0 %}
     <div class="">

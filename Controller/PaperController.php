@@ -236,6 +236,8 @@ class PaperController extends Controller
 
         }
 
+        $givenUp = $user->hasGivenUpExercise($exercise);
+
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
@@ -256,7 +258,8 @@ class PaperController extends Controller
                 '_resource'				=> $exercise,
                 'arrayMarkPapers'		=> $arrayMarkPapers,
                 'badgesName'			=> $badgesName,
-                'badgesNameOwned'		=> $badgesNameOwned
+                'badgesNameOwned'		=> $badgesNameOwned,
+            	'givenUp'		   		=> $givenUp 
             )
         );
     }

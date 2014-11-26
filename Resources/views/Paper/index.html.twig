@@ -134,7 +134,7 @@
         {% elseif maxAttemptsAchieved %}
         {% elseif endedExercise %}
         <p>{{ 'exercise_ended' | trans({}, 'solerni') }}</p>
-        {% else %}
+        {% elseif not givenUp %}
 		<div class="input-group">
 			<a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
 				{{ 'start again' | trans({}, 'solerni') }}
