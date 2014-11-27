@@ -131,7 +131,7 @@
 		<br/>
         {% if not startedExercise %}
         <p>{{ 'exercise_not_started' | trans({"%date%" : exerciseStartDate|date(format)}, 'solerni') | raw}}</p>
-        {% elseif maxAttemptsAchieved %}
+        {% elseif maxAttemptsAchieved and currentPaper is not defined and currentPaper == null %}
         {% elseif endedExercise %}
         <p>{{ 'exercise_ended' | trans({}, 'solerni') }}</p>
         {% elseif not givenUp %}

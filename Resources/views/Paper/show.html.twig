@@ -139,7 +139,7 @@
         {% if  p == -2 %}
 	        {% if retryButton %}
                 <a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoId }) }}">
-	                {{ 'start again' | trans({}, 'solerni') }}
+	        {% if currentPaper is defined and currentPaper != null %}{{ 'SaveNoFinish_Y' | trans({}, 'solerni') }}{% else %}{{ 'start again' | trans({}, 'solerni') }}{% endif %}
 	            </a>
 	            {% if not givenUp %}
                 <a class="btn btn-primary" href="{{ path('ujm_paper_give_up', { 'id': paperID }) }}">
