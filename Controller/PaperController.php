@@ -366,11 +366,6 @@ class PaperController extends Controller
 
         }
         
-        $givenUp = $user->hasGivenUpExercise($paper->getExercise());
-        if ($givenUp) {
-        	$retryButton = false;
-        }
-        
         if ($exercise->getMaxAttempts() > 0) {
         	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
         	if ($currentPaper != null) {
@@ -378,6 +373,11 @@ class PaperController extends Controller
         	}
         } else {
         	$currentPaper = null;
+        }
+        
+        $givenUp = $user->hasGivenUpExercise($paper->getExercise());
+        if ($givenUp) {
+        	$retryButton = false;
         }
         
         return $this->render(
@@ -498,14 +498,12 @@ class PaperController extends Controller
             $papersOneUser[] = $this->paperRepository->findBy(array(
 					'user' => $userList[$i]->getId(),
                     'exercise' => $exoID));
-
             if ($i > 0) {
-                $papersUser = array_merge($papersOneUser[$i - 1], $papersOneUser[$i]);
+                $papersUser = array_merge($papersUser, $papersOneUser[$i]);
             } else {
                 $papersUser = $papersOneUser[$i];
             }
         }
-
         foreach ($papersUser as $p) {
             $arrayMarkPapers[$p->getId()] = $this->exerciseServices->getInfosPaper($p);
         }
@@ -518,9 +516,10 @@ class PaperController extends Controller
         $exercise = $this->exerciseRepository->find($exoID);
         $exoAdmin = $this->exerciseServices->isExerciseAdmin($exercise);
         /* EDIT SII : provide isAdmin */
-         
+        
         $divResultSearch = $this->render(
             'UJMExoBundle:Paper:userPaper.html.twig', array(
+            	'exercise'		  => $exercise,
                 'papers'          => $papersUser,
                 'arrayMarkPapers' => $arrayMarkPapers,
                 'display'         => $display,

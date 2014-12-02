@@ -1,5 +1,5 @@
 {% if nbAttemptAllowed == 0 or givenUp %}
-	{% if currentPaper is defined and currentPaper != null %}
+	{% if not givenUp and currentPaper is defined and currentPaper != null %}
     <div class="">{{ 'attempt info8'|trans }}</div>
 	{% else %}
     <div class="">{{ 'attempt info6'|trans }}</div>

@@ -615,7 +615,7 @@ class ExerciseController extends Controller
             $paper = $this->paperRepository->getPaper($user->getId(), $exercise->getId());
 
             //if not exist a paper no finished
-            if (count($paper) == 0) {
+            if (!$exercise->getDispButtonInterrupt() || count($paper) == 0) {
                 if ($this->exerciseServices->controlMaxAttemps($exercise, $user, $exoAdmin) === false) {
                    return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $exercise->getId())));
                 }

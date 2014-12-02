@@ -60,7 +60,8 @@ class PaperRepository extends EntityRepository
             ->join('p.exercise', 'e')
             ->where($qb->expr()->in('u.id', $userID))
             ->andWhere($qb->expr()->in('e.id', $exerciseID))
-            ->andWhere('p.end IS NULL');
+            ->andWhere('p.end IS NULL')
+        	->orderBy("p.id", "DESC");
 
         return $qb->getQuery()->getResult();
     }
@@ -228,13 +229,15 @@ class PaperRepository extends EntityRepository
     			FROM UJM\ExoBundle\Entity\Paper p
     			WHERE p.exercise = :exercise
     			AND p.user = :user
-    			AND p.end IS NULL";
+    			AND p.end IS NULL
+    			ORDER BY p.id DESC";
     			
     	$query = $this->_em->createQuery($dql);
     	$query->setParameters(array(
     			"exercise"	=> $exercise,
     			"user"		=> $user
     	));
+    	$query->setMaxResults(1);
     	
     	return $query->getOneOrNullResult();
     }
