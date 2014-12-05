@@ -5,3 +5,7 @@ ujm_paper_list:
 ujm_paper_show:
     pattern:  /{id}/show/{p}
     defaults: { _controller: UJMExoBundle:Paper:show, p: -2 }
+
+ujm_paper_give_up:
+    pattern:  /{id}/giveup
+    defaults: { _controller: UJMExoBundle:Paper:giveUp}

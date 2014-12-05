@@ -1,5 +1,9 @@
-{% if nbAttemptAllowed == 0 %}
+{% if nbAttemptAllowed == 0 or givenUp %}
+	{% if not givenUp and currentPaper is defined and currentPaper != null %}
+    <div class="">{{ 'attempt info8'|trans }}</div>
+	{% else %}
     <div class="">{{ 'attempt info6'|trans }}</div>
+    {% endif %}
 {% elseif nbAttemptAllowed > 0 %}
     <div class="">
         {{ 'attempt info4'|trans }} {{nbAttemptAllowed}}
@@ -9,5 +13,8 @@
             {{ 'attempt info2sing'|trans }}
         {% endif %}
         {{ 'attempt info5'|trans }}
+        {% if currentPaper is defined and currentPaper != null %}
+        	{{ 'attempt info7'|trans }}
+        {% endif %}
     </div>
 {% endif %}

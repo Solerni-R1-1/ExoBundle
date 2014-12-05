@@ -49,6 +49,7 @@
         {% set format = 'd/m/Y \\- H\\hi\\ms\\s' %} <!-- Y-m-d H:i:s  /!\ if alter format, alter sorting -->
 
         {% for paper in papers %}
+            {% if (not exercise.getDispButtonInterrupt()) or (paper.getEnd() or isAdmin == 1) %}
             <tr>
                 <td class="classic">
                     {{ paper.user.firstname }} {{ paper.user.lastName }}
@@ -89,10 +90,11 @@
                     {% if arrayMarkPapers[paper.id].scoreTemp == true %}
                         <td class="classic" style="color: red;"> {{ scoreFinal }} / 20</td>
                     {% else %}
-                        <td class="classic"> {{ scoreFinal }} / 20</td>
+                        <td class="classic"> {{ paper.getMark() }} / 20</td>
                     {% endif %}
                 {% endif %}
             </tr>
+			{% endif %}
         {% endfor %}
         </tbody>
     </table>

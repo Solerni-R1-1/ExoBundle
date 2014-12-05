@@ -169,8 +169,8 @@
                             <th class="classic">{{ 'creationDate' | trans }}</th>
                             <td class="classic">{{ entity.dateCreate|date('d/m/Y \\- H\\hi\\ms\\s') }}</td>
                         </tr>
-                        <tr class="hiddencells">
-                            <th class="classic">{{ 'duration' | trans }}</th>
+                        {#<tr class="hiddencells">
+                        	<th class="classic">{{ 'duration' | trans }}</th>
                             <td class="classic">
                                 {% if entity.duration != 0 %}
                                     {{ entity.duration }}
@@ -178,8 +178,8 @@
                                     {{ 'noOne'|trans }}
                                 {% endif %}
                             </td>
-                        </tr>
-                        <tr class="hiddencells">
+                        </tr>#}
+                        {#<tr class="hiddencells">
                             <th class="classic">{{ 'print paper' | trans }}</th>
                             <td class="classic">
                                 {% if entity.doprint == 0 %}
@@ -188,7 +188,7 @@
                                     <i class="icon-ok-sign"></i>
                                 {% endif %}
                             </td>
-                        </tr>
+                        </tr>#}
                         <tr class="hiddencells">
                             <th class="classic">{{ 'maximum number of tries' | trans }}</th>
                             <td class="classic">
@@ -233,7 +233,7 @@
                                 {% endif %}
                             </td>
                         </tr>
-                        <tr class="hiddencells">
+                        {#<tr class="hiddencells">
                             <th class="classic">{{ 'lock attempt' | trans }}</th>
                             <td class="classic">
                                 {% if  entity.lockAttempt == 0 %}
@@ -242,7 +242,7 @@
                                     <i class="icon-ok-sign"></i>
                                 {% endif %}
                             </td>
-                        </tr>
+                        </tr>#}
                     {% endif %}
                 </tbody>
             </table>

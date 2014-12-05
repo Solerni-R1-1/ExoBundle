@@ -60,7 +60,8 @@ class PaperRepository extends EntityRepository
             ->join('p.exercise', 'e')
             ->where($qb->expr()->in('u.id', $userID))
             ->andWhere($qb->expr()->in('e.id', $exerciseID))
-            ->andWhere('p.end IS NULL');
+            ->andWhere('p.end IS NULL')
+        	->orderBy("p.id", "DESC");
 
         return $qb->getQuery()->getResult();
     }
@@ -78,7 +79,8 @@ class PaperRepository extends EntityRepository
     					p 				AS paper,
     					p.id			AS paper_id,
     					p.start			AS paper_start,
-    					p.end			AS paper_end
+    					p.end			AS paper_end,
+    					p.mark			AS paper_mark
     			FROM UJM\ExoBundle\Entity\Paper p
     			JOIN p.exercise e
     				WITH e.id = :exerciseId
@@ -106,7 +108,8 @@ class PaperRepository extends EntityRepository
     					p.id			AS paper_id,
     					p.start			AS paper_start,
     					p.end			AS paper_end,
-    					p.ordreQuestion AS paper_ordre_question
+    					p.ordreQuestion AS paper_ordre_question,
+    					p.mark 			AS paper_mark
     			FROM UJM\ExoBundle\Entity\Paper p
     			JOIN p.exercise e
     				WITH e = :exercise
@@ -219,5 +222,23 @@ class PaperRepository extends EntityRepository
 			) AS t2;');
     	$stmt->execute();
     	return $stmt->fetchAll();
+    }
+    
+    public function getCurrentPaperForUser(Exercise $exercise, User $user) {
+    	$dql = "SELECT p
+    			FROM UJM\ExoBundle\Entity\Paper p
+    			WHERE p.exercise = :exercise
+    			AND p.user = :user
+    			AND p.end IS NULL
+    			ORDER BY p.id DESC";
+    			
+    	$query = $this->_em->createQuery($dql);
+    	$query->setParameters(array(
+    			"exercise"	=> $exercise,
+    			"user"		=> $user
+    	));
+    	$query->setMaxResults(1);
+    	
+    	return $query->getOneOrNullResult();
     }
 }

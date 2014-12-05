@@ -248,14 +248,22 @@ class ExerciseController extends Controller
                                                 $exercise->getId());
 
 
-            /** SII trouver l'info numAttempt **/
-            $paper = $this->paperRepository->getExerciseUserPapers($user->getId(), $exercise->getId());
-            $numAttempt = -1;
-            if(count($paper) > 0){
-                $paper = $paper[count($paper) - 1 ];
-                $numAttempt = $paper['paper']->getNumPaper();    
-            } 
-
+        /** SII trouver l'info numAttempt **/
+        $paper = $this->paperRepository->getExerciseUserPapers($user->getId(), $exercise->getId());
+        $numAttempt = -1;
+        if(count($paper) > 0){
+            $paper = $paper[count($paper) - 1 ];
+            $numAttempt = $paper['paper']->getNumPaper();    
+        }
+        
+        if ($exercise->getDispButtonInterrupt()) {
+        	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
+        	if ($currentPaper != null) {
+        		$numAttempt--;
+        	}
+        }
+        
+            
         return $this->render(
             'UJMExoBundle:Exercise:show.html.twig',
             array(
@@ -607,7 +615,7 @@ class ExerciseController extends Controller
             $paper = $this->paperRepository->getPaper($user->getId(), $exercise->getId());
 
             //if not exist a paper no finished
-            if (count($paper) == 0) {
+            if (!$exercise->getDispButtonInterrupt() || count($paper) == 0) {
                 if ($this->exerciseServices->controlMaxAttemps($exercise, $user, $exoAdmin) === false) {
                    return $this->redirect($this->generateUrl('ujm_paper_list', array('exoID' => $exercise->getId())));
                 }

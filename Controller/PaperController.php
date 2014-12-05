@@ -61,6 +61,7 @@ use Claroline\CoreBundle\Entity\User;
 use Claroline\CoreBundle\Pager\PagerFactory;
 use UJM\ExoBundle\Repository\PaperRepository;
 use UJM\ExoBundle\Services\classes\exerciseServices;
+use UJM\ExoBundle\Entity\ExerciseUser;
 
 /**
  * Paper controller.
@@ -95,6 +96,10 @@ class PaperController extends Controller
 
     /** @var ResponseRepository */
     protected $responseRepository;
+
+    /** @var ExerciseUserRepository */
+    protected $exerciseUserRepository;
+    
 	/**
 	 * Constructor.
 	 *
@@ -123,6 +128,7 @@ class PaperController extends Controller
 		$this->exerciseRepository		= $this->em->getRepository('UJMExoBundle:Exercise');
 		$this->userRepository			= $this->em->getRepository('ClarolineCoreBundle:User');
 		$this->responseRepository		= $this->em->getRepository('UJMExoBundle:Response');
+		$this->exerciseUserRepository	= $this->em->getRepository('UJMExoBundle:ExerciseUser');
 	}
 	
     /**
@@ -230,6 +236,14 @@ class PaperController extends Controller
 
         }
 
+        $givenUp = $user->hasGivenUpExercise($exercise);
+
+        if ($exercise->getDispButtonInterrupt()) {
+        	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
+        } else {
+        	$currentPaper = null;
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:index.html.twig',
             array(
@@ -250,7 +264,9 @@ class PaperController extends Controller
                 '_resource'				=> $exercise,
                 'arrayMarkPapers'		=> $arrayMarkPapers,
                 'badgesName'			=> $badgesName,
-                'badgesNameOwned'		=> $badgesNameOwned
+                'badgesNameOwned'		=> $badgesNameOwned,
+            	'givenUp'		   		=> $givenUp,
+            	'currentPaper'			=> $currentPaper 
             )
         );
     }
@@ -350,6 +366,20 @@ class PaperController extends Controller
 
         }
         
+        if ($exercise->getMaxAttempts() > 0) {
+        	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
+        	if ($currentPaper != null) {
+        		$retryButton = true;
+        	}
+        } else {
+        	$currentPaper = null;
+        }
+        
+        $givenUp = $user->hasGivenUpExercise($paper->getExercise());
+        if ($givenUp) {
+        	$retryButton = false;
+        }
+        
         return $this->render(
             'UJMExoBundle:Paper:show.html.twig',
             array(
@@ -370,11 +400,14 @@ class PaperController extends Controller
                 'p'                => $p,
                 'nbMaxQuestion'    => $nbMaxQuestion,
                 'paperID'          => $paper->getId(),
+            	'paper'			   => $paper,
                 'retryButton'      => $retryButton,
                 'badgesName'       => $badgesName,
                 'badgesNameOwned'  => $badgesNameOwned,
                 'nbUserPaper'      => $nbUserPaper,
-            	'user'				=> $user
+            	'user'			   => $user,
+            	'givenUp'		   => $givenUp,
+            	'currentPaper'	   => $currentPaper
             )
         );
     }
@@ -465,14 +498,12 @@ class PaperController extends Controller
             $papersOneUser[] = $this->paperRepository->findBy(array(
 					'user' => $userList[$i]->getId(),
                     'exercise' => $exoID));
-
             if ($i > 0) {
-                $papersUser = array_merge($papersOneUser[$i - 1], $papersOneUser[$i]);
+                $papersUser = array_merge($papersUser, $papersOneUser[$i]);
             } else {
                 $papersUser = $papersOneUser[$i];
             }
         }
-
         foreach ($papersUser as $p) {
             $arrayMarkPapers[$p->getId()] = $this->exerciseServices->getInfosPaper($p);
         }
@@ -485,9 +516,10 @@ class PaperController extends Controller
         $exercise = $this->exerciseRepository->find($exoID);
         $exoAdmin = $this->exerciseServices->isExerciseAdmin($exercise);
         /* EDIT SII : provide isAdmin */
-         
+        
         $divResultSearch = $this->render(
             'UJMExoBundle:Paper:userPaper.html.twig', array(
+            	'exercise'		  => $exercise,
                 'papers'          => $papersUser,
                 'arrayMarkPapers' => $arrayMarkPapers,
                 'display'         => $display,
@@ -592,5 +624,34 @@ class PaperController extends Controller
         }
 
         return $display;
+    }
+    
+    /**
+     * @EXT\ParamConverter(
+     *      "paper",
+     *      class="UJMExoBundle:Paper",
+     *      options={"id" = "id", "strictId" = true})
+     *     
+     * @EXT\ParamConverter("user", options={"authenticatedUser" = true})
+     */
+    public function giveUpAction(User $user, Paper $paper) {
+    	$exerciseUser = $this->exerciseUserRepository->getExerciseUser($paper->getExercise(), $user);
+    	if ($exerciseUser == null) {
+    		$exerciseUser = new ExerciseUser($paper->getExercise(), $user);
+    	}
+    	$exerciseUser->setGivenUp(true);
+    	$this->em->persist($exerciseUser);
+    	$this->em->flush();
+    	
+    	$unfinishedPapers = $this->paperRepository->getPaper($user->getId(), $paper->getExercise()->getId());
+    	if ($unfinishedPapers != null) {
+    		foreach ($unfinishedPapers as $unfinishedPaper) {
+	    		$unfinishedPaper->setEnd(new \DateTime());
+	    		$unfinishedPaper->setInterupt(0);
+	    		$this->exerciseServices->manageEndOfExercise($unfinishedPaper);
+    		}
+    	}
+    	
+    	return $this->redirect($this->generateUrl("ujm_paper_show", array("id" => $paper->getId())));
     }
 }

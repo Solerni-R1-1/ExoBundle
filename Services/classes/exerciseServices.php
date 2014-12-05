@@ -65,6 +65,7 @@ use UJM\ExoBundle\Entity\Choice;
 use UJM\ExoBundle\Entity\InteractionQCM;
 use UJM\ExoBundle\Entity\Response;
 use UJM\ExoBundle\Entity\Exercise;
+use Claroline\CoreBundle\Entity\User;
 
 class exerciseServices
 {
@@ -860,9 +861,10 @@ class exerciseServices
      */
     public function controlMaxAttemps($exercise, $user, $exoAdmin)
     {
-        if (($exoAdmin != 1) && ($exercise->getMaxAttempts() > 0)
+    	
+        if (($user->hasGivenUpExercise($exercise)) || (($exoAdmin != 1) && ($exercise->getMaxAttempts() > 0)
             && ($exercise->getMaxAttempts() <= $this->getNbPaper($user->getId(),
-            $exercise->getId()))
+            $exercise->getId())))
         ) {
             return false;
         } else {

@@ -95,7 +95,7 @@ class Exercise extends AbstractResource
      *
      * @ORM\Column(name="duration", type="integer")
      */
-    private $duration;
+    private $duration = 0;
 
     /**
      * @var integer $nbQuestionPage
@@ -109,7 +109,7 @@ class Exercise extends AbstractResource
      *
      * @ORM\Column(name="doprint", type="boolean", nullable=true)
      */
-    private $doprint;
+    private $doprint = false;
 
     /**
      * @var integer $maxAttempts
@@ -172,7 +172,7 @@ class Exercise extends AbstractResource
      *
      * @ORM\Column(name="lock_attempt", type="boolean", nullable=true)
      */
-    private $lockAttempt;
+    private $lockAttempt = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="UJM\ExoBundle\Entity\Groupes")

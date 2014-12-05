@@ -120,24 +120,24 @@
             <hr/>
         {% endif %}
 
-        {% if nbUserPaper > 0 %}
+        {#% if nbUserPaper > 0 %}
             
                 {{ 'already answered' | trans }}
                 
-        {% endif %}
+        {% endif %#}
 
         {% include "UJMExoBundle:Partial:badgeInfos/infos.html.twig" %}
         {% include "UJMExoBundle:Partial:correction/attemptInfo.html.twig" %}
 		<br/>
         {% if not startedExercise %}
         <p>{{ 'exercise_not_started' | trans({"%date%" : exerciseStartDate|date(format)}, 'solerni') | raw}}</p>
-        {% elseif maxAttemptsAchieved %}
+        {% elseif maxAttemptsAchieved and (currentPaper is not defined or currentPaper == null) %}
         {% elseif endedExercise %}
         <p>{{ 'exercise_ended' | trans({}, 'solerni') }}</p>
-        {% else %}
+        {% elseif not givenUp %}
 		<div class="input-group">
 			<a class="btn btn-primary" href="{{ path('ujm_exercise_paper', { 'id': exoID }) }}">
-				{{ 'start again' | trans({}, 'solerni') }}
+				{% if currentPaper is defined and currentPaper != null %}{{ 'SaveNoFinish_Y' | trans({}, 'solerni') }}{% else %}{{ 'start again' | trans({}, 'solerni') }}{% endif %}
 			</a>
 		</div>
         {% endif %}
@@ -197,9 +197,9 @@
                         </thead>
                         <tbody>
 
-                        
-
+            
                         {% for paper in pager.currentPageResults %}
+                        	{% if (not exercise.getDispButtonInterrupt()) or (paper.paper_end or isAdmin == 1) %}
                             <tr>
                                 <td class="classic">
                                     {{ paper.user_firstname }} {{ paper.user_lastname }}
@@ -236,10 +236,11 @@
                                     {% if arrayMarkPapers[paper.paper_id].scoreTemp == true %}
                                         <td class="classic" style="color: red;"> {{ scoreFinal }} / 20</td>
                                     {% else %}
-                                        <td class="classic"> {{ scoreFinal }} / 20</td>
+                                        <td class="classic"> {{ paper.paper_mark }} / 20</td>
                                     {% endif %}
                                  {% endif %}
                              </tr>
+                             {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>

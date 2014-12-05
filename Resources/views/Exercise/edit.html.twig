@@ -121,10 +121,10 @@
                         <h3 class="panel-title">{{ 'At the end of assessment' | trans }}</h3>
                     </div>
                     <div class="panel-body">
-                        <div class="form-group row">
+                        {#<div class="form-group row">
                             {{ form_label(edit_form.doprint) }}
                             <div class="col-md-9">{{ form_widget(edit_form.doprint) }}</div>
-                        </div>
+                        </div>#}
                         {{ form_row(edit_form.correctionMode) }}
                         <div class="form-group row date picker" id="CorrectionMode" style="display: none;">
                             {{ form_label(edit_form.dateCorrection) }}
@@ -143,16 +143,16 @@
                         <h3 class="panel-title">{{ 'paper' | trans }}</h3>
                     </div>
                     <div class="panel-body">
-                        {{ form_row(edit_form.duration) }}
+                		{#{{ form_row(edit_form.duration) }}#}
                         {{ form_row(edit_form.maxAttempts) }}
                         <div class="form-group row">
                             {{ form_label(edit_form.dispButtonInterrupt) }}
                             <div class="col-md-9">{{ form_widget(edit_form.dispButtonInterrupt) }}</div>
                         </div>
-                        <div class="form-group row">
+                        {#<div class="form-group row">
                             {{ form_label(edit_form.lockAttempt) }}
                             <div class="col-md-9">{{ form_widget(edit_form.lockAttempt) }}</div>
-                        </div>
+                        </div>#}
                         {{ form_rest(edit_form) }}
                     </div>
                 </div>
