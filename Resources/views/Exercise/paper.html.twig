@@ -92,7 +92,7 @@
     <hr/>
     <div class="panel-body">
         <form method="post" name="formResponse" id="formResponse">
-	        <input type="hidden" name="answeredInteractionId" id="answeredInteractionId" value="{{ interaction.getId() }}"/>
+	        <input type="hidden" name="answeredInteractionId" id="answeredInteractionId" value="{{ interaction.getInteraction().getId() }}"/>
 	        <input type="hidden" name="answeredPaperId" id="answeredPaperId" value="{{ paper.getId() }}"/>
 	        <input type="hidden" name="answeredExerciseId" id="answeredExerciseId" value="{{ exercise.getId() }}"/>
             <input type="hidden" name="numQuestionToDisplayed" id="numQuestionToDisplayed" value=""/>
