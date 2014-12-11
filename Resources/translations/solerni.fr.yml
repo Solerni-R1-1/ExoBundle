@@ -15,7 +15,7 @@ display_correction : 'Afficher la correction (consommera vos essais restants)'
 
 #E
 end date: Fin
-exercise_ended: La date limite pour effectuer cet exercise à été dépassée. 
+exercise_ended: La date limite pour effectuer cet exercice à été dépassée. 
 exercise_not_started: Vous pourrez commencer cet exercice à partir du <strong>%date%</strong>.
 
 # F
