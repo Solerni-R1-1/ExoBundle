@@ -62,11 +62,7 @@
         ) %}
         <div class='col-xs-12 col-md-12 slrn-widget'>
 	        <div class='row slrn-back bg-color-grey-2'>
-                {% if not paper.getExercise().getDispButtonInterrupt() %}
-                   <a href="{{ mooc_service.getBackMoocUrl( workspace, user ) }}" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
-                {% else %}
-                    <a data-toggle="modal" href="#quitModal" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
-                {% endif %}
+                <a data-toggle="modal" href="#quitModal" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
             </div>
         </div>
         
@@ -366,7 +362,9 @@
                                     <h4 class="modal-title">{{ 'Quit_title'|trans({}, 'solerni') | raw }}</h4>
                                 </div>
                                 <div class="modal-body">
-                                    {% if not paper.getExercise().getDispButtonInterrupt() %}{{ 'Quit'|trans({}, 'solerni') }}<br/><br/>{% endif %}
+                                    {% if not paper.getExercise().getDispButtonInterrupt() %}
+                                        {{ 'Quit'|trans({}, 'solerni') }}<br/><br/>
+                                    {% endif %}
                                     {{ 'Quit2'|trans({}, 'solerni') }}
                                 </div>
                                 <div class="modal-footer">
@@ -447,28 +445,15 @@
         });
 
         function submitForm(interactionId) {
-            $(window).unbind('beforeunload');
             var route = Routing.generate('ujm_exercise_paper_question', {exerciseId:{{ exercise.getId() }}, paperId:{{ paper.getId() }}, interactionId:interactionId});
 			$('#formResponse').attr('action', route);
 			$('#formResponse').submit();
         }
 
         function finish() {
-            $(window).unbind('beforeunload');
         	var route = Routing.generate('ujm_finish_paper', {exerciseId:{{ exercise.getId() }}, paperId:{{ paper.getId() }}});
 			$('#formResponse').attr('action', route);
 			$('#formResponse').submit();
         }
-    </script>
-    
-    {% if not paper.getExercise().getDispButtonInterrupt() %}
-         <script type="text/javascript">
-            $(document).ready(function() {              
-                $(window).bind('beforeunload', function(e) {
-                    return '{{ 'Quit'|trans({}, 'solerni') }}';
-                });
-            });
-        </script>
-    {% endif %}
-    
+    </script>    
 {% endblock %}
