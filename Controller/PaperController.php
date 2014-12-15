@@ -368,9 +368,11 @@ class PaperController extends Controller
         
         if ($exercise->getMaxAttempts() > 0) {
         	$currentPaper = $this->paperRepository->getCurrentPaperForUser($exercise, $user);
-        	if ($currentPaper != null) {
+        	if ($currentPaper != null && $exercise->getDispButtonInterrupt() ) {
         		$retryButton = true;
-        	}
+        	} else {
+                $currentPaper = null; // We cannot have current paper if we cannot interrupt the quiz
+            }
         } else {
         	$currentPaper = null;
         }

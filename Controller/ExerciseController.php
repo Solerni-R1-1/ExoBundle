@@ -1053,6 +1053,10 @@ class ExerciseController extends Controller
         			$orderedQuestions[] = $question['title'];
         		}
         	}
+        	$parameters = array(
+        			"nbPapers"				=> $nbPapers,
+        			"workspace"				=> $exercise->getResourceNode()->getWorkspace(),
+        			"_resource"				=> $exercise);
 
         	if ($nbPapers >= 12) {
 	        	// Calculate marks histogram
@@ -1085,25 +1089,20 @@ class ExerciseController extends Controller
                 } else {
                     $histoDiscrimination['coeffQ'] = 'none';
                 }
+        	
+        	
+        	
+	        	$parameters["scoreList"] = $scores;
+	        	$parameters["frequencyMarks"] = $frequencies;
+	        	$parameters["questionsList"] = $orderedQuestions;
+	        	$parameters["seriesResponsesTab"] = array('success'			=> $success,
+	        											'partiallyRight'	=> $partiallyRight,
+	        											'wrong'				=> $wrong,
+	        											'noResponse'		=> $noResponse);
+	        	$parameters["coeffQ"] = $histoDiscrimination['coeffQ'];
+	        	$parameters["MeasureDifficulty"] = $difficulty;
+        	
             }
-        	
-        	
-        	
-        	$parameters = array(
-        			"nbPapers"				=> $nbPapers,
-        			"workspace"				=> $exercise->getResourceNode()->getWorkspace(),
-        			"_resource"				=> $exercise,
-        			"scoreList"				=> $scores,
-        			"frequencyMarks"		=> $frequencies,
-        			"questionsList"			=> $orderedQuestions,
-        			"seriesResponsesTab"	=> array('success'			=> $success,
-        											'partiallyRight'	=> $partiallyRight,
-        											'wrong'				=> $wrong,
-        											'noResponse'		=> $noResponse),
-        			"coeffQ"				=> $histoDiscrimination['coeffQ'],
-        			"MeasureDifficulty"		=> $difficulty
-        	);
-        	
             return $this->render('UJMExoBundle:Exercise:docimology.html.twig', $parameters);
         } else {
 

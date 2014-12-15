@@ -224,9 +224,11 @@ class exerciseServices
             foreach ($allChoices as $choice) {
                 $markByChoice[(string) $choice->getId()] = $choice->getWeight();
             }
-
+            
             foreach ($response as $res) {
-                $score += $markByChoice[$res];
+                if ( $res ) {
+                    $score += $markByChoice[$res];
+                }
             }
 
             if ($score > $scoreMax) {

@@ -62,8 +62,8 @@
         ) %}
         <div class='col-xs-12 col-md-12 slrn-widget'>
 	        <div class='row slrn-back bg-color-grey-2'>
-	            <a data-toggle="modal" href="#quitModal" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
-	        </div>
+                <a data-toggle="modal" href="#quitModal" class='slrn-back__link'><i class="icon-chevron-left no_underline"></i>{{ 'returnMOOC' | trans({}, 'solerni') }}</a>
+            </div>
         </div>
         
 </div>
@@ -92,7 +92,7 @@
     <hr/>
     <div class="panel-body">
         <form method="post" name="formResponse" id="formResponse">
-	        <input type="hidden" name="answeredInteractionId" id="answeredInteractionId" value="{{ interaction.getId() }}"/>
+	        <input type="hidden" name="answeredInteractionId" id="answeredInteractionId" value="{{ interaction.getInteraction().getId() }}"/>
 	        <input type="hidden" name="answeredPaperId" id="answeredPaperId" value="{{ paper.getId() }}"/>
 	        <input type="hidden" name="answeredExerciseId" id="answeredExerciseId" value="{{ exercise.getId() }}"/>
             <input type="hidden" name="numQuestionToDisplayed" id="numQuestionToDisplayed" value=""/>
@@ -362,7 +362,9 @@
                                     <h4 class="modal-title">{{ 'Quit_title'|trans({}, 'solerni') | raw }}</h4>
                                 </div>
                                 <div class="modal-body">
-                                    {% if exercise.getMaxAttempts() == paper.getNumPaper() %}{{ 'Quit'|trans({}, 'solerni') }}<br/><br/>{% endif %}
+                                    {% if not paper.getExercise().getDispButtonInterrupt() %}
+                                        {{ 'Quit'|trans({}, 'solerni') }}<br/><br/>
+                                    {% endif %}
                                     {{ 'Quit2'|trans({}, 'solerni') }}
                                 </div>
                                 <div class="modal-footer">
@@ -435,6 +437,7 @@
         <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/graphicdisplay.js') }}"></script>
         <script type="text/javascript" src="{{ asset('bundles/ujmexo/js/paper.js') }}"></script>
     {% endif %}
+        
 
     <script type="text/javascript">
         $(document).ready(function() {
@@ -452,5 +455,5 @@
 			$('#formResponse').attr('action', route);
 			$('#formResponse').submit();
         }
-    </script>
+    </script>    
 {% endblock %}
