@@ -5,14 +5,18 @@ ask hint : Je souhaite un indice#GB
 attempt info3 : essai#GB
 attempt info3_1 : er#GB
 attempt info3_x : ème#GB
-#GB
-# C#GB
+#B
+badge_not_yet: Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; %badgeName% &raquo;</strong>#GB
+badge_owned: Vous avez obtenu le badge de connaissance <strong>&laquo; %badgeName% &raquo;</strong>#GB
+
+#C
+congrats: Félicitations !#GB
 correction : Résultats du quiz#GB
-#GB
-#D#GB
+corrector_comments: Voir les commentaires du correcteur#GB
+#D
 duree : Durée estimée#GB
 display_correction : 'Afficher la correction (consommera vos essais restants)#GB'
-#GB
+discover_collection: Pour découvrir votre collection de badges, rendez vous sur la page <a class="red" href="%url%">mes badges</a>#GB
 #E#GB
 end date: Fin#GB
 exercise_ended: La date limite pour effectuer cet exercice à été dépassée.#GB
@@ -21,7 +25,7 @@ exercise_not_started: Vous pourrez commencer cet exercice à partir du <strong>%
 # F#GB
 final mark: Voir votre note#GB
 finish: Terminer#GB
-#GB
+free_answer: Réponse libre#GB
 # G#GB
 good response: Les bonnes réponses étaient#GB
 #GB
@@ -35,7 +39,8 @@ list of all results: Résultats précédents#GB
 #GB
 # N#GB
 next: Question suivante#GB
-#GB
+#M
+may_have_badge: En effectuant ce quiz, vous avez peut-être gagné un badge !#GB
 # P#GB
 paper exo : Quiz#GB
 previous : Question précédente#GB
@@ -71,7 +76,8 @@ start date: Début#GB
 #GB
 # T#GB
 #time : 2 min#GB
-#GB
+#U
+undealed_type: Le type %interactionType% n'est pas géré#GB
 # Y#GB
 your mark : Votre note#GB
 your score : Votre score#GB

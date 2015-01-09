@@ -76,19 +76,16 @@
 <div class='col-xs-9 col-md-9'>
 
      <div class="panel-heading">
-     
-        {#<div class='slrn_lessonTitle'>{{ render(controller('UJMExoBundle:ExoAddons:getLessonInSession', {'workspace': workspace})) }}</div>#}
-
         <h1>
-        {% if  p == -2 %}
-            {{'correction'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}
-        {% elseif p >= 0  %}
-            {% set desc = 'answer for question' | trans %}
-            {% set desc = desc ~ (p+1) ~ '/' ~ interactions|length %}
-            {{ desc }} : {{ _resource.getResourceNode().getName() }}
-        {% elseif  p == -1 %}
-            {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}
-        {% endif %}
+            {% if  p == -2 %}
+                {{'correction'|trans({}, 'solerni')}} : {{ _resource.getResourceNode().getName() }}
+            {% elseif p >= 0  %}
+                {% set desc = 'answer for question' | trans %}
+                {% set desc = desc ~ (p+1) ~ '/' ~ interactions|length %}
+                {{ desc }} : {{ _resource.getResourceNode().getName() }}
+            {% elseif  p == -1 %}
+                {{ 'your mark' | trans({}, 'solerni')  }} : {{ _resource.getResourceNode().getName() }}
+            {% endif %}
         </h1>
     </div>    
     <hr/>
@@ -102,38 +99,9 @@
     <h3 class='panel-title'>{{'see mark' | trans({}, 'solerni') }} : <div id="paperFinalScore" class="londrina-solid">{{ roundUpOrDown( paper.getMark() ) }} / 20</div></h3>
 
     <p>
-            
-        {% if hasBadge or hasBadgeOwned %}
-            {% if hasBadgeOwned %}
-                <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesNameOwned|join(', ')}} &raquo;</strong>. <br/>
-                Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
-            {% else %}
-                Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
-            {% endif %}
-        {% else %}
-            {# {% if isPassed %}
-                <strong>Félicitations !</strong>
-            {% else %}
-                Dommage...<br/>
-            {% endif %} #}
-        {% endif %}
-
-
+        {% include "UJMExoBundle:Partial:badgeInfos/infos.html.twig" %}
         {% include "UJMExoBundle:Partial:correction/attemptInfo.html.twig" %}
-        {#% if nbAttemptAllowed > 0 and not givenUp %}Il vous reste <strong>{{ nbAttemptAllowed }} essai(s)</strong> pour tenter d'améliorer votre note !{% endif %#}
     </p>
-    
-    {#
-    {% set exoMark = 0 %}
-    {% set exoScoreMax = 0 %}
-    {% if responses[p].mark != -1 %}
-        {{ 'mark' | trans }} : <span id="open_mark_value_{{ responses[p].id }}">{{ responses[p].mark }} / {{ interInfo['maxScore'] }}</span>
-        {% set exoMark = exoMark + responses[p].mark %}
-    {% else %}
-        {{ 'mark' | trans }} : <span id="open_mark_value_{{ responses[p].id }}">{{ 'not yet mark' | trans }}</span>
-        {% set temporaryMark = true %}
-    {% endif %}
-    #}
     
     <div class="panel-body">
         {% if  p == -2 %}
@@ -142,7 +110,7 @@
 	        {% if currentPaper is defined and currentPaper != null %}{{ 'SaveNoFinish_Y' | trans({}, 'solerni') }}{% else %}{{ 'start again' | trans({}, 'solerni') }}{% endif %}
 	            </a>
 	            {% if not givenUp %}
-                <a class="btn btn-primary" href="{{ path('ujm_paper_give_up', { 'id': paperID }) }}">
+                <a class="btn btn-primary top-margin" href="{{ path('ujm_paper_give_up', { 'id': paperID }) }}">
 	                {{ 'display_correction'|trans({}, 'solerni') }}
 	            </a>
 	            {% endif %}
@@ -184,22 +152,6 @@
                                     </div>
                                 </div>
 
-                               {# {% if inter.interaction.question.description != '' %}
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><h3 class="panel-title">{{ 'description' | trans }}</h3></div>
-                                        <div class="panel-body">
-                                            {{ inter.interaction.question.description|raw }}
-                                        </div>
-                                    </div>
-                                {% endif %} #}
-
-                                {#<div class="panel panel-default">
-                                    <div class="panel-heading"><h3 class="panel-title">{{ 'question' | trans }}</h3></div>
-                                    <div class="panel-body">
-                                        {{ inter.interaction.invite|raw }}
-                                    </div>
-                                </div> #}
-
                                 <div class="panel panel-default">
                                    {# <div class="panel-heading"><h3 class="panel-title">{{ 'response' | trans }}</h3></div> #}
                                     <div class="panel-body">
@@ -235,7 +187,7 @@
                                                             <img src="{{ asset('bundles/ujmexo/images/checkbox_off.gif') }}">
                                                         {% endif %}
                                                     </td>
-                                              {#      <td class="classic">
+                                              {# <td class="classic">
                                                         {% if choice.feedback is not empty %}
                                                             {{ choice.feedback|raw }}
                                                         {% else %}
@@ -277,54 +229,6 @@
                             </div>
                         </div>
 
-{#
-                        {% include "UJMExoBundle:Partial:correction/interaction.html.twig" %}
-
-                        <table border="1" class="table table-striped table-bordered table-condensed">
-                            <tr>
-                                <th class="classic">{{ 'choice' | trans }}</th>
-                                <th class="classic">{{ 'expected answer' | trans }}</th>
-                                <th class="classic">{{ 'your answer' | trans }}</th>
-                                <th class="classic">{{ 'feedback' | trans }}</th>
-                            </tr>
-
-                            {% for choice in inter.choices %}
-                                <tr>
-                                    <td class="classic">
-                                        {{ choice.label|raw }}
-                                    </td>
-                                    <td class="classic">
-                                        {% if choice.rightResponse %}
-                                            <img src="{{ asset('bundles/ujmexo/images/checkbox_on.gif') }}">
-                                        {% else %}
-                                            <img src="{{ asset('bundles/ujmexo/images/checkbox_off.gif') }}">
-                                        {% endif %}
-                                    </td>
-                                    <td class="classic">
-                                        {% if regexTwig('/' ~ choice.id ~ ';/', responses[p].response) > 0 %}
-                                            <!-- choice checked by student ->
-                                            {% if choice.rightResponse %}
-                                                <img src="{{ asset('bundles/ujmexo/images/checkbox_on.gif') }}">
-                                            {% else %}
-                                                <img src="{{ asset('bundles/ujmexo/images/checkbox_on_red.gif') }}">
-                                            {% endif %}
-                                        {% else %}
-                                            <img src="{{ asset('bundles/ujmexo/images/checkbox_off.gif') }}">
-                                        {% endif %}
-                                    </td>
-                                    <td class="classic">
-                                        {% if choice.feedback is not empty %}
-                                            {{ choice.feedback|raw }}
-                                        {% else %}
-                                            -
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </table>
-
-                        {% include "UJMExoBundle:Partial:correction/interactionScore.html.twig" %}
-#}
                     {% endif %}
                 </div>
 
@@ -450,22 +354,6 @@
                                     </div>
                                 </div>
 
-                                {# {% if inter.interaction.question.description != '' %}
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading"><h3 class="panel-title">{{ 'description' | trans }}</h3></div>
-                                        <div class="panel-body">
-                                            {{ inter.interaction.question.description|raw }}
-                                        </div>
-                                    </div>
-                                {% endif %} #}
-
-                                {# <div class="panel panel-default">
-                                    <div class="panel-heading"><h3 class="panel-title">{{ 'question' | trans }}</h3></div>
-                                    <div class="panel-body">
-                                        {{ inter.interaction.invite|raw }}
-                                    </div>
-                                </div> #}
-
                                 <div class="panel panel-default">
                                  {#   <div class="panel-heading"><h3 class="panel-title">{{ 'response' | trans }}</h3></div> #}
                                     <div class="panel-body">
@@ -523,37 +411,12 @@
                 </div>
             {% endif %}
         {% endif %}
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
       {% if p == -1 %}
             <div class="panel-body">
                 <div class="panel panel-default">
-                    {#<div class="panel-heading"><h3>{{ 'mark' | trans }} :</h3></div> #}
-                    <p>En effectuant ce quiz, vous avez peut-être gagné un badge !<br/>
-                    Pour le savoir, rendez vous sur la page <a href='{{ path('claro_profile_view_badges') }}' class='goToBadges'>Mes badges</a></p>
+                    <p>{{ 'may_have_badge' | trans({}, 'solerni') }}<br/>
+                    {{ 'check_if_badge' | trans({'%url%': path('claro_profile_view_badges') }, 'solerni')|raw }}</p>
                     <div class="panel-body">
                         {% set scoreFinal = scorePaper / maxExoScore %}
                         {% set scoreFinal = scoreFinal * 20 %}
@@ -603,7 +466,7 @@
                                    {% set interInfo = getInterTwig(interaction.id, 'InteractionHole') %}
                                 {% else %}
                                     {% set interInfo = null %}
-                                    <h1 style='color:#FOO'> Le type {{interaction.type }} n'est pas géré </h1>
+                                    <h1 style='color:#FOO'>{{'undealed_type'|trans({'%interactionType%': interaction.type}, 'solerni')}}</h1>
                 	            {% endif %}
 
                  	            {% if displayCorrection and interInfo != null and responses[i].mark == interInfo['maxScore'] %}
@@ -646,7 +509,7 @@
 									                
 									                   
 			                                        {% if interOpen.typeopenquestion == 'long' %}
-			                                            {#{ interOpen.worldResponse.response }#}Réponse libre
+			                                            {{'free_answer'|trans({}, 'solerni')}}
 			                                        {% else %}     
 			                                        {% endif %}
 								                {% endif %}
@@ -654,7 +517,7 @@
                                             </div>
                                             {% if interaction.feedback != '' %}
                                                 <div class='collapse__div' data-collapse>
-                                                    <div class='collapse__div__title' data-collapse-summary>Voir les commentaires du correcteur</div>
+                                                    <div class='collapse__div__title' data-collapse-summary>{{'corrector_comments'|trans({}, 'solerni')}}</div>
                                                     <div class='collapse__div__instruction slrn-grey-block'>{{ interaction.feedback|raw }}</div>
                                                 </div>
                                             {% endif %}
@@ -718,14 +581,12 @@
                                             </div>
                                             {% if displayCorrection and interaction.feedback != '' %}
                                                 <div class='collapse__div' data-collapse>
-                                                    <div class='collapse__div__title' data-collapse-summary>Voir les commentaires du correcteur</div>
+                                                    <div class='collapse__div__title' data-collapse-summary>{{'corrector_comments'|trans({}, 'solerni')}}</div>
                                                     <div class='collapse__div__instruction slrn-grey-block'>{{ interaction.feedback|raw }}</div>
                                                 </div>
                                             {% endif %}
                                         </div>
                                     {% endif %}
-
-
                                 <hr/>
                                 {% set i = i + 1 %}
                             {% endfor %}
@@ -742,8 +603,6 @@
             </div>
         {% endif %}
     </div>
-
-
 </div>
 </section>
 {% endblock %}

@@ -6,12 +6,20 @@ attempt info3 : essai
 attempt info3_1 : er
 attempt info3_x : ème
 
+#B
+badge_not_yet: Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; %badgeName% &raquo;</strong>
+badge_owned: Vous avez obtenu le badge de connaissance <strong>&laquo; %badgeName% &raquo;</strong>
+
 # C
+congrats: Félicitations !
 correction : Résultats du quiz
+corrector_comments: Voir les commentaires du correcteur
+check_if_badge: Pour le savoir, rendez vous sur la page <a href="%url%" class="goToBadges">Mes badges</a>
 
 #D
 duree : Durée estimée
 display_correction : 'Afficher la correction (consommera vos essais restants)'
+discover_collection: Pour découvrir votre collection de badges, rendez vous sur la page <a class="red" href="%url%">mes badges</a>
 
 #E
 end date: Fin
@@ -21,6 +29,7 @@ exercise_not_started: Vous pourrez commencer cet exercice à partir du <strong>%
 # F
 final mark: Voir votre note
 finish: Terminer
+free_answer: Réponse libre
 
 # G
 good response: Les bonnes réponses étaient
@@ -32,6 +41,9 @@ Hint_title: Attention
 list of question : Résultats
 list of response: Rappel de vos réponses
 list of all results: Résultats précédents
+
+#M
+may_have_badge: En effectuant ce quiz, vous avez peut-être gagné un badge !
 
 # N
 next: Question suivante
@@ -71,6 +83,10 @@ start date: Début
 
 # T
 #time : 2 min
+
+#U
+undealed_type: Le type %interactionType% n'est pas géré
+
 
 # Y
 your mark : Votre note
