@@ -1,4 +1,4 @@
-﻿##
+##
 # ExoOnLine
 # Copyright or © or Copr. Université Jean Monnet (France), 2012
 # dsi.dev@univ-st-etienne.fr
@@ -198,13 +198,13 @@ InteractionQCM: Multiple choice item
 # K 
 key word: Keyword
 kind of question: What type of question
- 
+
 # L 
 label: Label
 label_empty: The answer fields must not be empty
 legend: Key
 lessInformation: Less information
-linkedDoc: Beware: the document you are trying to delete is linked to questions
+linkedDoc: 'Beware: the document you are trying to delete is linked to questions'
 linkpaper: Linked to a test
 linkedQuestions: Linked questions
 list: List
@@ -365,7 +365,7 @@ validate: Submit
  
 # W 
 warning: Are you sure you wish to delete this document?
-warning_change_type_q: Beware: you risk losing the data entered, continue
+warning_change_type_q: 'Beware: you risk losing the data entered, continue'
 whichAction: What action do you wish to take?
 with: With
 withResponse: With answers
