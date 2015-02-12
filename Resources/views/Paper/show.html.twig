@@ -110,7 +110,7 @@
 	        {% if currentPaper is defined and currentPaper != null %}{{ 'SaveNoFinish_Y' | trans({}, 'solerni') }}{% else %}{{ 'start again' | trans({}, 'solerni') }}{% endif %}
 	            </a>
 	            {% if not givenUp %}
-                <a class="btn btn-primary top-margin" href="{{ path('ujm_paper_give_up', { 'id': paperID }) }}">
+                <a class="btn btn-primary" href="{{ path('ujm_paper_give_up', { 'id': paperID }) }}">
 	                {{ 'display_correction'|trans({}, 'solerni') }}
 	            </a>
 	            {% endif %}

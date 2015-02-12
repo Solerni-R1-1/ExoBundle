@@ -59,8 +59,8 @@ attempt info1: You are allowed
 attempt info2sing: attempt
 attempt info2plur: attempts
 attempt info3: Attempt No.
-attempt info4: You have _____ left
-attempt info5: to improve your score
+attempt info4: You have 
+attempt info5: left to improve your score
 attempt info6: You have no attempts left
 attempt info7: and one attempt in progress
 attempt info8: You have one attempt in progress left
@@ -91,7 +91,7 @@ close: Close
 color: Colour
 comment: Comment
 compose: Answer
-consult_hint: Viewing the index incurs a penalty of X points. Do you wish to continue?
+consult_hint: Viewing the index incurs a penalty of X point(s). Do you wish to continue
 containSearch: Of which the question contains
 correct: Correct
 correction: Correction
