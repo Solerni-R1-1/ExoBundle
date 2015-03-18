@@ -99,7 +99,7 @@
 
         {% if isAdmin == 1 and  pager.getNbResults() > 0 %}
             {{ 'searchUserPaper' | trans }} :
-            <div class="input-group">
+            <div class="input-group top-margin">
                 <input type="text" class="form-control" id="nameUser" placeholder="{{ 'search'|trans({}, 'platform') }}"
                     onkeydown="if (event.keyCode == 13) { searchUserPaper('{{ path('ujm_paper_searchUserPaper') }}', {{exoID}});return false; }">
                 <span class="input-group-btn">
@@ -107,25 +107,17 @@
                         onClick="searchUserPaper('{{ path('ujm_paper_searchUserPaper') }}', {{exoID}});">
                 <i class="icon-search"></i></button>
                 </span>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </div>
+            <div class="top-margin">
                 <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': exercise.id }) }}">
                     <i class="icon-repeat"></i> {{ 'reset' | trans }}
-               </a>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+               </a> 
                 <a class="btn btn-primary" href="{{ path('ujm_paper_list', { 'exoID': exercise.id, 'all': 1 }) }}">
                     <i class="icon-list"></i> {{ 'displayAllList' | trans }}
                 </a>
             </div>
-
             <hr/>
         {% endif %}
-
-        {#% if nbUserPaper > 0 %}
-            
-                {{ 'already answered' | trans }}
-                
-        {% endif %#}
-
         {% include "UJMExoBundle:Partial:badgeInfos/infos.html.twig" %}
         {% include "UJMExoBundle:Partial:correction/attemptInfo.html.twig" %}
 		<br/>

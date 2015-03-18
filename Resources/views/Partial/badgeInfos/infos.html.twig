@@ -17,10 +17,12 @@
 {% if hasBadge or hasBadgeOwned %}
 <p>
     {% if hasBadgeOwned %}
-        <strong>Félicitations !</strong> vous avez obtenu le badge de connaissance <strong>&laquo; {{badgesNameOwned|join(', ')}} &raquo;</strong>. <br/>
-        Pour découvrir votre collection de badges, rendez vous sur la page <a class='red' href='{{ path('claro_profile_view_badges') }}'>mes badges</a><br/>
+        <strong>{{'congrats'|trans({}, 'solerni')}}</strong> {{'badge_owned'|trans({'%badgeName%': badgesNameOwned|join(', ')}, 'solerni')|raw}}.<br/>
+        {{'discover_collection'|trans({'%url%': path('claro_profile_view_badges') }, 'solerni')|raw}}
+        <br/>
     {% else %}
-        Vous n'avez pas encore obtenu le badge de connaissance <strong>&laquo; {{badgesName|join(', ')}} &raquo;</strong>. <br/>
+        {% set badgeName = badgesName|join(', ') %}
+        {{ 'badge_not_yet'|trans({'%badgeName%': badgeName }, 'solerni')|raw }}.
     {% endif %}
 </p>
 {% endif %}

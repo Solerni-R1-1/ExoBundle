@@ -57,7 +57,7 @@ class ExerciseType extends AbstractType
                 )
             )
             ->add('description', 'tinymce', array(
-                    'label' => 'Description', 'required' => false
+                    'label' => 'description', 'required' => false
                 )
             )
             ->add(

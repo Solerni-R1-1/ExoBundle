@@ -1,10 +1,10 @@
 UJM\ExoBundle\Entity\InteractionQCM:
     properties:
         scoreRightResponse:
-            - UJM\ExoBundle\Validator\Constraints\isValidQCMGlobalMark: ~
+            - UJM\ExoBundle\Validator\Constraints\isValidQCMGlobalMark: {message: "invalid_mark"}
 
         scoreFalseResponse:
-            - UJM\ExoBundle\Validator\Constraints\isValidQCMGlobalMark: ~
+            - UJM\ExoBundle\Validator\Constraints\isValidQCMGlobalMark: {message: "invalid_mark"}
 
 UJM\ExoBundle\Entity\Hint:
     properties:

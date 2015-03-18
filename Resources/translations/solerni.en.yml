@@ -1,75 +1,75 @@
-# A
+#A
 actions: Correction
-answer for question : Correction for the question n°
-ask hint : Je souhaite un indice
-attempt info3 : essai
-attempt info3_1 : er
-attempt info3_x : ème
-
-# C
-correction : Quiz's Results
-
+answer for question : Correction of question n°
+ask hint : I would like a hint
+attempt info3 : try
+attempt info3_1 : st
+attempt info3_x : th
+#B	
+badge_not_yet: You have not yet obtained the <strong>&laquo; %badgeName% &raquo;</strong> knowledge badge.
+badge_owned: You have obtained the <strong>&laquo; %badgeName% &raquo;</strong> knowledge badge.
+#C	
+congrats: Congratulations!
+correction : Quiz results
+corrector_comments: See corrector comments
 #D
-duree : Durée estimée
-
-#E
-end date: Fin
-
-# G
-good response: Les bonnes réponses étaient
-
+duree : Estimated duration
+display_correction : 'Display the correction (will use your remaining tries)'
+discover_collection: To see your badge collection, go to the <a class="red" href="%url%">my badges</a> page.
+#E	
+end date: End
+exercise_ended: The deadline for this exercise has passed.
+exercise_not_started: You can start this exercise from <strong>%date%</strong>.
 # F
 final mark: See your mark
-finish: Finish
-
-# H
-Hint_title: Attention.
-
-# L
-list of question : Résultats
-list of response: Rappel de vos réponses
-list of all results: Résultats précédents
-
-# N
-next: Validate the answer
-
-# P
+finish: End
+free_answer: Free answer
+# G	
+good response: The correct responses were
+# H	
+Hint_title: Note
+# L	
+list of question : Results
+list of response: Reminder of your responses
+list of all results: Previous results
+# N	
+next: Next question
+#M	
+may_have_badge: By doing this quiz, you might have earned a badge!
+# P	
 paper exo : Quiz
-previous : Question précédente
-
-# Q
+previous : Previous question
+# Q	
 question_num : Question N°
-quiz_ended : You have already finish this quiz. Here your marks
-Quit_title : Quitter le quiz
-Quit : En quittant le quiz sans le terminer, vous serez décompté de vos essais disponibles pour obtenir le badge de connaissance correspondant.
-Quit2 : Êtes-vous sûr de vouloir quitter ce quiz maintenant ?
-Quit_Y : Oui
-Quit_N : Non
-
-# R
-returnMOOC: Return to the MOOC
-returnResult : Retourn to the results
-
-# S
+quiz_ended : You have already done this quiz. Here is your mark.
+Quit_title : End the quiz
+Quit : By ending this quiz without finishing it, your available tries for the relevant knowledge badge will be deducted.
+Quit2 : 'Are you sure you wish to end this quiz?'
+Quit_Y : Yes
+Quit_N : No
+# R	
+returnMOOC : Return to the MOOC
+returnResult : Return to the results
+# S	
 see mark : Your final mark
-see all corrections : See the correction of questions
-see papers : Voir ses copies
-Save_title : Attention 
-Save : Êtes vous sûr de vouloir terminer ? (Vous ne pourrez plus modifier vos réponses).
-Save_Y : Valider
-Save_N : Annuler
-SaveNoFinish_title : Attention 
-SaveNoFinish : Vous n'avez pas répondu à toutes les questions.
-SaveNoFinish2 : En validant votre quiz vous ne pourrez plus modifier vos réponses
-SaveNoFinish_Y : Reprendre le quiz
-SaveNoFinish_N : Valider
-start again: Recommencer le quiz
-start date: Début
-
-# T
-time : 2 min
-
-# Y
+see all corrections : See question corrections
+see papers : Display my previous results
+Save_title : Note
+Save : Are you sure you wish to finish? (You can no longer change your answers).
+Save_Y : Submit
+Save_N : Cancel
+SaveNoFinish_title : Note
+SaveNoFinish : You have not answered all the questions.
+SaveNoFinish2 : By submitting your quiz you can no longer change your answers
+SaveNoFinish_Y : Retake the quiz
+SaveNoFinish_N : Submit
+start again: Restart the quiz
+start date: Start
+# T	
+#time : 2 min
+#U	
+undealed_type: The %interactionType% type is not managed
+# Y	
 your mark : Your mark
-your score : Your mark
-your response : Votre réponse
+your score : Your score
+your response : Your answer
