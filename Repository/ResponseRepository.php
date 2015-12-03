@@ -58,14 +58,26 @@ class ResponseRepository extends EntityRepository
     	$dql = "SELECT r
     			FROM UJM\ExoBundle\Entity\Response r
     			WHERE r.paper = :paper
-    				AND r.interaction = :interaction";
+    				AND r.interaction = :interaction
+                ORDER BY r.id DESC";
     	$query = $this->_em->createQuery($dql);
     	$query->setParameters(array(
     			"paper"			=> $paper,
     			"interaction"	=> $interaction
     	));
 
-        return $query->getOneOrNullResult();
+        $responses = $query->getResult();
+
+        if (count($responses) > 0) {
+            for ($i = 1; $i < count($responses); $i++) {
+                $this->_em->remove($responses[$i]);
+            }
+            $this->_em->flush();
+
+            return $responses[0];
+        } else {
+            return null;
+        }
     }
 
     /**
