@@ -14,7 +14,7 @@
 
                         <script type="text/javascript">
                             show_hint2('{{hint.id}}', '{{path('ujm_hint_show')}}',
-                                       '{{nbr_hint}}', {{hint.penalty}}, '{{paper}}'
+                                       '{{nbr_hint}}', {{hint.penalty}}, '{{paper.id}}'
                                       );
                         </script>
                     {% else %}
@@ -47,7 +47,7 @@
                                     <h4 class="modal-title">{{ 'Hint_title'|trans({}, 'solerni') }}</h4>
                                 </div>
                                 <div class="modal-body">
-                                    Consulter l'indice entraîne une pénalité de {{hint.penalty}} point(s), voulez vous continuer ?
+                                    {{ 'hint_warning'|trans({"%hintpenalty%": hint.penalty}, 'solerni') }}
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" onclick="show_hint2('{{hint.id}}', '{{path('ujm_hint_show')}}',

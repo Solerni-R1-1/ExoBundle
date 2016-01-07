@@ -526,7 +526,7 @@
                                         <div class='slr__line'>
                                             <h3 class='slr__line__h3 {{ css }}'>{{ 'question_num' | trans({}, 'solerni')  }}{{ i+1 }}/{{ interactions|length }}</h3>
                                              {% if responses[i].markUsedForHint > 0 %}
-                                                <span class='hint_used'>Indice Utilisé : -{{responses[i].markUsedForHint}} pt</span>
+                                                <span class='hint_used'>{{ 'hint_used'|trans({}, 'solerni') }} : -{{responses[i].markUsedForHint}} pt</span>
                                             {% endif %}
                                             <p>{{ interaction.question.title }} </p>
                                             <div class='slr__line__answer'>

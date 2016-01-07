@@ -29,6 +29,8 @@ free_answer: Réponse libre
 good response: Les bonnes réponses étaient
 # H
 Hint_title: Attention
+hint_used: Indice Utilisé
+hint_warning: Consulter l'indice entraîne une pénalité de %hintpenalty% point(s), voulez vous continuer ?
 # L
 list of question : Résultats
 list of response: Rappel de vos réponses

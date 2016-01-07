@@ -28,7 +28,9 @@ free_answer: Free answer
 good response: The correct responses were
 # H	
 Hint_title: Note
-# L	
+hint_used: Hint used
+hint_warning: Clue consultation provokes penalty of %hintpenalty% point(s), do you want continue ?
+# L
 list of question : Results
 list of response: Reminder of your responses
 list of all results: Previous results
