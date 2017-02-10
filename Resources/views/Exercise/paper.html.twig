@@ -440,8 +440,10 @@
         
 
     <script type="text/javascript">
+        var flagFinish = false;
         $(document).ready(function() {
             $('#Qnumber option[value="' + {{ numQ }} + '"]').attr('selected', 'selected');
+            flagFinish = false;
         });
 
         function submitForm(interactionId) {
@@ -451,9 +453,12 @@
         }
 
         function finish() {
-        	var route = Routing.generate('ujm_finish_paper', {exerciseId:{{ exercise.getId() }}, paperId:{{ paper.getId() }}});
-			$('#formResponse').attr('action', route);
-			$('#formResponse').submit();
+            if (!flagFinish) {
+                flagFinish = true;
+                var route = Routing.generate('ujm_finish_paper', {exerciseId:{{ exercise.getId() }}, paperId:{{ paper.getId() }}});
+                $('#formResponse').attr('action', route);
+                $('#formResponse').submit();
+            }
         }
     </script>    
 {% endblock %}
